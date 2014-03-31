@@ -1,17 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GameAnalytics\Plugins\Framework\Scripts\GA.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\MouseCameraLook.cs">
     <Files>
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_SystemTracker.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleController.cs" Line="19" Column="58" />
-      <File FileName="Assets\Scripts\Eyetracking\UnityGazeUtils.cs" Line="22" Column="53" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA.cs" Line="90" Column="48" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_Design.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Eyetracking\GazeAngryBotsWrap.cs" Line="103" Column="15" />
+      <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Eyetracking\UnityGazeUtils.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Eyetracking\GazeAngryBotsWrap.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleHighScore.cs" Line="52" Column="25" />
-      <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleFloor.cs" Line="15" Column="24" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatMapDataFilter.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Input\KeyInput2Object.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player\CharacterMovementScript.cs" Line="95" Column="26" />
+      <File FileName="Assets\Scripts\Player\MouseCameraLook.cs" Line="47" Column="118" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
