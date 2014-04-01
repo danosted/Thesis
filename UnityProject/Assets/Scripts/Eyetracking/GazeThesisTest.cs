@@ -4,11 +4,11 @@ using TETCSharpClient;
 using TETCSharpClient.Data;
 using Assets.Scripts;
 
-public class GazeAngryBotsWrap : MonoBehaviour, IGazeListener
+public class GazeThesisTest : MonoBehaviour, IGazeListener
 {
     private GazeDataValidator gazeUtils;
 
-	void Start () 
+	void Awake () 
     {
         gazeUtils = new GazeDataValidator(15);
 
@@ -27,14 +27,6 @@ public class GazeAngryBotsWrap : MonoBehaviour, IGazeListener
     {
         //Add frame to GazeData cache handler
         gazeUtils.Update(gazeData);
-    }
-
-    public void OnCalibrationStateChanged(bool isCalibrated)
-    {
-    }
-
-    public void OnScreenIndexChanged(int screenIndex) 
-    {
     }
 
     void Update()
@@ -70,6 +62,13 @@ public class GazeAngryBotsWrap : MonoBehaviour, IGazeListener
             GUI.TextArea(new Rect(padding, y, 190, 20), "EyeTribe Server not calibrated!");
         }
 
+//		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
+//		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
+//		Debug.Log ("left eye pupil: " + pupil_left);
+//		Debug.Log ("right eye pupil: " + pupil_right);
+//		float pupil = (pupil_left + pupil_right) * 0.5f;
+//		Debug.Log("mean pupil: " + pupil);
+
 //		if(gazeUtils.GetLeftEye() == null)
 //		{
 //			Debug.Log("left eye closed");
@@ -79,6 +78,11 @@ public class GazeAngryBotsWrap : MonoBehaviour, IGazeListener
 //			Debug.Log("right eye closed");
 //		}
     }
+
+	public void Wut()
+	{
+
+	}
 
     void OnApplicationQuit()
     {
@@ -100,7 +104,19 @@ public class GazeAngryBotsWrap : MonoBehaviour, IGazeListener
 
     }
 
-	public float GetPupilDilation()
+	public float GetPupilDilationLeft()
+	{
+		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
+		return pupil_right;
+	}
+
+	public float GetPupilDilationRight()
+	{
+		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
+		return pupil_left;
+	}
+
+	public float GetMeanPupilDilation()
 	{
 		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
 		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
