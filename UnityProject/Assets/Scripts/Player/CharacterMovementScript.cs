@@ -6,8 +6,6 @@ public class CharacterMovementScript : MonoBehaviour {
 	[SerializeField]
 	private float movementSpeed = 1f;
 	[SerializeField]
-	private float jumpForce = 1f;
-	[SerializeField]
 	private float resetBounds = -10f;
 	[SerializeField]
 	private Transform rhs;

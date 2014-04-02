@@ -32,6 +32,8 @@ namespace Assets.Scripts
         private double _LastValidEyeDistance;
         private double _LastValidEyeAngle;
 
+		private bool _isFixating;
+
         public GazeDataValidator(int queueLength)
         {
             _Frames = new FixedSizeQueue<GazeData>(queueLength);
@@ -65,6 +67,8 @@ namespace Assets.Scripts
                         left = gd.LeftEye;
                     if (null == right && null != gd.RightEye && gd.RightEye.PupilCenterCoordinates.X != 0 && gd.RightEye.PupilCenterCoordinates.Y != 0)
                         right = gd.RightEye;
+
+					_isFixating = gd.IsFixated;
                 }
 
                 // if gaze coordinates available, cache both raw and smoothed
@@ -115,6 +119,7 @@ namespace Assets.Scripts
                 //update angle
                 _LastValidEyeAngle = ((180 / Math.PI * Math.Atan2(_LastValidRightEye.PupilCenterCoordinates.Y - _LastValidLeftEye.PupilCenterCoordinates.Y,
                     _LastValidRightEye.PupilCenterCoordinates.X - _LastValidLeftEye.PupilCenterCoordinates.X)));
+
             }
         }
 
@@ -167,6 +172,11 @@ namespace Assets.Scripts
         {
             return _LastValidSmoothedGazeCoords;
         }
+
+		public bool isFixating()
+		{
+			return _isFixating;
+		}
     }
 
     class FixedSizeQueue<T> : Queue<T>

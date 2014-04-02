@@ -123,4 +123,9 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
 		float pupil = (pupil_left + pupil_right) * 0.5f;
 		return pupil;
 	}
+
+	public bool isFixating()
+	{
+		return gazeUtils.isFixating ();;
+	}
 }
