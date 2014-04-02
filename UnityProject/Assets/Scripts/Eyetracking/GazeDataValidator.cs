@@ -50,7 +50,6 @@ namespace Assets.Scripts
             for (int i = _Frames.Count; --i >= 0; )
             {
                 gd = _Frames.ElementAt(i);
-
                 // if no tracking problems, then cache eye data
                 if ((gd.State & GazeData.STATE_TRACKING_FAIL) == 0 && (gd.State & GazeData.STATE_TRACKING_LOST) == 0)
                 {

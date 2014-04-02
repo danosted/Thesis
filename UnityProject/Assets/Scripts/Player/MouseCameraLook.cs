@@ -37,13 +37,20 @@ public class MouseCameraLook : MonoBehaviour {
 	private IEnumerator MouseOrbit()
 	{
 //		Input.
-		float verticalAxis = 0f;
-		float horizontalAxis = 0f;
+		float verticalMove = 0f;
+		float horizontalMove = 0f;
+		float zRot = 0f;
 		while(isLooking)
 		{
-			verticalAxis = Input.GetAxis("Mouse X");
-			horizontalAxis = Input.GetAxis("Mouse Y");
-			transform.Rotate(-horizontalAxis * mouseSensivity, verticalAxis * mouseSensivity, 0f);
+			horizontalMove = Input.GetAxis("Mouse X");
+			verticalMove = Input.GetAxis("Mouse Y");
+			zRot = (transform.rotation.z != 0f) ? transform.rotation.eulerAngles.z : 0f;
+			transform.Rotate(0f, horizontalMove * mouseSensivity, -zRot);
+			zRot = (mouseLookCamera.transform.rotation.z != 0f) ? mouseLookCamera.transform.rotation.eulerAngles.z : 0f;
+			if((mouseLookCamera.transform.rotation.eulerAngles.x-(verticalMove * mouseSensivity)) < 85f || (mouseLookCamera.transform.rotation.eulerAngles.x-(verticalMove * mouseSensivity)) > 280f)
+			{
+				mouseLookCamera.transform.Rotate(-verticalMove * mouseSensivity, 0f, -zRot);
+			}
 			yield return null;
 		}
 	}

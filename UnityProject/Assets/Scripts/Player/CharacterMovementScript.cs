@@ -9,6 +9,10 @@ public class CharacterMovementScript : MonoBehaviour {
 	private float jumpForce = 1f;
 	[SerializeField]
 	private float resetBounds = -10f;
+	[SerializeField]
+	private Transform rhs;
+	[SerializeField]
+	private Transform lhs;
 	
 	private KeyInput2Object keyInput;	
 	private float checkFrequency = 1f;
@@ -99,7 +103,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingLeft)
 		{
-			transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * movementSpeed, Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + (lhs.position - transform.position), Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}
@@ -108,7 +112,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingRight)
 		{
-			transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * movementSpeed, Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position  + (rhs.position - transform.position), Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}
@@ -117,7 +121,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingForward)
 		{
-			transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.forward * movementSpeed, Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}
@@ -126,7 +130,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingBackward)
 		{
-			transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.back * movementSpeed, Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position-transform.forward, Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}
