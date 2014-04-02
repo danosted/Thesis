@@ -1,14 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\CharacterMovementScript.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CharacterGAMetrics.cs">
     <Files>
       <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Eyetracking\UnityGazeUtils.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Eyetracking\GazeAngryBotsWrap.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Plugins\Examples\Scripts\GA_ExampleManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Input\KeyInput2Object.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Player\CharacterMovementScript.cs" Line="103" Column="22" />
-      <File FileName="Assets\Scripts\Player\MouseCameraLook.cs" Line="46" Column="4" />
+      <File FileName="Assets\Scripts\Player\CharacterMovementScript.cs" Line="103" Column="3" />
+      <File FileName="Assets\Scripts\Player\MouseCameraLook.cs" Line="1" Column="1" />
+      <File FileName="Assets\CharacterGAMetrics.cs" Line="17" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
