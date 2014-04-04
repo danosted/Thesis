@@ -18,15 +18,17 @@ public class CharacterGAMetrics : MonoBehaviour
 	void Start()
 	{
 		characterCamera = GetComponentInChildren<Camera>();
-		StartCoroutine(CollectEyetrackerMetrics());
-		StartCoroutine(CollectMetrics());
-		StartCoroutine(GazeRay());
+//				StartCoroutine(CollectEyetrackerMetrics());
+//		StartCoroutine(CollectMetrics());
+//				StartCoroutine(GazeRay());
+
 	}
 
 	private IEnumerator GazeRay()
 	{
 		while(true)
 		{
+
 			gazePos = transform.position;
 			try
 			{
@@ -61,7 +63,7 @@ public class CharacterGAMetrics : MonoBehaviour
 	{
 		while(true)
 		{
-			GA.API.Design.NewEvent("RandomTestPosition", gazeHandler.GetMeanPupilDilation(), transform.position);
+			GA.API.Design.NewEvent("RandomTestPosition", Random.Range(20, 24), transform.position);
 			
 			yield return new WaitForSeconds(1f);
 		}

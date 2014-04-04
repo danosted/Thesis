@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KeyInput2Object : MonoBehaviour {
+public class KeyInput2Object : MonoBehaviour
+{
 
 	public delegate void OnLeftPressedDelegate();
 	public event OnLeftPressedDelegate OnLeftPressed;
@@ -43,7 +44,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -54,7 +55,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -65,7 +66,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyDown(KeyCode.Space))
@@ -76,7 +77,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
@@ -87,7 +88,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.LeftArrow))
@@ -98,7 +99,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow))
@@ -109,7 +110,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
@@ -120,7 +121,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyUp(KeyCode.Space))
@@ -131,7 +132,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 		}
 		if(Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
@@ -142,7 +143,7 @@ public class KeyInput2Object : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log ("no listener to event", gameObject);
+				Debug.Log("no listener to event", gameObject);
 			}
 			
 		}

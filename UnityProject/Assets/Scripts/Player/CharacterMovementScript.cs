@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterMovementScript : MonoBehaviour {
+public class CharacterMovementScript : MonoBehaviour
+{
 
 	[SerializeField]
-	private float movementSpeed = 1f;
+	private float
+		movementSpeed = 1f;
 	[SerializeField]
-	private float resetBounds = -10f;
+	private float
+		resetBounds = -10f;
 	[SerializeField]
-	private Transform rhs;
+	private Transform
+		rhs;
 	[SerializeField]
-	private Transform lhs;
+	private Transform
+		lhs;
 	
 	private KeyInput2Object keyInput;	
 	private float checkFrequency = 1f;
@@ -19,7 +24,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	private bool goingForward;
 	private bool goingBackward;
 
-	void Awake () 
+	void Awake()
 	{
 		keyInput = GetComponent<KeyInput2Object>();
 		keyInput.OnLeftPressed += OnLeftPressed;
@@ -110,7 +115,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingRight)
 		{
-			transform.position = Vector3.MoveTowards(transform.position, transform.position  + (rhs.position - transform.position), Time.deltaTime * movementSpeed);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + (rhs.position - transform.position), Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}
@@ -128,7 +133,7 @@ public class CharacterMovementScript : MonoBehaviour {
 	{
 		while(goingBackward)
 		{
-			transform.position = Vector3.MoveTowards(transform.position, transform.position-transform.forward, Time.deltaTime * movementSpeed);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position - transform.forward, Time.deltaTime * movementSpeed);
 			yield return null;
 		}
 	}

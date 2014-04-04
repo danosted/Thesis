@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MouseCameraLook : MonoBehaviour {
+public class MouseCameraLook : MonoBehaviour
+{
 
 	[SerializeField]
-	private Camera mouseLookCamera;
+	private Camera
+		mouseLookCamera;
 	[SerializeField]
-	private float mouseSensivity;
+	private float
+		mouseSensivity;
 	[SerializeField]
-	private float thresh;
+	private float
+		thresh;
 
 	private bool isLooking;
 
@@ -47,7 +51,7 @@ public class MouseCameraLook : MonoBehaviour {
 			zRot = (transform.rotation.z != 0f) ? transform.rotation.eulerAngles.z : 0f;
 			transform.Rotate(0f, horizontalMove * mouseSensivity, -zRot);
 			zRot = (mouseLookCamera.transform.rotation.z != 0f) ? mouseLookCamera.transform.rotation.eulerAngles.z : 0f;
-			if((mouseLookCamera.transform.rotation.eulerAngles.x-(verticalMove * mouseSensivity)) < 85f || (mouseLookCamera.transform.rotation.eulerAngles.x-(verticalMove * mouseSensivity)) > 280f)
+			if((mouseLookCamera.transform.rotation.eulerAngles.x - (verticalMove * mouseSensivity)) < 85f || (mouseLookCamera.transform.rotation.eulerAngles.x - (verticalMove * mouseSensivity)) > 280f)
 			{
 				mouseLookCamera.transform.Rotate(-verticalMove * mouseSensivity, 0f, -zRot);
 			}
