@@ -16,6 +16,9 @@ public class CharacterMovementScript : MonoBehaviour
 	[SerializeField]
 	private Transform
 		lhs;
+	[SerializeField]
+	private float
+		jumpHeight = 5f;
 	
 	private KeyInput2Object keyInput;	
 	private float checkFrequency = 1f;
@@ -145,7 +148,7 @@ public class CharacterMovementScript : MonoBehaviour
 
 		while(duration > -100)
 		{
-			jumpSign = Mathf.Clamp(duration, -1, 1);
+			jumpSign = Mathf.Clamp(duration, -jumpHeight, jumpHeight);
 			transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * jumpSign, Time.deltaTime);
 			duration--;
 			yield return null;
