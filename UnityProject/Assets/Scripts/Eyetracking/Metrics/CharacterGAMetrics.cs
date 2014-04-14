@@ -18,9 +18,11 @@ public class CharacterGAMetrics : MonoBehaviour
 		rayColor;
 
 	private Camera characterCamera;
-	private Vector3 gazePos = Vector3.zero;
+	private Vector3 gazePosWorld = Vector3.zero;
 	private Transform currentTarget;
 	private Ray gazeRay;
+	private bool isHit;
+	private Vector3 poi;
 
 	void Start()
 	{
@@ -32,33 +34,55 @@ public class CharacterGAMetrics : MonoBehaviour
 
 	}
 
+	/*
+	 *	Debugging
+	 */
+	void OnDrawGizmos()
+	{
+		if(isHit)
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawSphere(poi, 0.5f);
+		}
+//		Gizmos.color = Color.yellow;
+//		Gizmos.DrawSphere(gazePosOrigin, 0.5f);
+	}
+
 	private IEnumerator DebugGazeRay()
 	{
 		while(true)
 		{
-			gazePos = transform.position;
+			gazePosWorld = transform.position;
 			try
 			{
-				gazePos = gazeHandler.GetGazeScreenPosition();
+				gazePosWorld = gazeHandler.GetGazeScreenPosition();
 			}
 			catch(System.Exception ex)
 			{
 				Debug.Log(ex);
 			}
-			gazePos = characterCamera.ScreenToWorldPoint(new Vector3(gazePos.x, gazePos.y, characterCamera.nearClipPlane));
-			
+//			Vector3 gazePosOrigin = characterCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f));
+			Vector3 gazePosOrigin = characterCamera.transform.position;
+			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(Mathf.Clamp((int)Input.mousePosition.x, 0, Screen.width), Mathf.Clamp((int)Input.mousePosition.y, 0, Screen.height), characterCamera.farClipPlane));
+
+
+
 			//Ray showing gaze direction
 			RaycastHit hit;
-			gazeRay = new Ray(characterCamera.transform.position, characterCamera.transform.forward);
+			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
 			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
 				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
+				poi = hit.point;
+				isHit = true;
+
 			}
 			else
 			{
 				currentTarget = null;
+				isHit = false;
 //				Debug.Log("staring into infinity and beyond");
 			}
 			
@@ -70,20 +94,21 @@ public class CharacterGAMetrics : MonoBehaviour
 	{
 		while(true)
 		{
-			gazePos = transform.position;
+			gazePosWorld = transform.position;
 			try
 			{
-				gazePos = gazeHandler.GetGazeScreenPosition();
+				gazePosWorld = gazeHandler.GetGazeScreenPosition();
 			}
 			catch(System.Exception ex)
 			{
 				Debug.Log(ex);
 			}
-			gazePos = characterCamera.ScreenToWorldPoint(new Vector3(gazePos.x, gazePos.y, characterCamera.nearClipPlane));
+			Vector3 gazePosOrigin = characterCamera.transform.position;
+			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(gazePosWorld.x, gazePosWorld.y, characterCamera.farClipPlane));
 
 			//Ray showing gaze direction
 			RaycastHit hit;
-			gazeRay = new Ray(characterCamera.transform.position, (gazePos - characterCamera.transform.position));
+			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
 			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
@@ -129,7 +154,7 @@ public class CharacterGAMetrics : MonoBehaviour
 
 			yield return new WaitForSeconds(1f);
 
-			GA.API.Design.NewEvent("GazeCoordinates", gazePos);
+			GA.API.Design.NewEvent("GazeCoordinates", gazePosWorld);
 			
 			yield return new WaitForSeconds(1f);
 		}

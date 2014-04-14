@@ -8,6 +8,6 @@ public class HitmapGenerator : MonoBehaviour
 
 	private IEnumerator CreateHitmap()
 	{
-		
+		yield return null;
 	}
 }
