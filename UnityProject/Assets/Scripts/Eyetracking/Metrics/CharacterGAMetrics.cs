@@ -173,4 +173,9 @@ public class CharacterGAMetrics : MonoBehaviour
 		}
 		return this.currentTarget.gameObject;
 	}
+
+	public Vector3 GetCurrentHitPosition()
+	{
+		return this.poi;
+	}
 }

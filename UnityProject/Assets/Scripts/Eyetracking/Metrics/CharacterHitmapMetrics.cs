@@ -16,7 +16,7 @@ public class CharacterHitmapMetrics : MonoBehaviour
 	{
 		while(true)
 		{
-			HitmapDataManager.HitmapManager.NewHitEvent("GazeRayWithTargetObject", 0f, transform.position, characterMetrics.GetCurrentTarget(), characterMetrics.GetCurrentGazeRay());
+			HitmapDataManager.HitmapManager.NewHitEvent("GazeRayWithTargetObject", transform.position, characterMetrics.GetCurrentTarget(), characterMetrics.GetCurrentHitPosition(), characterMetrics.GetCurrentGazeRay());
 			yield return new WaitForSeconds(1f);
 		}
 	}
