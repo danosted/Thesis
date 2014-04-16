@@ -9,14 +9,13 @@ public class CharacterHitmapMetrics : MonoBehaviour
 	{
 		characterMetrics = GetComponent<CharacterGAMetrics>();
 		StartCoroutine(CollectCharacterMetrics());
-
 	}
 
 	private IEnumerator CollectCharacterMetrics()
 	{
 		while(true)
 		{
-			HitmapDataManager.HitmapManager.NewHitEvent("GazeRayWithTargetObject", transform.position, characterMetrics.GetCurrentTarget(), characterMetrics.GetCurrentHitPosition(), characterMetrics.GetCurrentGazeRay());
+			HitmapDataManager.HitmapManager.NewHitEvent("GazeRayWithTargetObject", transform.position, characterMetrics.GetCurrentTargetName(), characterMetrics.GetCurrentHitPosition(), characterMetrics.GetCurrentGazeRay());
 			yield return new WaitForSeconds(1f);
 		}
 	}

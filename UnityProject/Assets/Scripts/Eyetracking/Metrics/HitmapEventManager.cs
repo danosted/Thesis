@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class HitmapDataManager
 {
-	private static HitmapDataManager hitmapManager;
 
 	private HashSet<HitmapEvent> hitmapDataSet = new HashSet<HitmapEvent>();
+
+	private static HitmapDataManager hitmapManager;
 
 	public static HitmapDataManager HitmapManager
 	{
@@ -20,19 +21,19 @@ public class HitmapDataManager
 		}
 	}
 	
-	public void NewHitEvent(string eventName, Vector3 eventPosition, GameObject eventGazeTarget)
+	public void NewHitEvent(string eventName, Vector3 eventPosition, string eventGazeTarget)
 	{
 		HitmapEvent newEvent = new HitmapEvent(eventName, eventPosition, eventGazeTarget);
 		hitmapDataSet.Add(newEvent);
 	}
 
-	public void NewHitEvent(string eventName, Vector3 eventPosition, GameObject eventGazeTarget, Vector3 eventHitPosition)
+	public void NewHitEvent(string eventName, Vector3 eventPosition, string eventGazeTarget, Vector3 eventHitPosition)
 	{
 		HitmapEvent newEvent = new HitmapEvent(eventName, eventPosition, eventGazeTarget, eventHitPosition);
 		hitmapDataSet.Add(newEvent);
 	}
 
-	public void NewHitEvent(string eventName, Vector3 eventPosition, GameObject eventGazeTarget, Vector3 eventHitPosition, Ray eventGazeRay)
+	public void NewHitEvent(string eventName, Vector3 eventPosition, string eventGazeTarget, Vector3 eventHitPosition, Ray eventGazeRay)
 	{
 		HitmapEvent newEvent = new HitmapEvent(eventName, eventPosition, eventGazeTarget, eventHitPosition, eventGazeRay);
 		hitmapDataSet.Add(newEvent);
@@ -52,12 +53,29 @@ public class HitmapDataManager
 public class HitmapEvent
 {
 	public string eventName;
-	public Vector3 eventOrigin;
-	public GameObject eventGazeTarget;
-	public Vector3 eventHitPosition;
-	public Ray eventGazeRay;
+	[SerializeField]
+	public Vector3
+		eventOrigin;
+	[SerializeField]
+	public string
+		eventGazeTarget;
+	[SerializeField]
+	public Vector3
+		eventHitPosition;
+	[SerializeField]
+	public Ray
+		eventGazeRay;
+
+	public HitmapEvent()
+	{
+		this.eventName = "";
+		this.eventHitPosition = Vector3.zero;
+		this.eventOrigin = Vector3.zero;
+		this.eventGazeTarget = "";
+		this.eventGazeRay = new Ray();
+	}
 	
-	public HitmapEvent(string eventName, Vector3 eventOrigin, GameObject eventGazeTarget)
+	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget)
 	{
 		this.eventName = eventName;
 		this.eventHitPosition = Vector3.zero;
@@ -66,7 +84,7 @@ public class HitmapEvent
 		this.eventGazeRay = new Ray();
 	}
 	
-	public HitmapEvent(string eventName, Vector3 eventOrigin, GameObject eventGazeTarget, Vector3 eventHitPosition)
+	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget, Vector3 eventHitPosition)
 	{
 		this.eventName = eventName;
 		this.eventHitPosition = eventHitPosition;
@@ -75,7 +93,7 @@ public class HitmapEvent
 		this.eventGazeRay = new Ray();
 	}
 
-	public HitmapEvent(string eventName, Vector3 eventOrigin, GameObject eventGazeTarget, Vector3 eventHitPosition, Ray eventGazeRay)
+	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget, Vector3 eventHitPosition, Ray eventGazeRay)
 	{
 		this.eventName = eventName;
 		this.eventHitPosition = eventHitPosition;

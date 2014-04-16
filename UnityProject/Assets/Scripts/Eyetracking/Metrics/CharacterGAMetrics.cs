@@ -165,13 +165,13 @@ public class CharacterGAMetrics : MonoBehaviour
 		return this.gazeRay;
 	}
 
-	public GameObject GetCurrentTarget()
+	public string GetCurrentTargetName()
 	{
 		if(!currentTarget)
 		{
-			return null;
+			return "";
 		}
-		return this.currentTarget.gameObject;
+		return this.currentTarget.gameObject.name;
 	}
 
 	public Vector3 GetCurrentHitPosition()
