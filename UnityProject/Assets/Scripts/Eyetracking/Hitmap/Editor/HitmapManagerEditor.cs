@@ -49,6 +49,7 @@ public class HitmapManagerEditor : Editor
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.MinMaxSlider(ref gatherer.minPupilSize,ref gatherer.maxPupilSize,0f,40f);
 		serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("gazeTargetData"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eyeData"), true);

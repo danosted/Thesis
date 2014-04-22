@@ -121,6 +121,7 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
 		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
 		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
 		float pupil = (pupil_left + pupil_right) * 0.5f;
+//		Debug.Log("pupil size: " + pupil);
 		return pupil;
 	}
 

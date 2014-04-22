@@ -22,7 +22,7 @@ public class CharacterEyeMetricsCollecter : MonoBehaviour
 			EyeDataManager.Instance.NewHitEvent("GazeRayWithTargetObject", pos, eyeMetrics.GetCurrentTargetName(), eyeMetrics.GetCurrentHitPosition(), eyeMetrics.GetCurrentGazeRay());
 //			yield return new WaitForSeconds(timeBetweenDataCollects);
 //			TODO: Change to eye metrics data
-			EyeDataManager.Instance.NewEyeEvent("PupilSizeChange", pos, Random.Range(20f, 25f), 0f, 0f, 0f, 0f);
+			EyeDataManager.Instance.NewEyeEvent("PupilSizeChange", pos, eyeMetrics.PupilSize, 0f, 0f, 0f, 0f);
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
 	}

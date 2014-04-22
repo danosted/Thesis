@@ -98,13 +98,13 @@ namespace Assets.Scripts
 			if(null != left)
 			{
 				_LastValidLeftEye = left;
-				timeAtLastValidEyeLeft = Time.time;
+//				timeAtLastValidEyeLeft = Time.time;
 			}
 
 			if(null != right)
 			{
 				_LastValidRightEye = right;
-				timeAtLastValidEyeRight = Time.time;
+//				timeAtLastValidEyeRight = Time.time;
 			}
 
 			if(null != gazeCoords)
@@ -200,17 +200,17 @@ namespace Assets.Scripts
 			return _isFixating;
 		}
 
-		public float GetTimeSinceLastValidEyeLeft()
-		{
-			timeSinceLastValidEyeLeft = Time.time - timeAtLastValidEyeLeft;
-			return timeSinceLastValidEyeLeft;
-		}
+//		public float GetTimeSinceLastValidEyeLeft()
+//		{
+//			timeSinceLastValidEyeLeft = Time.time - timeAtLastValidEyeLeft;
+//			return timeSinceLastValidEyeLeft;
+//		}
 
-		public float GetTimeSinceLastValidEyeRight()
-		{
-			timeSinceLastValidEyeRight = Time.time - timeAtLastValidEyeRight;
-			return timeSinceLastValidEyeRight;
-		}
+//		public float GetTimeSinceLastValidEyeRight()
+//		{
+//			timeSinceLastValidEyeRight = Time.time - timeAtLastValidEyeRight;
+//			return timeSinceLastValidEyeRight;
+//		}
 	}
 
 	class FixedSizeQueue<T> : Queue<T>

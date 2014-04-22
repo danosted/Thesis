@@ -27,6 +27,9 @@ public class HitmapManager : MonoBehaviour
 	private bool isShowingPupilMap;
 	private bool isShowingBlinkMap;
 
+	public float maxPupilSize = 30f;
+	public float minPupilSize = 20f;
+
 	void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.Space) && Application.isPlaying)
@@ -57,7 +60,7 @@ public class HitmapManager : MonoBehaviour
 				{
 					float pupilSize = e.pupilMeanSize;
 					//TODO: Find the right min and max for pupil size
-					float map = Mathf.InverseLerp(20f, 25f, pupilSize);
+					float map = Mathf.InverseLerp(minPupilSize, maxPupilSize, pupilSize);
 					Gizmos.color = new Color(2f * map, 0.6f * (map + 0.1f), 0.6f * (map + 0.1f), 0.8f);
 					Gizmos.DrawSphere(e.eventOrigin, maxHeatMapPointSize * (map + 0.1f));
 				}

@@ -16,21 +16,26 @@ public class CharacterEyeMetrics : MonoBehaviour
 	[SerializeField]
 	private Color
 		rayColor;
+	[SerializeField]
+	private Transform target;
 
 	private Camera characterCamera;
 	private Vector3 gazePosWorld = Vector3.zero;
+	private Vector3 gazePosScreen = Vector3.zero;
 	private Transform currentTarget;
 	private Ray gazeRay;
 	private bool isHit;
 	private Vector3 poi;
+	private float pupilSize;
 
 	void Start()
 	{
 		characterCamera = GetComponentInChildren<Camera>();
 //		StartCoroutine(CollectEyetrackerMetrics());
 //		StartCoroutine(CollectMetrics());
-//		StartCoroutine(GazeRay());
-		StartCoroutine(DebugGazeRay());
+		StartCoroutine(GazeRay());
+		StartCoroutine(EyeData());
+//		StartCoroutine(DebugGazeRay());
 
 
 	}
@@ -54,14 +59,6 @@ public class CharacterEyeMetrics : MonoBehaviour
 		while(true)
 		{
 			gazePosWorld = transform.position;
-			try
-			{
-				gazePosWorld = gazeHandler.GetGazeScreenPosition();
-			}
-			catch(System.Exception ex)
-			{
-				Debug.Log(ex);
-			}
 //			Vector3 gazePosOrigin = characterCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f));
 			Vector3 gazePosOrigin = characterCamera.transform.position;
 			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(Mathf.Clamp((int)Input.mousePosition.x, 0, Screen.width), Mathf.Clamp((int)Input.mousePosition.y, 0, Screen.height), characterCamera.farClipPlane));
@@ -81,6 +78,7 @@ public class CharacterEyeMetrics : MonoBehaviour
 			else
 			{
 				currentTarget = null;
+				poi = gazeRay.direction * hitRayMaxDistance;
 				isHit = false;
 //				Debug.Log("staring into infinity and beyond");
 			}
@@ -94,17 +92,11 @@ public class CharacterEyeMetrics : MonoBehaviour
 		while(true)
 		{
 			gazePosWorld = transform.position;
-			try
-			{
-				gazePosWorld = gazeHandler.GetGazeScreenPosition();
-			}
-			catch(System.Exception ex)
-			{
-				Debug.Log(ex);
-			}
+			Vector3 eyescreenpos = gazeHandler.GetGazeScreenPosition();
+//			gazePosScreen = new Vector3(Mathf.Clamp((int)eyescreenpos.x, 0, Screen.width), Mathf.Clamp((int)eyescreenpos.y, 0, Screen.height), characterCamera.farClipPlane);
+			gazePosScreen = eyescreenpos;
 			Vector3 gazePosOrigin = characterCamera.transform.position;
-			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(gazePosWorld.x, gazePosWorld.y, characterCamera.farClipPlane));
-
+			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(gazePosScreen.x, gazePosScreen.y, characterCamera.farClipPlane));
 			//Ray showing gaze direction
 			RaycastHit hit;
 			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
@@ -112,14 +104,28 @@ public class CharacterEyeMetrics : MonoBehaviour
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
+				target.transform.position = hit.point;
 				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
+				poi = hit.point;
+				isHit = true;
 			}
 			else
 			{
 				currentTarget = null;
-				Debug.Log("staring into infinity and beyond");
+				poi = gazeRay.direction * hitRayMaxDistance;
+				isHit = false;
+//				Debug.Log("staring into infinity and beyond");
 			}
 
+			yield return null;
+		}
+	}
+
+	private IEnumerator EyeData()
+	{
+		while(true)
+		{
+			pupilSize = gazeHandler.GetMeanPupilDilation();
 			yield return null;
 		}
 	}
@@ -176,5 +182,11 @@ public class CharacterEyeMetrics : MonoBehaviour
 	public Vector3 GetCurrentHitPosition()
 	{
 		return this.poi;
+	}
+
+	public float PupilSize {
+		get {
+			return pupilSize;
+		}
 	}
 }
