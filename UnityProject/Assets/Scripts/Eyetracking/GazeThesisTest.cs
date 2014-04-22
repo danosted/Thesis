@@ -54,6 +54,7 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
         {
             y += btnHeight + padding;
             GUI.TextArea(new Rect(padding, y, 170, 20), "EyeTribe Server not running!");
+
         }
         else
         if (!GazeManager.Instance.IsCalibrated)
@@ -61,7 +62,12 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
             y += btnHeight + padding;
             GUI.TextArea(new Rect(padding, y, 190, 20), "EyeTribe Server not calibrated!");
         }
-
+		y += btnHeight + padding;
+		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.CloseTime.ToString());
+		y += btnHeight + padding;
+		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.BlinkCount.ToString());
+		y += btnHeight + padding;
+		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.HasClosed.ToString());
 //		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
 //		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
 //		Debug.Log ("left eye pupil: " + pupil_left);
@@ -78,11 +84,6 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
 //			Debug.Log("right eye closed");
 //		}
     }
-
-	public void Wut()
-	{
-
-	}
 
     void OnApplicationQuit()
     {
@@ -123,6 +124,16 @@ public class GazeThesisTest : MonoBehaviour, IGazeListener
 		float pupil = (pupil_left + pupil_right) * 0.5f;
 //		Debug.Log("pupil size: " + pupil);
 		return pupil;
+	}
+
+	public long GetTimeSinceLastBlink()
+	{
+		return gazeUtils.CloseTime;
+	}
+
+	public int GetBlinkCount()
+	{
+		return gazeUtils.BlinkCount;
 	}
 
 	public bool isFixating()

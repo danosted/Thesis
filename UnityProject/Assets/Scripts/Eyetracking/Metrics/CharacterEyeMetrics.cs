@@ -126,6 +126,16 @@ public class CharacterEyeMetrics : MonoBehaviour
 		while(true)
 		{
 			pupilSize = gazeHandler.GetMeanPupilDilation();
+
+			try
+			{
+//				Debug.Log("TimeSinceLastBlink: ");
+//				Debug.Log(gazeHandler.GetTimeSinceLastBlink());
+			}
+			catch(System.Exception e)
+			{
+				Debug.Log (e, gameObject);
+			}
 			yield return null;
 		}
 	}

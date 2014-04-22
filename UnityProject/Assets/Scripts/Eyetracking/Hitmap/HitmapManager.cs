@@ -17,6 +17,8 @@ public class HitmapManager : MonoBehaviour
 	[SerializeField]
 	private List<EyeEvent>
 		eyeData;
+	[SerializeField]
+	private Color pupilColor = Color.yellow;
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.25f;
@@ -61,7 +63,7 @@ public class HitmapManager : MonoBehaviour
 					float pupilSize = e.pupilMeanSize;
 					//TODO: Find the right min and max for pupil size
 					float map = Mathf.InverseLerp(minPupilSize, maxPupilSize, pupilSize);
-					Gizmos.color = new Color(2f * map, 0.6f * (map + 0.1f), 0.6f * (map + 0.1f), 0.8f);
+					Gizmos.color = new Color(pupilColor.r * map, pupilColor.g * map, pupilColor.b * map, 0.8f);
 					Gizmos.DrawSphere(e.eventOrigin, maxHeatMapPointSize * (map + 0.1f));
 				}
 //				if(isShowingBlinkMap)

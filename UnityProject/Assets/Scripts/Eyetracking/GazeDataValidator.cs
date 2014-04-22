@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using TETCSharpClient.Data;
@@ -40,16 +41,23 @@ namespace Assets.Scripts
 		private float timeAtLastValidEyeLeft;
 		private float timeAtLastValidEyeRight;
 
+		private static Stopwatch time;
+		private int blinkCount;
+		private long timeSinceLastClose;
+		private long closeTime;
+		private bool hasClosed;
+
 		public GazeDataValidator(int queueLength)
 		{
 			_Frames = new FixedSizeQueue<GazeData>(queueLength);
 			_LastValidUserPosition = new Point2D();
+			time = new Stopwatch();
+			time.Start();
 		}
 
 		public void Update(GazeData frame)
 		{
 			_Frames.Enqueue(frame);
-
 			// update valid gazedata based on store
 			Eye right = null, left = null;
 			Point2D gazeCoords = null;
@@ -76,6 +84,29 @@ namespace Assets.Scripts
 					if(null == right && null != gd.RightEye && gd.RightEye.PupilCenterCoordinates.X != 0 && gd.RightEye.PupilCenterCoordinates.Y != 0)
 					{
 						right = gd.RightEye;
+					}
+
+					if(left == null && right == null)
+					{
+						if(!time.IsRunning)
+						{
+							time.Start();	
+						}
+					}
+					
+					if(left != null && right != null)
+					{
+						long t = time.ElapsedMilliseconds;
+						if(time.IsRunning)
+						{
+//							closeTime = time.ElapsedMilliseconds;
+							if(t > 5 && t < 500)
+							{
+								closeTime = t;
+								blinkCount++;
+							}
+							time.Reset();
+						}
 					}
 
 					_isFixating = gd.IsFixated;
@@ -193,6 +224,29 @@ namespace Assets.Scripts
 		public Point2D GetLastValidSmoothedGazeCoordinates()
 		{
 			return _LastValidSmoothedGazeCoords;
+		}
+
+		public long CloseTime {
+			get {
+				return closeTime;
+			}
+		}
+
+		public int BlinkCount {
+			get {
+				return blinkCount;
+			}
+		}
+
+		public bool timeIsRunning()
+		{
+			return time.IsRunning;
+		}
+
+		public bool HasClosed {
+			get {
+				return hasClosed;
+			}
 		}
 
 		public bool isFixating()
