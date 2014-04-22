@@ -1,21 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Hitmap\Editor\HitmapDataEditor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Eyetracking\Hitmap\HitmapManager.cs">
     <Files>
       <File FileName="Assets\Scripts\Eyetracking\UnityGazeUtils.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Eyetracking\GazeThesisTest.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Eyetracking\Metrics\CharacterHitmapMetrics.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Eyetracking\Metrics\CharacterGAMetrics.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Eyetracking\Metrics\HitmapEventManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatmapData.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatMapDataFilter.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatMapDataFilterBase.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Serializer\Serializer.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameAnalytics\Editor\GA_HeatMapRendererInspector.cs" Line="44" Column="2" />
-      <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatMapRenderer.cs" Line="6" Column="1" />
-      <File FileName="Assets\Scripts\Hitmap\HitmapDataGatherer.cs" Line="14" Column="2" />
-      <File FileName="Assets\Scripts\Hitmap\Editor\HitmapDataEditor.cs" Line="26" Column="5" />
+      <File FileName="Assets\Scripts\Eyetracking\Metrics\CharacterEyeMetricsCollecter.cs" Line="24" Column="38" />
+      <File FileName="Assets\Scripts\Eyetracking\Metrics\CharacterEyeMetrics.cs" Line="68" Column="4" />
+      <File FileName="Assets\Scripts\Serializer\Serializer.cs" Line="93" Column="7" />
+      <File FileName="Assets\Scripts\Eyetracking\Hitmap\HitmapManager.cs" Line="61" Column="87" />
+      <File FileName="Assets\Scripts\Eyetracking\Hitmap\EyeDataManager.cs" Line="48" Column="34" />
+      <File FileName="Assets\Scripts\Eyetracking\Hitmap\Editor\HitmapManagerEditor.cs" Line="43" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

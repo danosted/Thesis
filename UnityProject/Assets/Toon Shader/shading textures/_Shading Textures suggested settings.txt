@@ -1,0 +1,14 @@
+Shading Textures suggested settings :
+-Textue Type : Advanced
+-Generate Mip Maps enabled
+-Mip Map Filtering Kaiser
+-Wrap Mode : Clamp
+-Filter Mode : Bilinear
+-Aniso Level : 2 or greater
+-Format : TrueColor
+-Max Size : 512x512 or smaller
+
+Please select all textures in this folder and apply the above settings ( so you perform this oeration once ).
+
+Shading Textures are called in other software packages lit spheres or matcaps or spherical maps.
+They use similar methods with Mudbox™, Sculptris™ ( so you can import pngs from those packages ).

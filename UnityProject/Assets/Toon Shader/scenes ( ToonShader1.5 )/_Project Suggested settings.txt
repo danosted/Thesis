@@ -1,0 +1,5 @@
+Project suggested settings :
+-Go to Menu -> Edit -> Project Settings -> Quality.
+-Select Default Iphone Settings -> Good ( This way what you see in Editor is what you get on Device, if you develop for Android, change this too ).
+-Select Antialiasing -> 4x multisampling ( All shaders included are designed for best cooperation with this mode - Try this setting for your apps).
+-Select Blend Weights -> 4 Bones ( The beautiful model from Mixamo has really fluid motion under this setting - Avoid this setting for your apps).
