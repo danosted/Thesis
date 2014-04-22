@@ -9,7 +9,7 @@ using UnityEditor;
 [ExecuteInEditMode]
 public class HitmapManager : MonoBehaviour
 {
-	private EyeDataManager data = EyeDataManager.Instance;
+	private EyeMetricEvents data = EyeMetricEvents.Instance;
 
 	[SerializeField]
 	private List<HitmapEvent>
@@ -129,14 +129,16 @@ public class HitmapManager : MonoBehaviour
 		{
 			eyeData.Clear();
 		}
-		foreach(HitmapEvent e in data.HitmapDataSet)
-		{
-			gazeTargetData.Add(e);
-		}
-		foreach(EyeEvent e in data.EyeDataSet)
-		{
-			eyeData.Add(e);
-		}
+//		foreach(HitmapEvent e in data.HitmapDataSet)
+//		{
+//			gazeTargetData.Add(e);
+//		}
+//		foreach(EyeEvent e in data.EyeDataSet)
+//		{
+//			eyeData.Add(e);
+//		}
+		gazeTargetData = data.HitmapDataSet;
+		eyeData = data.EyeDataSet;
 
 		isRunning = false;
 		SaveData();

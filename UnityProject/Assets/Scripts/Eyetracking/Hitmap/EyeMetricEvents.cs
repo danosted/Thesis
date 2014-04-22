@@ -2,20 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EyeDataManager
+public class EyeMetricEvents
 {
 
-	private HashSet<HitmapEvent> hitmapDataSet = new HashSet<HitmapEvent>();
-	private HashSet<EyeEvent> eyeDataSet = new HashSet<EyeEvent>();
-	private static EyeDataManager instance;
+	private List<HitmapEvent> hitmapDataSet = new List<HitmapEvent>();
+	private List<EyeEvent> eyeDataSet = new List<EyeEvent>();
+	private static EyeMetricEvents instance;
 
-	public static EyeDataManager Instance
+	public static EyeMetricEvents Instance
 	{
 		get
 		{
 			if(instance == null)
 			{
-				instance = new EyeDataManager();
+				instance = new EyeMetricEvents();
 			}
 			return instance;
 		}
@@ -45,7 +45,7 @@ public class EyeDataManager
 		eyeDataSet.Add(newEvent);
 	}
 
-	public HashSet<HitmapEvent> HitmapDataSet
+	public List<HitmapEvent> HitmapDataSet
 	{
 		get
 		{
@@ -53,7 +53,7 @@ public class EyeDataManager
 		}
 	}
 
-	public HashSet<EyeEvent> EyeDataSet
+	public List<EyeEvent> EyeDataSet
 	{
 		get
 		{
