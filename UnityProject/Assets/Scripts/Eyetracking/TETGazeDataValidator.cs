@@ -13,7 +13,7 @@ namespace Assets.Scripts
 	/// the class analyzes the frame history and finds the currently valid gaze data.
 	/// Use this class to avoid the 'glitch' effect of occational poor tracking.
 	/// </summary>
-	class GazeDataValidator
+	class TETGazeDataValidator
 	{
 		private double _MinimumEyesDistance = 0.1f;
 		private double _MaximumEyesDistance = 0.3f;
@@ -47,7 +47,7 @@ namespace Assets.Scripts
 		private long closeTime;
 		private bool hasClosed;
 
-		public GazeDataValidator(int queueLength)
+		public TETGazeDataValidator(int queueLength)
 		{
 			_Frames = new FixedSizeQueue<GazeData>(queueLength);
 			_LastValidUserPosition = new Point2D();
@@ -226,14 +226,18 @@ namespace Assets.Scripts
 			return _LastValidSmoothedGazeCoords;
 		}
 
-		public long CloseTime {
-			get {
+		public long CloseTime
+		{
+			get
+			{
 				return closeTime;
 			}
 		}
 
-		public int BlinkCount {
-			get {
+		public int BlinkCount
+		{
+			get
+			{
 				return blinkCount;
 			}
 		}
@@ -243,8 +247,10 @@ namespace Assets.Scripts
 			return time.IsRunning;
 		}
 
-		public bool HasClosed {
-			get {
+		public bool HasClosed
+		{
+			get
+			{
 				return hasClosed;
 			}
 		}

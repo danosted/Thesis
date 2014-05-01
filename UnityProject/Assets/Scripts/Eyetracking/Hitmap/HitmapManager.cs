@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 #if UNITY_EDITOR
@@ -9,7 +9,7 @@ using UnityEditor;
 [ExecuteInEditMode]
 public class HitmapManager : MonoBehaviour
 {
-	private EyeMetricEvents data = EyeMetricEvents.Instance;
+	private GazeMetricEvents data = GazeMetricEvents.Instance;
 
 	[SerializeField]
 	private List<HitmapEvent>
@@ -18,7 +18,8 @@ public class HitmapManager : MonoBehaviour
 	private List<EyeEvent>
 		eyeData;
 	[SerializeField]
-	private Color pupilColor = Color.yellow;
+	private Color
+		pupilColor = Color.yellow;
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.25f;
@@ -32,11 +33,40 @@ public class HitmapManager : MonoBehaviour
 	public float maxPupilSize = 30f;
 	public float minPupilSize = 20f;
 
-	void Update()
+//	void Update()
+//	{
+//		if(Input.GetKeyDown(KeyCode.Space) && Application.isPlaying)
+//		{
+//			CreateSaveFiles();
+//		}
+//	}
+
+	void OnGUI()
 	{
-		if(Input.GetKeyDown(KeyCode.Space) && Application.isPlaying)
+		int padding = 10;
+		int width = 180;
+		int btnHeight = 30;
+		int y = padding;
+		int x = Screen.width - (width + padding);
+		
+		if(GUI.Button(new Rect(x, y, 170, 20), "Save Session Data"))
 		{
 			CreateSaveFiles();
+		}
+		y += btnHeight + padding;
+		bool showProfiler = false;
+		showProfiler = GUI.Toggle(new Rect(x, y, 170, 20), showProfiler, "Toggle Data Collection Profiler");
+		if(showProfiler)
+		{
+			y += btnHeight + padding;
+			//TODO: Data point count
+			GUI.TextArea(new Rect(x, y, 150, 20), "");
+			y += btnHeight + padding;
+			//TODO: 
+			GUI.TextArea(new Rect(x, y, 150, 20), "");
+			y += btnHeight + padding;
+			//TODO:
+			GUI.TextArea(new Rect(x, y, 150, 20), "");
 		}
 	}
 
@@ -49,9 +79,9 @@ public class HitmapManager : MonoBehaviour
 //				Gizmos.color = Color.yellow;
 //				Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
 				Gizmos.color = Color.cyan;
-				Gizmos.DrawLine(e.eventOrigin, e.eventHitPosition);
+				Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
 				Gizmos.color = Color.red;
-				Gizmos.DrawSphere(e.eventHitPosition, gazeRayHitSphereSize);
+				Gizmos.DrawSphere(e.eventHitPoint, gazeRayHitSphereSize);
 			}
 		}
 		if(isShowingPupilMap || isShowingBlinkMap)
@@ -140,8 +170,8 @@ public class HitmapManager : MonoBehaviour
 		gazeTargetData = data.HitmapDataSet;
 		eyeData = data.EyeDataSet;
 
-		isRunning = false;
 		SaveData();
+		isRunning = false;
 		yield return null;
 	}
 

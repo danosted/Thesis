@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterEyeMetrics : MonoBehaviour
+public class FirstPersonGazeCalculator : MonoBehaviour
 {
 
 	[SerializeField]
-	private GazeThesisTest
-		gazeHandler;
+	private TETGazeData
+		gazeData;
 	[SerializeField]
 	private float
 		hitRayMaxDistance = 100f;
@@ -17,7 +17,11 @@ public class CharacterEyeMetrics : MonoBehaviour
 	private Color
 		rayColor;
 	[SerializeField]
-	private Transform target;
+	private Transform
+		target;
+	[SerializeField]
+	private bool
+		showLiveGazeData;
 
 	private Camera characterCamera;
 	private Vector3 gazePosWorld = Vector3.zero;
@@ -31,17 +35,13 @@ public class CharacterEyeMetrics : MonoBehaviour
 	void Start()
 	{
 		characterCamera = GetComponentInChildren<Camera>();
-//		StartCoroutine(CollectEyetrackerMetrics());
-//		StartCoroutine(CollectMetrics());
-		StartCoroutine(GazeRay());
-		StartCoroutine(EyeData());
-//		StartCoroutine(DebugGazeRay());
-
-
+		StartCoroutine(CalculateGazeRay());
+		StartCoroutine(CalculateEyeData());
+//		StartCoroutine(DebugCalculateGazeRay());
 	}
 
 	/*
-	 *	Debugging
+	 *	Live Editor Debugging
 	 */
 	void OnDrawGizmos()
 	{
@@ -54,7 +54,7 @@ public class CharacterEyeMetrics : MonoBehaviour
 		Gizmos.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance);
 	}
 
-	private IEnumerator DebugGazeRay()
+	private IEnumerator DebugCalculateGazeRay()
 	{
 		while(true)
 		{
@@ -87,24 +87,26 @@ public class CharacterEyeMetrics : MonoBehaviour
 		}
 	}
 
-	private IEnumerator GazeRay()
+	private IEnumerator CalculateGazeRay()
 	{
 		while(true)
 		{
 			gazePosWorld = transform.position;
-			Vector3 eyescreenpos = gazeHandler.GetGazeScreenPosition();
+			Vector3 eyescreenpos = gazeData.GetGazeScreenPosition();
 //			gazePosScreen = new Vector3(Mathf.Clamp((int)eyescreenpos.x, 0, Screen.width), Mathf.Clamp((int)eyescreenpos.y, 0, Screen.height), characterCamera.farClipPlane);
 			gazePosScreen = eyescreenpos;
 			Vector3 gazePosOrigin = characterCamera.transform.position;
 			gazePosWorld = characterCamera.ScreenToWorldPoint(new Vector3(gazePosScreen.x, gazePosScreen.y, characterCamera.farClipPlane));
+
 			//Ray showing gaze direction
 			RaycastHit hit;
 			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
 			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
+
+			//Ray Cast Gaze Ray
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
-				target.transform.position = hit.point;
 				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
 				poi = hit.point;
 				isHit = true;
@@ -114,18 +116,19 @@ public class CharacterEyeMetrics : MonoBehaviour
 				currentTarget = null;
 				poi = gazeRay.direction * hitRayMaxDistance;
 				isHit = false;
-//				Debug.Log("staring into infinity and beyond");
 			}
-
+			//Live Gaze Target
+			target.position = poi;
+			target.gameObject.SetActive(showLiveGazeData);
 			yield return null;
 		}
 	}
 
-	private IEnumerator EyeData()
+	private IEnumerator CalculateEyeData()
 	{
 		while(true)
 		{
-			pupilSize = gazeHandler.GetMeanPupilDilation();
+			pupilSize = gazeData.GetMeanPupilDilation();
 
 			try
 			{
@@ -134,44 +137,9 @@ public class CharacterEyeMetrics : MonoBehaviour
 			}
 			catch(System.Exception e)
 			{
-				Debug.Log (e, gameObject);
+				Debug.Log(e, gameObject);
 			}
 			yield return null;
-		}
-	}
-
-	private IEnumerator CollectMetrics()
-	{
-		while(true)
-		{
-			GA.API.Design.NewEvent("RandomTestPosition", Random.Range(20, 24), transform.position);
-			
-			yield return new WaitForSeconds(1f);
-		}
-	}
-
-	private IEnumerator CollectEyetrackerMetrics()
-	{
-//		Vector3 screen_coord = Input.mousePosition;
-//		Vector3 world_coord = Camera.main.ScreenToWorldPoint(new Vector3(screen_coord.x, screen_coord.y, transform.position.z - Camera.main.transform.position.z));
-//		gazeHandler.transform.position = world_coord
-//		float pos_x = world_coord.x;
-//		pos_x =  Mathf.Clamp(pos_x, -MaxVelocityChange, MaxVelocityChange);
-//		transform.position = new Vector3(pos_x, transform.position.y, transform.position.z);
-		while(gazeHandler)
-		{
-			float pupilDilation = gazeHandler.GetMeanPupilDilation();
-			if(pupilDilation > minPupilDilation)
-			{
-				GA.API.Design.NewEvent("PupilDilationMean", pupilDilation, transform.position);
-				Debug.Log("Pupil Dilation Current: " + pupilDilation);
-			}
-
-			yield return new WaitForSeconds(1f);
-
-			GA.API.Design.NewEvent("GazeCoordinates", gazePosWorld);
-			
-			yield return new WaitForSeconds(1f);
 		}
 	}
 
@@ -194,8 +162,10 @@ public class CharacterEyeMetrics : MonoBehaviour
 		return this.poi;
 	}
 
-	public float PupilSize {
-		get {
+	public float PupilSize
+	{
+		get
+		{
 			return pupilSize;
 		}
 	}

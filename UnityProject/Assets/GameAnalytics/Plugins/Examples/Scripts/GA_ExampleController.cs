@@ -7,7 +7,7 @@ public class GA_ExampleController : MonoBehaviour
 	public float MaxVelocityChange = 5.3f;
 
 	[SerializeField]
-	private GazeThesisTest gazeHandler;
+	private TETGazeData gazeHandler;
 
 	private int i = 0;
 

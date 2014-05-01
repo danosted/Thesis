@@ -2,20 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EyeMetricEvents
+public class GazeMetricEvents
 {
-
 	private List<HitmapEvent> hitmapDataSet = new List<HitmapEvent>();
 	private List<EyeEvent> eyeDataSet = new List<EyeEvent>();
-	private static EyeMetricEvents instance;
+	private static GazeMetricEvents instance;
 
-	public static EyeMetricEvents Instance
+	public static GazeMetricEvents Instance
 	{
 		get
 		{
 			if(instance == null)
 			{
-				instance = new EyeMetricEvents();
+				instance = new GazeMetricEvents();
 			}
 			return instance;
 		}
@@ -74,7 +73,7 @@ public class HitmapEvent
 		eventGazeTarget;
 	[SerializeField]
 	public Vector3
-		eventHitPosition;
+		eventHitPoint;
 	[SerializeField]
 	public Ray
 		eventGazeRay;
@@ -82,7 +81,7 @@ public class HitmapEvent
 	public HitmapEvent()
 	{
 		this.eventName = "";
-		this.eventHitPosition = Vector3.zero;
+		this.eventHitPoint = Vector3.zero;
 		this.eventOrigin = Vector3.zero;
 		this.eventGazeTarget = "";
 		this.eventGazeRay = new Ray();
@@ -91,7 +90,7 @@ public class HitmapEvent
 	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget)
 	{
 		this.eventName = eventName;
-		this.eventHitPosition = Vector3.zero;
+		this.eventHitPoint = Vector3.zero;
 		this.eventOrigin = eventOrigin;
 		this.eventGazeTarget = eventGazeTarget;
 		this.eventGazeRay = new Ray();
@@ -100,7 +99,7 @@ public class HitmapEvent
 	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget, Vector3 eventHitPosition)
 	{
 		this.eventName = eventName;
-		this.eventHitPosition = eventHitPosition;
+		this.eventHitPoint = eventHitPosition;
 		this.eventOrigin = eventOrigin;
 		this.eventGazeTarget = eventGazeTarget;
 		this.eventGazeRay = new Ray();
@@ -109,7 +108,7 @@ public class HitmapEvent
 	public HitmapEvent(string eventName, Vector3 eventOrigin, string eventGazeTarget, Vector3 eventHitPosition, Ray eventGazeRay)
 	{
 		this.eventName = eventName;
-		this.eventHitPosition = eventHitPosition;
+		this.eventHitPoint = eventHitPosition;
 		this.eventOrigin = eventOrigin;
 		this.eventGazeTarget = eventGazeTarget;
 		this.eventGazeRay = eventGazeRay;
