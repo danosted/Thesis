@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class GazeMetricEvents
 {
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
+	private HashSet<string> eventNames = new HashSet<string>();
 
 	private static GazeMetricEvents instance;
 
@@ -22,18 +23,21 @@ public class GazeMetricEvents
 
 	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPosition, string eventHitName, Ray eventGazeRay)
 	{
+		eventNames.Add(eventName);
 		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPosition, eventHitName, eventGazeRay);
 		gazeDataList.Add(newEvent);
 	}
 
 	public void NewGazeEvent(string eventName, Vector3 eventOrigin, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationMeanLength)
 	{
+		eventNames.Add(eventName);
 		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationMeanLength);
 		gazeDataList.Add(newEvent);
 	}
 
 	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPosition, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationMeanLength)
 	{
+		eventNames.Add(eventName);
 		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPosition, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationMeanLength);
 		gazeDataList.Add(newEvent);
 	}
@@ -46,6 +50,13 @@ public class GazeMetricEvents
 		}
 	}
 
+	public HashSet<string> EventNames
+	{
+		get
+		{
+			return eventNames;
+		}
+	}
 }
 
 [System.Serializable]
@@ -119,38 +130,3 @@ public class GazeEvent
 	}
 
 }
-
-//[System.Serializable]
-//public class EyeEvent
-//{
-//	public string eventName;
-//	public Vector3 eventOrigin;
-//	public float pupilMeanSize;
-//	public float blinkFrequency;
-//	public float blinkClosedToOpenedLength;
-//	public float saccadeFrequency;
-//	public float fixationMeanLength;
-//	
-//	public EyeEvent()
-//	{
-//		this.eventName = "";
-//		this.eventOrigin = Vector3.zero;
-//		this.pupilMeanSize = 0f;
-//		this.blinkFrequency = 0f;
-//		this.blinkClosedToOpenedLength = 0f;
-//		this.saccadeFrequency = 0f;
-//		this.fixationMeanLength = 0f;
-//	}
-//
-//	public EyeEvent(string eventName, Vector3 eventOrigin, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationMeanLength)
-//	{
-//		this.eventName = eventName;
-//		this.eventOrigin = eventOrigin;
-//		this.pupilMeanSize = pupilMeanSize;
-//		this.blinkFrequency = blinkFrequency;
-//		this.blinkClosedToOpenedLength = blinkClosedToOpenedLength;
-//		this.saccadeFrequency = saccadeFrequency;
-//		this.fixationMeanLength = fixationMeanLength;
-//	}
-//	
-//}

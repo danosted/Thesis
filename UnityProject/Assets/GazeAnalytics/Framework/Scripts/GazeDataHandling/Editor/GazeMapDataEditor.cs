@@ -3,18 +3,19 @@ using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(GazeMapManager))]
-public class GazeMapManagerEditor : Editor
+[CustomEditor(typeof(GazeMapData))]
+public class GazeMapDataEditor : Editor
 {
 
 	private int index = 0;
 
 	override public void OnInspectorGUI()
 	{
-		GazeMapManager gatherer = target as GazeMapManager;
+		GazeMapData gatherer = target as GazeMapData;
 
 		#region filehandling
 		EditorGUILayout.LabelField("Gaze Data Editor", EditorStyles.label);
+
 		EditorGUILayout.BeginHorizontal();
 		if(GUILayout.Button("Load files on disk"))
 		{
@@ -24,29 +25,24 @@ public class GazeMapManagerEditor : Editor
 			}
 			catch(System.Exception e)
 			{
-				Debug.Log("No saved files found." + e);
+				Debug.Log(e);
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+
 		EditorGUILayout.BeginHorizontal();
 		index = EditorGUILayout.Popup(index, gatherer.Filenames.ToArray());
-		if(GUILayout.Button("Load data file"))
+		if(gatherer.Filenames.Count > 0 && !gatherer.FilenamesToShow.Contains(gatherer.Filenames.ToArray()[index]))
 		{
-			try
-			{
-				gatherer.LoadData(gatherer.Filenames.ToArray()[index]);
-				SceneView.RepaintAll();
-			}
-			catch(System.Exception e)
-			{
-				Debug.Log(e);
-			}
+			gatherer.ShowGazeData(gatherer.Filenames.ToArray()[index]);
+			SceneView.RepaintAll();
 		}
 		if(GUILayout.Button("Delete data file"))
 		{
 			try
 			{
 				gatherer.DeleteSaveFile(gatherer.Filenames.ToArray()[index]);
+				index = index > 0 ? index - 1 : 0;
 			}
 			catch(System.Exception e)
 			{
@@ -54,6 +50,7 @@ public class GazeMapManagerEditor : Editor
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+
 		EditorGUILayout.BeginHorizontal();
 		if(GUILayout.Button("Clear current hitmap data"))
 		{
@@ -93,9 +90,12 @@ public class GazeMapManagerEditor : Editor
 				Debug.Log(e);
 			}
 		}
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.MinMaxSlider(new GUIContent("Time interval"), ref gatherer.minGazeDataIndex, ref gatherer.maxGazeDataIndex, 0f, gatherer.GazeDataList.Count - 1f);
+
+		EditorGUILayout.MinMaxSlider(new GUIContent("Time interval: "), ref gatherer.minGazeDataIndex, ref gatherer.maxGazeDataIndex, 0f, 1f);
 		SceneView.RepaintAll();
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("lower and upper values: " + gatherer.minGazeDataIndex.ToString(), EditorStyles.label);
+		EditorGUILayout.LabelField(gatherer.maxGazeDataIndex.ToString(), EditorStyles.label);
 		EditorGUILayout.EndHorizontal();
 		#endregion
 
@@ -115,13 +115,14 @@ public class GazeMapManagerEditor : Editor
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.MinMaxSlider(new GUIContent("Pupil Dilation Threshold"), ref gatherer.minPupilSize, ref gatherer.maxPupilSize, 0f, 40f);
 		EditorGUILayout.EndHorizontal();
+
 		serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("pupilColor"), true);
 		serializedObject.ApplyModifiedProperties();
 		#endregion
 
 		serializedObject.Update();
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("gazeDataList"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("filenamesToShow"), true);
 		serializedObject.ApplyModifiedProperties();
 	}
 

@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(TETGazeTrackerData))]
 public class GazeCalculator : MonoBehaviour
 {
-
-	[SerializeField]
-	private TETGazeTrackerData
-		gazeData;
+	
 	[SerializeField]
 	private float
 		hitRayMaxDistance = 100f;
@@ -19,6 +17,7 @@ public class GazeCalculator : MonoBehaviour
 	[SerializeField]
 	private Camera
 		gazeCamera;
+
 	#region debug
 	[SerializeField]
 	private bool
@@ -28,25 +27,42 @@ public class GazeCalculator : MonoBehaviour
 		showLiveGazeDebug;
 	#endregion
 
+	private TETGazeTrackerData gazeData;
+
 	private Vector3 gazePosWorld = Vector3.zero;
 	private Vector3 gazePosScreen = Vector3.zero;
+	private Vector3 gazeHitPoint;
+
 	private Transform currentTarget;
+
 	private Ray gazeRay;
+
 	private bool isHit;
-	private Vector3 poi;
+
 	private float pupilSize;
 
 	void Start()
 	{
-		gazeCamera = GetComponentInChildren<Camera>();
-		if(mouseAsGaze)
+		//Don't find another camera if it is already assigned
+		gazeCamera = gazeCamera ? gazeCamera : GetComponentInChildren<Camera>();
+		gazeData = GetComponent<TETGazeTrackerData>();
+
+		//Report if no camera assigned in inspector and none found in prefab
+		if(!gazeCamera)
 		{
-			StartCoroutine(CalculateGazeRayWithMouse());
+			Debug.LogError("No camera found for gaze tracking", gameObject);
 		}
 		else
 		{
-			StartCoroutine(CalculateGazeRay());
-			StartCoroutine(CalculateEyeData());
+			if(mouseAsGaze)
+			{
+				StartCoroutine(CalculateGazeRayWithMouse());
+			}
+			else
+			{
+				StartCoroutine(CalculateGazeRay());
+				StartCoroutine(CalculateEyeData());
+			}
 		}
 	}
 
@@ -60,7 +76,7 @@ public class GazeCalculator : MonoBehaviour
 			if(isHit)
 			{
 				Gizmos.color = Color.red;
-				Gizmos.DrawSphere(poi, 0.5f);
+				Gizmos.DrawSphere(gazeHitPoint, 0.5f);
 			}
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance);
@@ -84,14 +100,14 @@ public class GazeCalculator : MonoBehaviour
 			{
 				currentTarget = hit.transform;
 				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
-				poi = hit.point;
+				gazeHitPoint = hit.point;
 				isHit = true;
 
 			}
 			else
 			{
 				currentTarget = null;
-				poi = gazeRay.direction * hitRayMaxDistance;
+				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
 				isHit = false;
 //				Debug.Log("staring into infinity and beyond");
 			}
@@ -121,17 +137,17 @@ public class GazeCalculator : MonoBehaviour
 			{
 				currentTarget = hit.transform;
 				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
-				poi = hit.point;
+				gazeHitPoint = hit.point;
 				isHit = true;
 			}
 			else
 			{
 				currentTarget = null;
-				poi = gazeRay.direction * hitRayMaxDistance;
+				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
 				isHit = false;
 			}
 			//Live Gaze Target
-			target.position = poi;
+			target.position = gazeHitPoint;
 			target.gameObject.SetActive(showLiveGazeDebug);
 			yield return null;
 		}
@@ -165,7 +181,7 @@ public class GazeCalculator : MonoBehaviour
 	{
 		if(!currentTarget)
 		{
-			return "NAN";
+			return "N/A";
 		}
 		else
 		{
@@ -175,7 +191,7 @@ public class GazeCalculator : MonoBehaviour
 
 	public Vector3 GetCurrentHitPosition()
 	{
-		return this.poi;
+		return this.gazeHitPoint;
 	}
 
 	public float PupilSize

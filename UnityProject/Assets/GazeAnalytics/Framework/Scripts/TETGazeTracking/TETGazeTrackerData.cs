@@ -29,15 +29,6 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		gazeUtils.Update(gazeData);
 	}
 
-	void Update()
-	{
-		//handle keypress
-		if(Input.GetKey(KeyCode.Escape))
-		{
-			Application.Quit();
-		}
-	}
-
 	void OnGUI()
 	{
 		int padding = 10;
