@@ -32,10 +32,20 @@ public class GazeMapDataEditor : Editor
 
 		EditorGUILayout.BeginHorizontal();
 		index = EditorGUILayout.Popup(index, gatherer.Filenames.ToArray());
-		if(gatherer.Filenames.Count > 0 && !gatherer.FilenamesToShow.Contains(gatherer.Filenames.ToArray()[index]))
+		if(GUILayout.Button("Toggle Gaze Data File"))
 		{
-			gatherer.ShowGazeData(gatherer.Filenames.ToArray()[index]);
-			SceneView.RepaintAll();
+			if(gatherer.Filenames.Count > 0)
+			{
+				if(!gatherer.FilenamesToShow.Contains(gatherer.Filenames.ToArray()[index]))
+				{
+					gatherer.ShowGazeData(gatherer.Filenames.ToArray()[index]);
+				}
+				else
+				{
+					gatherer.HideGazeData(gatherer.Filenames.ToArray()[index]);
+				}
+				SceneView.RepaintAll();
+			}
 		}
 		if(GUILayout.Button("Delete data file"))
 		{
@@ -123,6 +133,7 @@ public class GazeMapDataEditor : Editor
 
 		serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("filenamesToShow"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("savedFilenames"), true);
 		serializedObject.ApplyModifiedProperties();
 	}
 

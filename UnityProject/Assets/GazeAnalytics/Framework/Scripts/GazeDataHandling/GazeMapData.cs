@@ -159,14 +159,7 @@ public class GazeMapData : MonoBehaviour
 
 	public void ToggleHitmap()
 	{
-		if(filenamesToShow.Count > 0)
-		{
-			isShowingGazeMap = !isShowingGazeMap;
-		}
-		else
-		{
-			isShowingGazeMap = false;
-		}
+		isShowingGazeMap = !isShowingGazeMap;
 	}
 
 	public void TogglePupilMap()
@@ -196,42 +189,6 @@ public class GazeMapData : MonoBehaviour
 	{
 		gazeDataList = data.GazeDataList;
 		HashSet<string> eventNames = data.EventNames;
-		foreach(string eventName in eventNames)
-		{
-			string filename = CreateFilename(eventName);
-			savedFilenames.Add(filename);
-			List<GazeEvent> gazeEventList = new List<GazeEvent>();
-			foreach(GazeEvent e in gazeDataList)
-			{
-				if(e.eventName.Equals(eventName))
-				{
-					gazeEventList.Add(e);
-				}
-			}
-			SaveGazeEventData(gazeEventList, filename);
-		}
-		Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
-		isSaving = false;
-		yield return null;
-	}
-
-	public void LoadFilesOnDisk()
-	{
-		isShowingGazeMap = false;
-		if(savedFilenames.Count == 0 || filenameToGazeEvent.Count == 0)
-		{
-			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
-			foreach(string filename in savedFilenames)
-			{
-				filenameToGazeEvent.Add(filename, Serializer.Instance.DeserializeHitmap(filename));
-			}
-		}
-	}
-
-	public void SaveGazeEventData(List<GazeEvent> gazeDataList, string filename)
-	{
-//		Debug.Log(filename);
-		Serializer.Instance.SerializeHitmap(gazeDataList, filename);
 		try
 		{
 			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
@@ -240,6 +197,30 @@ public class GazeMapData : MonoBehaviour
 		{
 			Debug.Log("filename file not found, creating new." + e);
 		}
+		foreach(string eventName in eventNames)
+		{
+			string filename = CreateFilename(eventName);
+			List<GazeEvent> gazeEventList = new List<GazeEvent>();
+			savedFilenames.Add(filename);
+			foreach(GazeEvent e in gazeDataList)
+			{
+				if(e.eventName.Equals(eventName))
+				{
+					gazeEventList.Add(e);
+				}
+			}
+			SaveGazeEventDataToFile(gazeEventList, filename);
+		}
+		Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
+		Debug.Log("saved " + savedFilenames.Count.ToString() + " filenames.");
+		isSaving = false;
+		yield return null;
+	}
+
+	public void SaveGazeEventDataToFile(List<GazeEvent> gazeDataList, string filename)
+	{
+//		Debug.Log(filename);
+		Serializer.Instance.SerializeHitmap(gazeDataList, filename);
 		Debug.Log("Data has been saved to file: " + filename, gameObject);
 	}
 
@@ -254,6 +235,19 @@ public class GazeMapData : MonoBehaviour
 		filenamesToShow.Remove(filename);
 	}
 
+	public void LoadFilesOnDisk()
+	{
+		isShowingGazeMap = false;
+		if(savedFilenames.Count == 0 || filenameToGazeEvent.Count == 0)
+		{
+			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
+			foreach(string filename in savedFilenames)
+			{
+				filenameToGazeEvent.Add(filename, Serializer.Instance.DeserializeHitmap(filename));
+			}
+		}
+	}
+	
 	public void ClearLoadedData()
 	{
 		gazeDataList.Clear();
