@@ -34,7 +34,7 @@ public class GazeMapData : MonoBehaviour
 		eventHitPointColors = new List<Color>();
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
-	private List<GazeEvent> gazeDataList;
+	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.25f;

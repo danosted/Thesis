@@ -51,8 +51,11 @@ public class GazeMapDataEditor : Editor
 		{
 			try
 			{
-				gatherer.DeleteSaveFile(gatherer.Filenames.ToArray()[index]);
-				index = index > 0 ? index - 1 : 0;
+				if(gatherer.Filenames.Count > 0)
+				{
+					gatherer.DeleteSaveFile(gatherer.Filenames.ToArray()[index]);
+					index = index > 0 ? index - 1 : 0;
+				}
 			}
 			catch(System.Exception e)
 			{
