@@ -132,7 +132,7 @@ public class GazeMapDataEditor : Editor
 		#endregion
 
 		serializedObject.Update();
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("filenamesToShow"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("dataToCompare"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("savedFilenames"), true);
 		serializedObject.ApplyModifiedProperties();
 	}

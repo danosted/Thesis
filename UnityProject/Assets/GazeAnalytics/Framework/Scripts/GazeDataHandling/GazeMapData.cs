@@ -13,7 +13,7 @@ public class GazeMapData : MonoBehaviour
 	
 	[SerializeField]
 	private List<string>
-		filenamesToShow;
+		dataToCompare;
 	[SerializeField]
 	private Color
 		pupilColor = Color.yellow;
@@ -115,7 +115,7 @@ public class GazeMapData : MonoBehaviour
 //				Debug.Log("maxGazeDataIndex: " + ((int)maxGazeDataIndex).ToString());
 //			}
 		
-			foreach(string filename in filenamesToShow)
+			foreach(string filename in dataToCompare)
 			{
 				foreach(KeyValuePair<string, List<GazeEvent>> entry in filenameToGazeEvent)
 				{
@@ -226,13 +226,13 @@ public class GazeMapData : MonoBehaviour
 
 	public void ShowGazeData(string filename)
 	{
-		filenamesToShow.Add(filename);
+		dataToCompare.Add(filename);
 //		gazeDataList = Serializer.Instance.DeserializeHitmap(filename);
 	}
 
 	public void HideGazeData(string filename)
 	{
-		filenamesToShow.Remove(filename);
+		dataToCompare.Remove(filename);
 	}
 
 	public void LoadFilesOnDisk()
@@ -252,7 +252,7 @@ public class GazeMapData : MonoBehaviour
 	{
 		gazeDataList.Clear();
 		filenameToGazeEvent.Clear();
-		filenamesToShow.Clear();
+		dataToCompare.Clear();
 	}
 
 	public void DeleteSaveFile(string filename)
@@ -328,7 +328,7 @@ public class GazeMapData : MonoBehaviour
 	{
 		get
 		{
-			return filenamesToShow;
+			return dataToCompare;
 		}
 	}
 }
