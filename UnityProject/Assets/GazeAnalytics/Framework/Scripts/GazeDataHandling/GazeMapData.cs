@@ -23,6 +23,15 @@ public class GazeMapData : MonoBehaviour
 	[SerializeField]
 	private List<string>
 		savedFilenames = new List<string>();
+	[SerializeField]
+	private List<Color>
+		eventOriginColors = new List<Color>();
+	[SerializeField]
+	private List<Color>
+		eventGazeRayColors = new List<Color>();
+	[SerializeField]
+	private List<Color>
+		eventHitPointColors = new List<Color>();
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList;
@@ -32,8 +41,8 @@ public class GazeMapData : MonoBehaviour
 	private float maxHeatMapPointSize = 2f;
 
 	private bool isSaving;
-	private bool isShowingGazeMap;
-	private bool isShowingPupilMap;
+	private bool isShowingGazeEvents;
+	private bool isShowingPupilEvents;
 	private bool isShowingBlinkMap;
 
 	public float maxPupilSize = 30f;
@@ -73,71 +82,26 @@ public class GazeMapData : MonoBehaviour
 	//Render 3D GazeMap
 	void OnDrawGizmos()
 	{
-		if(isShowingGazeMap || isShowingPupilMap || isShowingBlinkMap)
+		if(isShowingGazeEvents || isShowingPupilEvents || isShowingBlinkMap)
 		{
-//			GazeEvent[] gazeArray = gazeDataList.ToArray();
-//			int i = 0;
-//			try
-//			{
-//				for(i = (int)minGazeDataIndex; i < (int)maxGazeDataIndex; i++)
-//				{
-//					GazeEvent e = gazeArray[i];
-//					if(isShowingGazeMap)
-//					{
-//						Gizmos.color = Color.cyan;
-//						Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
-//						Gizmos.color = Color.red;
-//						Gizmos.DrawSphere(e.eventHitPoint, gazeRayHitSphereSize);
-//						Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (i + 1).ToString() + ".");
-//						Handles.Label(e.eventHitPoint, e.eventHitName);
-//						Gizmos.color = Color.yellow;
-//						Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
-//					}
-//					if(isShowingPupilMap)
-//					{
-//						float pupilSize = gazeArray[i].pupilMeanSize;
-//						//TODO: Find the right min and max for pupil size
-//						float map = Mathf.InverseLerp(minPupilSize, maxPupilSize, pupilSize);
-//						Gizmos.color = new Color(pupilColor.r * map, pupilColor.g * map, pupilColor.b * map, 0.8f);
-//						Gizmos.DrawSphere(gazeArray[i].eventOrigin, maxHeatMapPointSize * (map + 0.1f));
-//					}
-//					if(isShowingBlinkMap)
-//					{
-//
-//					}
-//				}
-//			}
-//			catch(System.Exception e)
-//			{
-//				Debug.Log(e);
-//				Debug.Log("i: " + i.ToString());
-//				Debug.Log("minGazeDataIndex: " + ((int)minGazeDataIndex).ToString());
-//				Debug.Log("maxGazeDataIndex: " + ((int)maxGazeDataIndex).ToString());
-//			}
-		
-			foreach(string filename in dataToCompare)
+			for(int fileindex = 0; fileindex < dataToCompare.Count; fileindex++)
 			{
 				foreach(KeyValuePair<string, List<GazeEvent>> entry in filenameToGazeEvent)
 				{
-					if(entry.Key == filename)
+					//If filename matches what is selected to be shown in the inspector
+					if(entry.Key == dataToCompare.ToArray()[fileindex])
 					{
 						GazeEvent[] gazeArray = entry.Value.ToArray();
 						int i = 0;
 						for(i = (int)(minGazeDataIndex*(gazeArray.Length-1)); i < (int)(maxGazeDataIndex*(gazeArray.Length-1)); i++)
 						{
 							GazeEvent e = gazeArray[i];
-							if(isShowingGazeMap)
+							if(isShowingGazeEvents)
 							{
-								Gizmos.color = Color.cyan;
-								Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
-								Gizmos.color = Color.red;
-								Gizmos.DrawSphere(e.eventHitPoint, gazeRayHitSphereSize);
-								Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (i + 1).ToString() + ".");
-								Handles.Label(e.eventHitPoint, e.eventHitName);
-								Gizmos.color = Color.yellow;
-								Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
+								DrawGazeEvent(e, fileindex, i);
+
 							}
-							if(isShowingPupilMap)
+							if(isShowingPupilEvents)
 							{
 								float pupilSize = gazeArray[i].pupilMeanSize;
 								//TODO: Find the right min and max for pupil size
@@ -150,21 +114,37 @@ public class GazeMapData : MonoBehaviour
 								
 							}
 						}
-						
 					}
 				}
 			}
 		}
 	}
 
+	private void DrawGazeEvent(GazeEvent e, int fileindex, int eventindex)
+	{
+		//Ray color
+		Gizmos.color = eventGazeRayColors.Count > 0 ? eventGazeRayColors.ToArray()[fileindex] : Color.cyan;
+		Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
+		//Hit point color
+		Gizmos.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+		Gizmos.DrawSphere(e.eventHitPoint, gazeRayHitSphereSize);
+		//Event origin color
+		Gizmos.color = eventOriginColors.Count > 0 ? eventOriginColors.ToArray()[fileindex] : Color.blue;
+		Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
+		//index of event
+		Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (eventindex + 1).ToString() + ".");
+		//Name of object that was hit
+		Handles.Label(e.eventHitPoint, e.eventHitName);
+	}
+
 	public void ToggleHitmap()
 	{
-		isShowingGazeMap = !isShowingGazeMap;
+		isShowingGazeEvents = !isShowingGazeEvents;
 	}
 
 	public void TogglePupilMap()
 	{
-		isShowingPupilMap = !isShowingPupilMap;
+		isShowingPupilEvents = !isShowingPupilEvents;
 	}
 
 	public void ToggleBlinkMap()
@@ -237,13 +217,21 @@ public class GazeMapData : MonoBehaviour
 
 	public void LoadFilesOnDisk()
 	{
-		isShowingGazeMap = false;
+		isShowingGazeEvents = false;
 		if(savedFilenames.Count == 0 || filenameToGazeEvent.Count == 0)
 		{
+			eventOriginColors.Clear();
+			eventGazeRayColors.Clear();
+			eventHitPointColors.Clear();
+			dataToCompare.Clear();
 			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
+			int i = 0;
 			foreach(string filename in savedFilenames)
 			{
 				filenameToGazeEvent.Add(filename, Serializer.Instance.DeserializeHitmap(filename));
+				eventOriginColors.Add(Color.blue);
+				eventGazeRayColors.Add(Color.cyan);
+				eventHitPointColors.Add(Color.yellow);
 			}
 		}
 	}
@@ -253,6 +241,9 @@ public class GazeMapData : MonoBehaviour
 		gazeDataList.Clear();
 		filenameToGazeEvent.Clear();
 		dataToCompare.Clear();
+		eventOriginColors.Clear();
+		eventGazeRayColors.Clear();
+		eventHitPointColors.Clear();
 	}
 
 	public void DeleteSaveFile(string filename)

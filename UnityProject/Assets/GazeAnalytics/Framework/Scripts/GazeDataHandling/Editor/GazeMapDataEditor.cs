@@ -77,6 +77,7 @@ public class GazeMapDataEditor : Editor
 		{
 			try
 			{
+				gatherer.ClearLoadedData();
 				gatherer.DeleteAllSaveFiles();
 			}
 			catch(System.Exception e)
@@ -100,38 +101,42 @@ public class GazeMapDataEditor : Editor
 				Debug.Log(e);
 			}
 		}
-
+		gatherer.minGazeDataIndex = (gatherer.minGazeDataIndex < 0f || gatherer.minGazeDataIndex > 1f) ? 0f : gatherer.minGazeDataIndex;
+		gatherer.maxGazeDataIndex = (gatherer.maxGazeDataIndex < 0f || gatherer.maxGazeDataIndex > 1f) ? 1f : gatherer.maxGazeDataIndex;
 		EditorGUILayout.MinMaxSlider(new GUIContent("Time interval: "), ref gatherer.minGazeDataIndex, ref gatherer.maxGazeDataIndex, 0f, 1f);
 		SceneView.RepaintAll();
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("lower and upper values: " + gatherer.minGazeDataIndex.ToString(), EditorStyles.label);
-		EditorGUILayout.LabelField(gatherer.maxGazeDataIndex.ToString(), EditorStyles.label);
+		EditorGUILayout.LabelField("lower and upper values: ", EditorStyles.label);
+		EditorGUILayout.LabelField(gatherer.minGazeDataIndex.ToString() + "         " + gatherer.maxGazeDataIndex.ToString(), EditorStyles.label);
 		EditorGUILayout.EndHorizontal();
 		#endregion
 
 		#region pupilmaprender
-		if(GUILayout.Button("Toggle Pupil Dilation Map"))
-		{
-			try
-			{
-				gatherer.TogglePupilMap();
-				SceneView.RepaintAll();
-			}
-			catch(System.Exception e)
-			{
-				Debug.Log(e);
-			}
-		}
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.MinMaxSlider(new GUIContent("Pupil Dilation Threshold"), ref gatherer.minPupilSize, ref gatherer.maxPupilSize, 0f, 40f);
-		EditorGUILayout.EndHorizontal();
-
-		serializedObject.Update();
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("pupilColor"), true);
-		serializedObject.ApplyModifiedProperties();
+//		if(GUILayout.Button("Toggle Pupil Dilation Map"))
+//		{
+//			try
+//			{
+//				gatherer.TogglePupilMap();
+//				SceneView.RepaintAll();
+//			}
+//			catch(System.Exception e)
+//			{
+//				Debug.Log(e);
+//			}
+//		}
+//		EditorGUILayout.BeginHorizontal();
+//		EditorGUILayout.MinMaxSlider(new GUIContent("Pupil Dilation Threshold"), ref gatherer.minPupilSize, ref gatherer.maxPupilSize, 0f, 40f);
+//		EditorGUILayout.EndHorizontal();
+//
+//		serializedObject.Update();
+//		EditorGUILayout.PropertyField(serializedObject.FindProperty("pupilColor"), true);
+//		serializedObject.ApplyModifiedProperties();
 		#endregion
 
 		serializedObject.Update();
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventOriginColors"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventGazeRayColors"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventHitPointColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("dataToCompare"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("savedFilenames"), true);
 		serializedObject.ApplyModifiedProperties();
