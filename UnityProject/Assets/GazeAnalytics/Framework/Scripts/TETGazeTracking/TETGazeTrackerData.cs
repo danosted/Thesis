@@ -35,8 +35,8 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 	void OnGUI()
 	{
 		int padding = 10;
-		int btnWidth = 100;
-		int btnHeight = 30;
+		int btnWidth = 180;
+		int btnHeight = 20;
 		int y = padding;
 
 		if(GUI.Button(new Rect(padding, y, btnWidth, btnHeight), "Press to Exit"))
@@ -47,20 +47,24 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		if(!GazeManager.Instance.IsConnected)
 		{
 			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, 170, 20), "EyeTribe Server not running!");
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not running!");
 
 		}
 		else if(!GazeManager.Instance.IsCalibrated)
 		{
 			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, 190, 20), "EyeTribe Server not calibrated!");
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not calibrated!");
 		}
-		y += btnHeight + padding;
-		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.CloseTime.ToString());
-		y += btnHeight + padding;
-		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.BlinkCount.ToString());
-		y += btnHeight + padding;
-		GUI.TextArea(new Rect(padding, y, 150, 20), gazeUtils.HasClosed.ToString());
+		else
+		{
+			y += btnHeight + padding;
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.CloseTime.ToString());
+			y += btnHeight + padding;
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.BlinkCount.ToString());
+			y += btnHeight + padding;
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.HasClosed.ToString());
+		}
+
 //		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
 //		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
 //		Debug.Log ("left eye pupil: " + pupil_left);

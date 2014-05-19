@@ -1,18 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\ExperimentSpawner.cs">
     <Files>
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="4" Column="1" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="54" Column="4" />
       <File FileName="Assets\GameAnalytics\Editor\GA_HeatMapInspector.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA_HeatMapDataFilter.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Character&amp;Camera\CharacterMovementScript.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMetricEvents.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="1" Column="1" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="107" Column="11" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Editor\GA_EventPicker.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="1" Column="1" />
+      <File FileName="Assets\ExperimentSpawner.cs" Line="101" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
