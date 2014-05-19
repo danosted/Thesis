@@ -8,6 +8,8 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
 	private TETGazeTrackerDataValidator gazeUtils;
 
+	private bool trackerIsActive;
+
 	void Awake()
 	{
 		gazeUtils = new TETGazeTrackerDataValidator(15);
@@ -21,6 +23,7 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 
 		//register for gaze updates
 		GazeManager.Instance.AddGazeListener(this);
+		trackerIsActive = GazeManager.Instance.IsConnected;
 	}
 
 	public void OnGazeUpdate(GazeData gazeData)
@@ -132,5 +135,13 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 	{
 		return gazeUtils.isFixating();
 		;
+	}
+
+	public bool TrackerIsActive
+	{
+		get
+		{
+			return trackerIsActive;
+		}
 	}
 }

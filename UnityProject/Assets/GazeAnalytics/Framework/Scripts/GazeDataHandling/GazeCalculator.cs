@@ -46,7 +46,6 @@ public class GazeCalculator : MonoBehaviour
 		//Don't find another camera if it is already assigned
 		gazeCamera = gazeCamera ? gazeCamera : GetComponentInChildren<Camera>();
 		gazeData = GetComponent<TETGazeTrackerData>();
-
 		//Report if no camera assigned in inspector and none found in prefab
 		if(!gazeCamera)
 		{
@@ -54,15 +53,17 @@ public class GazeCalculator : MonoBehaviour
 		}
 		else
 		{
-			if(mouseAsGaze)
+
+			if(gazeData.TrackerIsActive)
 			{
-				StartCoroutine(CalculateGazeRayWithMouse());
+				StartCoroutine(CalculateEyeData());
 			}
 			else
 			{
-				StartCoroutine(CalculateGazeRay());
-				StartCoroutine(CalculateEyeData());
+				Debug.Log("Tracker not connected, switching to mouse");
+				mouseAsGaze = true;
 			}
+			StartCoroutine(CalculateGazeRay());
 		}
 	}
 
@@ -76,43 +77,10 @@ public class GazeCalculator : MonoBehaviour
 			if(isHit)
 			{
 				Gizmos.color = Color.red;
-				Gizmos.DrawSphere(gazeHitPoint, 0.5f);
+				Gizmos.DrawSphere(gazeHitPoint, 0.25f);
 			}
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance);
-		}
-	}
-
-	private IEnumerator CalculateGazeRayWithMouse()
-	{
-		while(true)
-		{
-			gazePosWorld = transform.position;
-//			Vector3 gazePosOrigin = characterCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f));
-			Vector3 gazePosOrigin = gazeCamera.transform.position;
-			gazePosWorld = gazeCamera.ScreenToWorldPoint(new Vector3(Mathf.Clamp((int)Input.mousePosition.x, 0, Screen.width), Mathf.Clamp((int)Input.mousePosition.y, 0, Screen.height), gazeCamera.farClipPlane));
-
-			//Ray showing gaze direction
-			RaycastHit hit;
-			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
-//			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
-			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
-			{
-				currentTarget = hit.transform;
-				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
-				gazeHitPoint = hit.point;
-				isHit = true;
-
-			}
-			else
-			{
-				currentTarget = null;
-				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
-				isHit = false;
-//				Debug.Log("staring into infinity and beyond");
-			}
-			
-			yield return null;
 		}
 	}
 
@@ -120,19 +88,8 @@ public class GazeCalculator : MonoBehaviour
 	{
 		while(true)
 		{
-			gazePosWorld = transform.position;
-			Vector3 eyescreenpos = gazeData.GetGazeScreenPosition();
-//			gazePosScreen = new Vector3(Mathf.Clamp((int)eyescreenpos.x, 0, Screen.width), Mathf.Clamp((int)eyescreenpos.y, 0, Screen.height), characterCamera.farClipPlane);
-			gazePosScreen = eyescreenpos;
-			Vector3 gazePosOrigin = gazeCamera.transform.position;
-			gazePosWorld = gazeCamera.ScreenToWorldPoint(new Vector3(gazePosScreen.x, gazePosScreen.y, gazeCamera.farClipPlane));
-
-			//Ray showing gaze direction
+			gazeRay = mouseAsGaze ? Camera.main.ScreenPointToRay(Input.mousePosition) : Camera.main.ScreenPointToRay(gazeData.GetGazeScreenPosition());
 			RaycastHit hit;
-			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
-			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
-
-			//Ray Cast Gaze Ray
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
@@ -152,6 +109,43 @@ public class GazeCalculator : MonoBehaviour
 			yield return null;
 		}
 	}
+
+//	private IEnumerator CalculateGazeRay()
+//	{
+//		while(true)
+//		{
+//			gazePosWorld = transform.position;
+//			Vector3 eyescreenpos = gazeData.GetGazeScreenPosition();
+//			gazePosScreen = new Vector3(Mathf.Clamp((int)eyescreenpos.x, 0, Screen.width), Mathf.Clamp((int)eyescreenpos.y, 0, Screen.height), characterCamera.farClipPlane);
+//			gazePosScreen = eyescreenpos;
+//			Vector3 gazePosOrigin = gazeCamera.transform.position;
+//			gazePosWorld = gazeCamera.ScreenToWorldPoint(new Vector3(gazePosScreen.x, gazePosScreen.y, gazeCamera.farClipPlane));
+//
+//			//Ray showing gaze direction
+//			RaycastHit hit;
+//			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
+//			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
+//
+//			//Ray Cast Gaze Ray
+//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
+//			{
+//				currentTarget = hit.transform;
+//				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
+//				gazeHitPoint = hit.point;
+//				isHit = true;
+//			}
+//			else
+//			{
+//				currentTarget = null;
+//				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
+//				isHit = false;
+//			}
+//			//Live Gaze Target
+//			target.position = gazeHitPoint;
+//			target.gameObject.SetActive(showLiveGazeDebug);
+//			yield return null;
+//		}
+//	}
 
 	private IEnumerator CalculateEyeData()
 	{
