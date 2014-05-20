@@ -35,6 +35,8 @@ public class GazeCalculator : MonoBehaviour
 
 	private Transform currentTarget;
 
+	private Object currentTestTarget;
+
 	private Ray gazeRay;
 
 	private bool isHit;

@@ -35,6 +35,7 @@ public class GazeMapData : MonoBehaviour
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
+	private List<GameObject> drawnObjects = new List<GameObject>();
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.25f;
@@ -99,7 +100,6 @@ public class GazeMapData : MonoBehaviour
 							if(isShowingGazeEvents)
 							{
 								DrawGazeEvent(e, fileindex, i);
-
 							}
 							if(isShowingPupilEvents)
 							{
@@ -135,6 +135,16 @@ public class GazeMapData : MonoBehaviour
 		Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (eventindex + 1).ToString() + ".");
 		//Name of object that was hit
 		Handles.Label(e.eventHitPoint, e.eventHitName);
+		//TODO:
+		/*
+		 * Save asset at savepath
+		 * Get asset save path
+		 * Load with Resources.Load
+		 * Delete asset after use
+		 * 
+		 * 
+		 */
+
 	}
 
 	public void ToggleHitmap()
