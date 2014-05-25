@@ -19,7 +19,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 		while(true)
 		{
 			Vector3 pos = transform.position;
-			GazeMetricEvents.Instance.NewGazeEvent("WhenShitHitsTheFan", 
+			GazeMetricEvents.Instance.NewGazeEvent("DataWithObject", 
 			                                       pos, 
 			                                       gazeCalculator.GetCurrentHitPosition(), 
 			                                       gazeCalculator.GetCurrentTargetName(), 
@@ -28,18 +28,20 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       0f, 
 			                                       0f, 
-			                                       0f);
-			yield return new WaitForSeconds(timeBetweenDataCollects);
-			GazeMetricEvents.Instance.NewGazeEvent("WhenShitHitsTheFan2", 
-			                                       pos, 
-			                                       gazeCalculator.GetCurrentHitPosition(), 
-			                                       gazeCalculator.GetCurrentTargetName(), 
-			                                       gazeCalculator.GetCurrentGazeRay(), 
-			                                       10f, 
-			                                       0f, 
-			                                       0f, 
-			                                       0f, 
-			                                       0f);
+			                                       0f,
+			                                       gazeCalculator.GetCurrentTargetObjectPath());
+//			yield return new WaitForSeconds(timeBetweenDataCollects);
+//			GazeMetricEvents.Instance.NewGazeEvent("WhenShitHitsTheFan2", 
+//			                                       pos, 
+//			                                       gazeCalculator.GetCurrentHitPosition(), 
+//			                                       gazeCalculator.GetCurrentTargetName(), 
+//			                                       gazeCalculator.GetCurrentGazeRay(), 
+//			                                       10f, 
+//			                                       0f, 
+//			                                       0f, 
+//			                                       0f, 
+//			                                       0f,
+//			                                       "");
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
 	}

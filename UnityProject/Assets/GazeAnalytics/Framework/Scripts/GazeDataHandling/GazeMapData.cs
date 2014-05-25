@@ -32,10 +32,12 @@ public class GazeMapData : MonoBehaviour
 	[SerializeField]
 	private List<Color>
 		eventHitPointColors = new List<Color>();
+	[SerializeField]
+	private Material
+		meshMaterial;
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
-	private List<GameObject> drawnObjects = new List<GameObject>();
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.25f;
@@ -134,7 +136,9 @@ public class GazeMapData : MonoBehaviour
 		//index of event
 		Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (eventindex + 1).ToString() + ".");
 		//Name of object that was hit
-		Handles.Label(e.eventHitPoint, e.eventHitName);
+		GUIStyle style = new GUIStyle();
+		style.alignment = TextAnchor.MiddleCenter;
+		Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
 		//TODO:
 		/*
 		 * Save asset at savepath
@@ -144,6 +148,9 @@ public class GazeMapData : MonoBehaviour
 		 * 
 		 * 
 		 */
+		
+//		Graphics.DrawMesh();
+
 
 	}
 
@@ -309,6 +316,14 @@ public class GazeMapData : MonoBehaviour
 		return filename;
 	}
 
+	public Dictionary<string, List<GazeEvent>> FilenameToGazeEvent
+	{
+		get
+		{
+			return filenameToGazeEvent;
+		}
+	}
+
 	public List<string> Filenames
 	{
 		get
@@ -325,11 +340,35 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
-	public List<string> FilenamesToShow
+	public List<string> DataToCompare
 	{
 		get
 		{
 			return dataToCompare;
+		}
+	}
+
+	public bool IsShowingGazeEvents
+	{
+		get
+		{
+			return isShowingGazeEvents;
+		}
+	}
+
+	public bool IsShowingPupilEvents
+	{
+		get
+		{
+			return isShowingPupilEvents;
+		}
+	}
+
+	public bool IsShowingBlinkMap
+	{
+		get
+		{
+			return isShowingBlinkMap;
 		}
 	}
 }

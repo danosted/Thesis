@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [RequireComponent(typeof(TETGazeTrackerData))]
 public class GazeCalculator : MonoBehaviour
@@ -34,8 +38,6 @@ public class GazeCalculator : MonoBehaviour
 	private Vector3 gazeHitPoint;
 
 	private Transform currentTarget;
-
-	private Object currentTestTarget;
 
 	private Ray gazeRay;
 
@@ -90,12 +92,12 @@ public class GazeCalculator : MonoBehaviour
 	{
 		while(true)
 		{
-			gazeRay = mouseAsGaze ? Camera.main.ScreenPointToRay(Input.mousePosition) : Camera.main.ScreenPointToRay(gazeData.GetGazeScreenPosition());
+			gazeRay = mouseAsGaze ? gazeCamera.ScreenPointToRay(Input.mousePosition) : gazeCamera.ScreenPointToRay(gazeData.GetGazeScreenPosition());
 			RaycastHit hit;
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
-				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
+//				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
 				gazeHitPoint = hit.point;
 				isHit = true;
 			}
@@ -168,6 +170,39 @@ public class GazeCalculator : MonoBehaviour
 		}
 	}
 
+	public string GetCurrentTargetObjectPath()
+	{
+		string path = "";
+		if(currentTarget)
+		{
+			Transform parentObject = (Transform)PrefabUtility.GetPrefabParent(currentTarget);
+			if(!parentObject)
+			{
+				GazePrefabTracker gpt = currentTarget.GetComponent<GazePrefabTracker>();
+				if(gpt)
+				{
+					path = gpt.GetAssetPath();
+				}
+				else
+				{
+					Debug.Log("Add the GazePrefabTracker script to Instantiated objects.");
+				}
+//				return AssetDatabase.GetAssetPath(currentTarget);
+			}
+			else
+			{
+				path = AssetDatabase.GetAssetPath(parentObject);
+				Debug.Log(path);
+				if(path != "")
+				{
+					return path;
+				}
+			}
+
+		}
+		return path;
+	}
+
 	public Ray GetCurrentGazeRay()
 	{
 		return this.gazeRay;
@@ -182,6 +217,42 @@ public class GazeCalculator : MonoBehaviour
 		else
 		{
 			return currentTarget.name;
+		}
+	}
+
+	public Vector3 GetCurrentTargetPosition()
+	{
+		if(!currentTarget)
+		{
+			return Vector3.zero;
+		}
+		else
+		{
+			return currentTarget.position;
+		}
+	}
+
+	public Quaternion GetCurrentTargetRotation()
+	{
+		if(!currentTarget)
+		{
+			return Quaternion.identity;
+		}
+		else
+		{
+			return currentTarget.rotation;
+		}
+	}
+
+	public Vector3 GetCurrentTargetScale()
+	{
+		if(!currentTarget)
+		{
+			return Vector3.zero;
+		}
+		else
+		{
+			return currentTarget.localScale;
 		}
 	}
 

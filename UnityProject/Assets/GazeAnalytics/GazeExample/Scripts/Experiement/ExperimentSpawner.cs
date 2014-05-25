@@ -44,6 +44,7 @@ public class ExperimentSpawner : MonoBehaviour
 			for(int i = 0; i < targets.Length; i++)
 			{
 				targets[i] = Instantiate(targets[i]) as Transform;
+				targets[i].parent = transform;
 				targets[i].gameObject.SetActive(false);
 			}
 			canRun = true;
@@ -117,8 +118,8 @@ public class ExperimentSpawner : MonoBehaviour
 			{
 				targetPoint = new Vector3(target.position.x + step, upperBounds.y * Random.value, -lowerBounds.z);
 				thresh += elapsedTime;
-				Debug.Log("next step");
-				Debug.Log("elapsed: " + elapsedTime + " thresh: " + thresh);
+//				Debug.Log("next step");
+//				Debug.Log("elapsed: " + elapsedTime + " thresh: " + thresh);
 			}
 			target.position = Vector3.MoveTowards(target.position, targetPoint, speed * difficulty * Time.deltaTime);
 			elapsedTime += Time.deltaTime;
