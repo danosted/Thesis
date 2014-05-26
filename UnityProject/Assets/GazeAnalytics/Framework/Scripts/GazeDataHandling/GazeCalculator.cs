@@ -36,6 +36,8 @@ public class GazeCalculator : MonoBehaviour
 	private Vector3 gazePosWorld = Vector3.zero;
 	private Vector3 gazePosScreen = Vector3.zero;
 	private Vector3 gazeHitPoint;
+	private Vector3 upperBounds;
+	private Vector3 lowerBounds;
 
 	private Transform currentTarget;
 
@@ -69,6 +71,8 @@ public class GazeCalculator : MonoBehaviour
 			}
 			StartCoroutine(CalculateGazeRay());
 		}
+		upperBounds = gazeCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, gazeCamera.farClipPlane));
+		lowerBounds = gazeCamera.ScreenToWorldPoint(new Vector3(0, 0, gazeCamera.farClipPlane));
 	}
 
 	/*
@@ -108,8 +112,29 @@ public class GazeCalculator : MonoBehaviour
 				isHit = false;
 			}
 			//Live Gaze Target
-			target.position = gazeHitPoint;
-			target.gameObject.SetActive(showLiveGazeDebug);
+			if(showLiveGazeDebug)
+			{
+				target.position = gazeHitPoint;
+				float width, height;
+				width = Mathf.Abs(upperBounds.x - lowerBounds.x);
+				height = Mathf.Abs(upperBounds.y - lowerBounds.y);
+				if(width > height)
+				{
+					float size = height * 0.01f;
+					target.localScale = new Vector3(size, size, size);
+				}
+				else
+				{
+					float size = width * 0.01f;
+					target.localScale = new Vector3(size, size, size);
+				}
+				target.gameObject.SetActive(true);
+			}
+			else
+			{
+				target.gameObject.SetActive(false);
+			}
+
 			yield return null;
 		}
 	}

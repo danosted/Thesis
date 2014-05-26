@@ -104,14 +104,20 @@ public class GazeMapDataEditor : Editor
 				Debug.Log(e);
 			}
 		}
+		//Prevent out of bounds exception due to slider inaccuracy:
 		gazeMapData.minGazeDataIndex = (gazeMapData.minGazeDataIndex < 0f || gazeMapData.minGazeDataIndex > 1f) ? 0f : gazeMapData.minGazeDataIndex;
 		gazeMapData.maxGazeDataIndex = (gazeMapData.maxGazeDataIndex < 0f || gazeMapData.maxGazeDataIndex > 1f) ? 1f : gazeMapData.maxGazeDataIndex;
-		EditorGUILayout.MinMaxSlider(new GUIContent("Time interval: "), ref gazeMapData.minGazeDataIndex, ref gazeMapData.maxGazeDataIndex, 0f, 1f);
-		SceneView.RepaintAll();
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("lower and upper values: ", EditorStyles.label);
-		EditorGUILayout.LabelField(gazeMapData.minGazeDataIndex.ToString() + "         " + gazeMapData.maxGazeDataIndex.ToString(), EditorStyles.label);
+		EditorGUILayout.LabelField(new GUIContent("Time interval: "));
+		EditorGUILayout.FloatField(gazeMapData.minGazeDataIndex, GUILayout.Width(30f));
+		EditorGUILayout.MinMaxSlider(ref gazeMapData.minGazeDataIndex, ref gazeMapData.maxGazeDataIndex, 0f, 1f);
+		EditorGUILayout.FloatField(gazeMapData.maxGazeDataIndex, GUILayout.Width(30f));
 		EditorGUILayout.EndHorizontal();
+		SceneView.RepaintAll();
+//		EditorGUILayout.BeginHorizontal();
+//		EditorGUILayout.LabelField("lower and upper values: ", EditorStyles.label);
+//		EditorGUILayout.LabelField(gazeMapData.minGazeDataIndex.ToString() + "         " + gazeMapData.maxGazeDataIndex.ToString(), EditorStyles.label);
+//		EditorGUILayout.EndHorizontal();
 		#endregion
 
 		#region pupilmaprender

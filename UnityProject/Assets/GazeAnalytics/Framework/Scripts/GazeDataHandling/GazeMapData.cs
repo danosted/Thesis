@@ -40,7 +40,7 @@ public class GazeMapData : MonoBehaviour
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
 
 	private float characterCubeSize = 0.5f;
-	private float gazeRayHitSphereSize = 0.25f;
+	private float gazeRayHitSphereSize = 0.1f;
 	private float maxHeatMapPointSize = 2f;
 
 	private bool isSaving;
@@ -83,7 +83,7 @@ public class GazeMapData : MonoBehaviour
 	}
 
 	//Render 3D GazeMap
-	void OnDrawGizmos()
+	void OnDrawGizmosSelected()
 	{
 		if(isShowingGazeEvents || isShowingPupilEvents || isShowingBlinkMap)
 		{

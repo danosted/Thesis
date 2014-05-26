@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ExecuteInEditMode]
 public class ExperimentSpawner : MonoBehaviour
 {
 	[SerializeField]
@@ -11,11 +12,11 @@ public class ExperimentSpawner : MonoBehaviour
 	private float
 		speed = 1f;
 	[SerializeField]
-	private float
-		simpleSize = 1f;
+	private int
+		experimentSteps = 3;
 	[SerializeField]
-	private Color
-		targetColor = Color.blue;
+	private List<Color>
+		targetColors = new List<Color>();
 	[SerializeField]
 	private Color
 		backgroundColor = Color.grey;
@@ -34,89 +35,95 @@ public class ExperimentSpawner : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		if(targets == null)
+		if(Application.isPlaying)
 		{
-			Debug.Log("Need targets to run experiements");
-			canRun = false;
-		}
-		else
-		{
-			for(int i = 0; i < targets.Length; i++)
+			if(targets == null)
 			{
-				targets[i] = Instantiate(targets[i]) as Transform;
-				targets[i].parent = transform;
-				targets[i].gameObject.SetActive(false);
+				Debug.Log("Need targets to run experiements");
+				canRun = false;
 			}
-			canRun = true;
+			else
+			{
+				for(int i = 0; i < targets.Length; i++)
+				{
+					targets[i] = Instantiate(targets[i]) as Transform;
+					targets[i].parent = transform;
+					targets[i].gameObject.SetActive(false);
+				}
+				canRun = true;
+			}
+			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z - background.position.z));
+			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.position.z + 0.5f));
 		}
-		background.renderer.material.color = backgroundColor;
-		upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z - background.position.z));
-		lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.position.z));
 	}
 	
 	void OnGUI()
 	{
-		float width = 120f;
-		float height = 20f;
-		if(canRun)
+		if(!Application.isPlaying)
 		{
-			if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Start Experiment"))
-			{
-				canRun = false;
-				StartCoroutine(RunExperiementFor(experiementLength));
-			}
-
+			background.renderer.sharedMaterial.color = backgroundColor;
 		}
-		if(!canRun)
+		else
 		{
-			if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Stop Experiment"))
+			float width = 120f;
+			float height = 20f;
+			if(canRun)
 			{
-				StopAllCoroutines();
-				for(int i = 0; i < targets.Length; i++)
+				if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Start Experiment"))
 				{
-					targets[i].gameObject.SetActive(false);
+					canRun = false;
+					StartCoroutine(RunExperiementFor(experiementLength));
 				}
-				canRun = true;
+
+			}
+			if(!canRun)
+			{
+				if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Stop Experiment"))
+				{
+					StopAllCoroutines();
+					for(int i = 0; i < targets.Length; i++)
+					{
+						targets[i].gameObject.SetActive(false);
+					}
+					canRun = true;
+				}
 			}
 		}
 	}
 
 	private IEnumerator RunExperiementFor(float length)
 	{
-		int index = 0;
-		float difficulty = 1f;
-		yield return StartCoroutine(RunExperimentFor(length * 0.33f, index, difficulty));
-//		index++;
-		difficulty++;
-		yield return StartCoroutine(RunExperimentFor(length * 0.33f, index, difficulty));
-//		index++;
-		difficulty++;
-		yield return StartCoroutine(RunExperimentFor(length * 0.33f, index, difficulty));
+
+		for(int i = 0; i < experimentSteps; i++)
+		{
+			yield return StartCoroutine(RunExperimentFor(length / experimentSteps, 0, i + 1));
+		}
 		canRun = true;
 	}
 
-	private IEnumerator RunExperimentFor(float seconds, int index, float difficulty)
+	private IEnumerator RunExperimentFor(float seconds, int index, int difficulty)
 	{
 		float elapsedTime = 0f;
 		float thresh = 1f;
-		float step = -10f;
+		float step = -1f;
 		Transform target = targets[index];
-		Vector3 startPoint = new Vector3(lowerBounds.x, upperBounds.y * Random.value, -lowerBounds.z);
-		Vector3 targetPoint = new Vector3(lowerBounds.x + step, upperBounds.y * Random.value, -lowerBounds.z);
+		Vector3 startPoint = new Vector3(lowerBounds.x, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
+		Vector3 targetPoint = new Vector3(lowerBounds.x + step, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 		target.position = startPoint;
 		target.gameObject.SetActive(true);
-		target.transform.localScale /= difficulty;
+		target.transform.localScale = Vector3.one / difficulty;
 		while(elapsedTime < seconds)
 		{
+			//Check if the target is outside camera border
 			if(Mathf.Abs(upperBounds.x - target.position.x) < 0.1f)
 			{
-				target.position = new Vector3(lowerBounds.x, upperBounds.y * Random.value, -lowerBounds.z);
-//				targetPoint = new Vector3(target.position.x + thresh, upperBounds.y * Random.value, lowerBounds.z);
+				target.position = new Vector3(lowerBounds.x, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
+				targetPoint = new Vector3(target.position.x + step, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 				Debug.Log("resetting");
 			}
-			if(elapsedTime > thresh)
+			if(elapsedTime > thresh || Mathf.Abs(targetPoint.x - target.position.x) < 0.1f)
 			{
-				targetPoint = new Vector3(target.position.x + step, upperBounds.y * Random.value, -lowerBounds.z);
+				targetPoint = new Vector3(target.position.x + step, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 				thresh += elapsedTime;
 //				Debug.Log("next step");
 //				Debug.Log("elapsed: " + elapsedTime + " thresh: " + thresh);
