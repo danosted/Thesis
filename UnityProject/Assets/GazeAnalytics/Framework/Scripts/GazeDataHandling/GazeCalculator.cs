@@ -8,7 +8,10 @@ using UnityEditor;
 [RequireComponent(typeof(TETGazeTrackerData))]
 public class GazeCalculator : MonoBehaviour
 {
-	
+
+	public delegate void OnGazeObjectHitDelegate(Object obj);
+	public event OnGazeObjectHitDelegate OnGazeObjectHit;
+
 	[SerializeField]
 	private float
 		hitRayMaxDistance = 100f;
@@ -23,9 +26,6 @@ public class GazeCalculator : MonoBehaviour
 		gazeCamera;
 
 	#region debug
-	[SerializeField]
-	private bool
-		mouseAsGaze;
 	[SerializeField]
 	private bool
 		showLiveGazeDebug;
@@ -44,8 +44,11 @@ public class GazeCalculator : MonoBehaviour
 	private Ray gazeRay;
 
 	private bool isHit;
+	private bool mouseAsGaze;
 
 	private float pupilSize;
+	private float currentFixationLength;
+	private float lastFixationLength;
 
 	void Start()
 	{
@@ -96,13 +99,14 @@ public class GazeCalculator : MonoBehaviour
 	{
 		while(true)
 		{
+			//Gaze Ray
 			gazeRay = mouseAsGaze ? gazeCamera.ScreenPointToRay(Input.mousePosition) : gazeCamera.ScreenPointToRay(gazeData.GetGazeScreenPosition());
 			RaycastHit hit;
 			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
 			{
 				currentTarget = hit.transform;
-//				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
 				gazeHitPoint = hit.point;
+				OnGazeObjectHit(hit.transform);
 				isHit = true;
 			}
 			else
@@ -111,6 +115,9 @@ public class GazeCalculator : MonoBehaviour
 				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
 				isHit = false;
 			}
+			//Fixation
+			currentFixationLength = gazeData.GetCurrentFixationLength();
+			lastFixationLength = gazeData.GetLastFixationLength();
 			//Live Gaze Target
 			if(showLiveGazeDebug)
 			{
@@ -138,43 +145,6 @@ public class GazeCalculator : MonoBehaviour
 			yield return null;
 		}
 	}
-
-//	private IEnumerator CalculateGazeRay()
-//	{
-//		while(true)
-//		{
-//			gazePosWorld = transform.position;
-//			Vector3 eyescreenpos = gazeData.GetGazeScreenPosition();
-//			gazePosScreen = new Vector3(Mathf.Clamp((int)eyescreenpos.x, 0, Screen.width), Mathf.Clamp((int)eyescreenpos.y, 0, Screen.height), characterCamera.farClipPlane);
-//			gazePosScreen = eyescreenpos;
-//			Vector3 gazePosOrigin = gazeCamera.transform.position;
-//			gazePosWorld = gazeCamera.ScreenToWorldPoint(new Vector3(gazePosScreen.x, gazePosScreen.y, gazeCamera.farClipPlane));
-//
-//			//Ray showing gaze direction
-//			RaycastHit hit;
-//			gazeRay = new Ray(gazePosOrigin, gazePosWorld);
-//			Debug.DrawRay(gazeRay.origin, gazeRay.direction * hitRayMaxDistance, rayColor);
-//
-//			//Ray Cast Gaze Ray
-//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
-//			{
-//				currentTarget = hit.transform;
-//				Debug.Log("hit something: " + currentTarget.name, currentTarget.gameObject);
-//				gazeHitPoint = hit.point;
-//				isHit = true;
-//			}
-//			else
-//			{
-//				currentTarget = null;
-//				gazeHitPoint = gazeRay.direction * hitRayMaxDistance;
-//				isHit = false;
-//			}
-//			//Live Gaze Target
-//			target.position = gazeHitPoint;
-//			target.gameObject.SetActive(showLiveGazeDebug);
-//			yield return null;
-//		}
-//	}
 
 	private IEnumerator CalculateEyeData()
 	{
@@ -291,6 +261,18 @@ public class GazeCalculator : MonoBehaviour
 		get
 		{
 			return pupilSize;
+		}
+	}
+
+	public float CurrentFixationLength {
+		get {
+			return currentFixationLength;
+		}
+	}
+
+	public float LastFixationLength {
+		get {
+			return lastFixationLength;
 		}
 	}
 }

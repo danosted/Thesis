@@ -7,7 +7,13 @@ public class ExperimentSpawner : MonoBehaviour
 {
 	[SerializeField]
 	private float
-		experiementLength = 300f;
+		experiementLength = 60f;
+	[SerializeField]
+	private bool contrastExperiment = true;
+	[SerializeField]
+	private bool sizeExperiment = false;
+	[SerializeField]
+	private bool speedExperiment = false;
 	[SerializeField]
 	private float
 		speed = 1f;
@@ -31,6 +37,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private bool isRunning;
 	private Vector3 upperBounds;
 	private Vector3 lowerBounds;
+	private float elapsedTime;
 
 	// Use this for initialization
 	void Start()
@@ -87,32 +94,70 @@ public class ExperimentSpawner : MonoBehaviour
 					}
 					canRun = true;
 				}
+				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
 			}
 		}
 	}
 
 	private IEnumerator RunExperiementFor(float length)
 	{
-
-		for(int i = 0; i < experimentSteps; i++)
+		if(contrastExperiment)
 		{
-			yield return StartCoroutine(RunExperimentFor(length / experimentSteps, 0, i + 1));
+			for(int i = 0; i < experimentSteps; i++)
+			{
+				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, i + 1));
+			}
+			canRun = true;
 		}
-		canRun = true;
+		else if(sizeExperiment)
+		{
+		}
+		else if(speedExperiment)
+		{
+			for(int i = 0; i < experimentSteps; i++)
+			{
+				yield return StartCoroutine(RunSpeedExperimentFor(length / experimentSteps, 0, i + 1));
+			}
+			canRun = true;
+		}
 	}
 
-	private IEnumerator RunExperimentFor(float seconds, int index, int difficulty)
+	private IEnumerator RunContrastExperimentFor(float runtime, int difficulty)
 	{
-		float elapsedTime = 0f;
+		elapsedTime = 0f;
+		for(int i = 0; i < targets.Length; i++)
+		{
+			targets[i].GetChild(0).renderer.material.color = backgroundColor;
+			targets[i].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
+			targets[i].localScale = Vector3.one / difficulty;
+			targets[i].gameObject.SetActive(true);
+		}
+		while(elapsedTime < runtime)
+		{
+			for(int i = 0; i < targets.Length; i++)
+			{
+				Color col = targets[i].GetChild(0).renderer.material.color;
+				targets[i].GetChild(0).renderer.material.color = Color.Lerp(col, targetColors.ToArray()[i], elapsedTime * speed / difficulty * 0.001f);
+				Debug.Log(col);
+			}
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
+
+	}
+
+	private IEnumerator RunSpeedExperimentFor(float runtime, int targetIndex, int difficulty)
+	{
+		elapsedTime = 0f;
 		float thresh = 1f;
 		float step = -1f;
-		Transform target = targets[index];
+		Transform target = targets[targetIndex];
 		Vector3 startPoint = new Vector3(lowerBounds.x, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 		Vector3 targetPoint = new Vector3(lowerBounds.x + step, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 		target.position = startPoint;
 		target.gameObject.SetActive(true);
-		target.transform.localScale = Vector3.one / difficulty;
-		while(elapsedTime < seconds)
+		target.localScale = Vector3.one / difficulty;
+		while(elapsedTime < runtime)
 		{
 			//Check if the target is outside camera border
 			if(Mathf.Abs(upperBounds.x - target.position.x) < 0.1f)
@@ -145,13 +190,9 @@ public class ExperimentSpawner : MonoBehaviour
 		return new Vector3(point.x, point.y * Random.value, point.z);
 	}
 
-//	private Vector3 GetRandomDirectionFromTowards(Vector3 directionFrom, Vector3 directionTo)
-//	{
-//		Vector3 dir = directionTo;
-//		float randX = Random.Range(0.5f, 1f);
-//		float randY = Random.Range(0.5f, 1f);
-//		dir = new Vector3()
-//
-//		return dir;
-//	}
+	public float ElapsedTime {
+		get {
+			return elapsedTime;
+		}
+	}
 }

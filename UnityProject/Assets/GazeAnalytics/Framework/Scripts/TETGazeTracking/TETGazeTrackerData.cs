@@ -60,9 +60,9 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.CloseTime.ToString());
 			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.BlinkCount.ToString());
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "curfix: " + gazeUtils.CurrentFixationTime.ToString());
 			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.HasClosed.ToString());
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "lastfix: " + gazeUtils.LastFixationTime.ToString());
 		}
 
 //		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
@@ -135,10 +135,19 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		return gazeUtils.BlinkCount;
 	}
 
+	public float GetCurrentFixationLength()
+	{
+		return gazeUtils.CurrentFixationTime;
+	}
+
+	public float GetLastFixationLength()
+	{
+		return gazeUtils.LastFixationTime;
+	}
+
 	public bool isFixating()
 	{
 		return gazeUtils.isFixating();
-		;
 	}
 
 	public bool TrackerIsActive

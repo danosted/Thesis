@@ -6,11 +6,15 @@ public class GazeMetricsCollecter : MonoBehaviour
 	[SerializeField]
 	private float
 		timeBetweenDataCollects = 0.5f;
+	[SerializeField]
+	private ExperimentSpawner experiment;
+
 	private GazeCalculator gazeCalculator;
 
 	void Start()
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
+		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
 		StartCoroutine(CollectEyeMetrics());
 	}
 
@@ -28,7 +32,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       0f, 
 			                                       0f, 
-			                                       0f,
+			                                       gazeCalculator.CurrentFixationLength,
 			                                       gazeCalculator.GetCurrentTargetObjectPath());
 //			yield return new WaitForSeconds(timeBetweenDataCollects);
 //			GazeMetricEvents.Instance.NewGazeEvent("WhenShitHitsTheFan2", 
@@ -44,5 +48,10 @@ public class GazeMetricsCollecter : MonoBehaviour
 //			                                       "");
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
+	}
+
+	private void OnGazeObjectHit(Object obj)
+	{
+		GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 	}
 }

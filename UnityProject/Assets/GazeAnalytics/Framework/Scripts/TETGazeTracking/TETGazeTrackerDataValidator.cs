@@ -120,7 +120,7 @@ namespace Assets.Scripts
 						lastFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
 						fixationTimer.Reset();
 					}
-					else if(!fixationTimer.IsRunning && gd.IsFixated)
+					if(!fixationTimer.IsRunning && gd.IsFixated)
 					{
 						fixationTimer.Start();
 					}
@@ -294,6 +294,14 @@ namespace Assets.Scripts
 			get
 			{
 				return currentFixationTime;
+			}
+		}
+
+		public float LastFixationTime 
+		{
+			get 
+			{
+				return lastFixationTime;
 			}
 		}
 	}
