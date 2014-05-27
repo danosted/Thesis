@@ -53,6 +53,11 @@ public class GazeMapData : MonoBehaviour
 	public float minGazeDataIndex = 0f;
 	public float maxGazeDataIndex = 1f;
 
+	private int startIndex = 0;
+	private int endIndex = 0;
+
+	private GUIStyle style = new GUIStyle();
+
 	void OnGUI()
 	{
 		int padding = 10;
@@ -96,12 +101,17 @@ public class GazeMapData : MonoBehaviour
 					{
 						GazeEvent[] gazeArray = entry.Value.ToArray();
 						int i = 0;
-						for(i = (int)(minGazeDataIndex*(gazeArray.Length-1)); i < (int)(maxGazeDataIndex*(gazeArray.Length-1)); i++)
+
+						startIndex = (int)(minGazeDataIndex * (gazeArray.Length - 1));
+						endIndex = (int)(maxGazeDataIndex * (gazeArray.Length - 1));
+						for(i = startIndex; i < endIndex; i++)
 						{
 							GazeEvent e = gazeArray[i];
 							if(isShowingGazeEvents)
 							{
-								DrawGazeEvent(e, fileindex, i);
+								Vector3 nextSaccadePoint = i < endIndex - 1 ? gazeArray[i + 1].eventHitPoint : e.eventHitPoint;
+//								Vector3 nextSaccadePoint = gazeArray[i + 1].eventHitPoint;
+								DrawGazeEvent(e, nextSaccadePoint, fileindex, i);
 							}
 							if(isShowingPupilEvents)
 							{
@@ -122,23 +132,31 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
-	private void DrawGazeEvent(GazeEvent e, int fileindex, int eventindex)
+	private void DrawGazeEvent(GazeEvent e, Vector3 nextSaccadePoint, int fileindex, int eventindex)
 	{
-		//Ray color
+		//Gaze Ray
 		Gizmos.color = eventGazeRayColors.Count > 0 ? eventGazeRayColors.ToArray()[fileindex] : Color.cyan;
 		Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
+		//Saccade Ray
+		if(nextSaccadePoint != e.eventHitPoint)
+		{
+			Gizmos.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+			Gizmos.DrawLine(e.eventHitPoint, nextSaccadePoint);
+		}
 		//Hit point color
-		Gizmos.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		Gizmos.DrawSphere(e.eventHitPoint, gazeRayHitSphereSize);
+		Handles.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+		Handles.DrawSolidDisc(e.eventHitPoint, (Camera.current.transform.position - e.eventHitPoint).normalized, gazeRayHitSphereSize);
 		//Event origin color
 		Gizmos.color = eventOriginColors.Count > 0 ? eventOriginColors.ToArray()[fileindex] : Color.blue;
 		Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
 		//index of event
-		Handles.Label((e.eventOrigin + e.eventHitPoint) * 0.5f, (eventindex + 1).ToString() + ".");
+		style.alignment = TextAnchor.MiddleCenter;
+		Handles.color = Color.black;
+		Handles.Label(e.eventHitPoint, (eventindex + 1).ToString(), style);
 		//Name of object that was hit
-		GUIStyle style = new GUIStyle();
 		style.alignment = TextAnchor.MiddleCenter;
 		Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
+
 		//TODO:
 		/*
 		 * Save asset at savepath

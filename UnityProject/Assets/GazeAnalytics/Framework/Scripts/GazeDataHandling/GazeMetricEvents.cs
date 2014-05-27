@@ -35,10 +35,10 @@ public class GazeMetricEvents
 //		gazeDataList.Add(newEvent);
 //	}
 
-	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPosition, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationMeanLength, string filePath)
+	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPosition, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationLength, string filePath)
 	{
 		eventNames.Add(eventName);
-		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPosition, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationMeanLength, filePath);
+		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPosition, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationLength, filePath);
 		gazeDataList.Add(newEvent);
 	}
 
@@ -71,7 +71,7 @@ public class GazeEvent
 	public float blinkFrequency;
 	public float blinkClosedToOpenedLength;
 	public float saccadeFrequency;
-	public float fixationMeanLength;
+	public float fixationLength;
 	public string filePath;
 
 	public GazeEvent()
@@ -85,7 +85,7 @@ public class GazeEvent
 		this.blinkFrequency = 0f;
 		this.blinkClosedToOpenedLength = 0f;
 		this.saccadeFrequency = 0f;
-		this.fixationMeanLength = 0f;
+		this.fixationLength = 0f;
 		this.filePath = "";
 	}
 
@@ -127,7 +127,7 @@ public class GazeEvent
 	                 float blinkFrequency, 
 	                 float blinkClosedToOpenedLength, 
 	                 float saccadeFrequency, 
-	                 float fixationMeanLength, 
+	                 float fixationLength, 
 	                 string filePath)
 	{
 		this.eventName = eventName;
@@ -139,7 +139,7 @@ public class GazeEvent
 		this.blinkFrequency = blinkFrequency;
 		this.blinkClosedToOpenedLength = blinkClosedToOpenedLength;
 		this.saccadeFrequency = saccadeFrequency;
-		this.fixationMeanLength = fixationMeanLength;
+		this.fixationLength = fixationLength;
 		this.filePath = filePath;
 	}
 
