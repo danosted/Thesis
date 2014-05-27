@@ -41,7 +41,11 @@ namespace Assets.Scripts
 		private float timeAtLastValidEyeLeft;
 		private float timeAtLastValidEyeRight;
 
-		private static Stopwatch time;
+		private float currentFixationTime;
+		private float lastFixationTime;
+
+		private static Stopwatch blinkTimer;
+		private static Stopwatch fixationTimer;
 		private int blinkCount;
 		private long timeSinceLastClose;
 		private long closeTime;
@@ -51,8 +55,9 @@ namespace Assets.Scripts
 		{
 			_Frames = new FixedSizeQueue<GazeData>(queueLength);
 			_LastValidUserPosition = new Point2D();
-			time = new Stopwatch();
-			time.Start();
+			blinkTimer = new Stopwatch();
+			fixationTimer = new Stopwatch();
+//			blinkTimer.Start();
 		}
 
 		public void Update(GazeData frame)
@@ -88,16 +93,16 @@ namespace Assets.Scripts
 
 					if(left == null && right == null)
 					{
-						if(!time.IsRunning)
+						if(!blinkTimer.IsRunning)
 						{
-							time.Start();	
+							blinkTimer.Start();	
 						}
 					}
 					
 					if(left != null && right != null)
 					{
-						long t = time.ElapsedMilliseconds;
-						if(time.IsRunning)
+						long t = blinkTimer.ElapsedMilliseconds;
+						if(blinkTimer.IsRunning)
 						{
 //							closeTime = time.ElapsedMilliseconds;
 							if(t > 5 && t < 500)
@@ -105,11 +110,23 @@ namespace Assets.Scripts
 								closeTime = t;
 								blinkCount++;
 							}
-							time.Reset();
+							blinkTimer.Reset();
 						}
 					}
 
 					_isFixating = gd.IsFixated;
+					if(!gd.IsFixated && fixationTimer.IsRunning)
+					{
+						lastFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
+						fixationTimer.Reset();
+					}
+					else if(!fixationTimer.IsRunning && gd.IsFixated)
+					{
+						fixationTimer.Start();
+					}
+
+					currentFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
+
 				}
 
 				// if gaze coordinates available, cache both raw and smoothed
@@ -244,7 +261,7 @@ namespace Assets.Scripts
 
 		public bool timeIsRunning()
 		{
-			return time.IsRunning;
+			return blinkTimer.IsRunning;
 		}
 
 		public bool HasClosed
@@ -271,6 +288,14 @@ namespace Assets.Scripts
 //			timeSinceLastValidEyeRight = Time.time - timeAtLastValidEyeRight;
 //			return timeSinceLastValidEyeRight;
 //		}
+
+		public float CurrentFixationTime
+		{
+			get
+			{
+				return currentFixationTime;
+			}
+		}
 	}
 
 	class FixedSizeQueue<T> : Queue<T>
