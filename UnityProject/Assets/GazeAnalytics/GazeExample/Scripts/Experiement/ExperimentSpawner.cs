@@ -140,17 +140,25 @@ public class ExperimentSpawner : MonoBehaviour
 			targets[i].localScale = Vector3.one / difficulty;
 			targets[i].gameObject.SetActive(true);
 		}
-		while(elapsedTime < runtime && isLerping)
+		while(elapsedTime < runtime)
 		{
 			for(int i = 0; i < targets.Length; i++)
 			{
-				Color col = targets[i].GetChild(0).renderer.material.color;
-				Color endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
-				targets[i].GetChild(0).renderer.material.color = Color.Lerp(col, endCol, elapsedTime * speed / difficulty * 0.001f);
+				Color c = targets[i].GetChild(0).renderer.material.color;
+				Vector3 col = new Vector3(c.r, c.g, c.b);
+				Vector3 endCol = new Vector3(targetColors.ToArray()[i].r, targetColors.ToArray()[i].g, targetColors.ToArray()[i].b);
+//				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
+				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed * 0.01f / Mathf.Pow(2f,difficulty));
+				targets[i].GetChild(0).renderer.material.color = new Color(col.x, col.y, col.z);
 				if(endCol == col)
 				{
-					isLerping = false;
-					Debug.Log("sup");
+					for(int j = 0; j < targets.Length; j++)
+					{
+						targets[j].GetChild(0).renderer.material.color = backgroundColor;
+						targets[j].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
+						targets[j].localScale = Vector3.one / difficulty;
+						targets[j].gameObject.SetActive(true);
+					}
 				}
 			}
 			elapsedTime += Time.deltaTime;

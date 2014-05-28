@@ -81,20 +81,6 @@ public class GazeMapData : MonoBehaviour
 		{
 			CreateSaveFile();
 		}
-		y += btnHeight + padding;
-		bool showProfiler = false;
-		if(GUI.Toggle(new Rect(x, y, 170, 20), showProfiler, "Show Data Collection"))
-		{
-			y += btnHeight + padding;
-			//TODO: Data point count
-			GUI.TextArea(new Rect(x, y, 150, 20), "");
-			y += btnHeight + padding;
-			//TODO: add profiling
-			GUI.TextArea(new Rect(x, y, 150, 20), "");
-			y += btnHeight + padding;
-			//TODO: add profiling
-			GUI.TextArea(new Rect(x, y, 150, 20), "");
-		}
 	}
 
 	//Render 3D GazeMap
@@ -175,19 +161,10 @@ public class GazeMapData : MonoBehaviour
 			style.alignment = TextAnchor.MiddleCenter;
 			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
 		}
-		//TODO:
 		/*
-		 * Save asset at savepath
-		 * Get asset save path
-		 * Load with Resources.Load
-		 * Delete asset after use
-		 * 
-		 * 
+		 * Note to self:
+		 * Asset prefab path selection is located in the editor class
 		 */
-		
-//		Graphics.DrawMesh();
-
-
 	}
 
 	public void CreateSaveFile()

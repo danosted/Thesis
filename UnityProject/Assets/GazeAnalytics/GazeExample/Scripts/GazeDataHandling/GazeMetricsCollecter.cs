@@ -37,27 +37,16 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       gazeCalculator.CurrentFixationLength,
 			                                       gazeCalculator.GetCurrentTargetObjectPath());
-//			yield return new WaitForSeconds(timeBetweenDataCollects);
-//			GazeMetricEvents.Instance.NewGazeEvent("WhenShitHitsTheFan2", 
-//			                                       pos, 
-//			                                       gazeCalculator.GetCurrentHitPosition(), 
-//			                                       gazeCalculator.GetCurrentTargetName(), 
-//			                                       gazeCalculator.GetCurrentGazeRay(), 
-//			                                       10f, 
-//			                                       0f, 
-//			                                       0f, 
-//			                                       0f, 
-//			                                       0f,
-//			                                       "");
+			Debug.Log (Application.targetFrameRate);
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
 	}
 
-	private void OnGazeObjectHit(Object obj)
+	private void OnGazeObjectHit(Transform hit)
 	{
-		Transform hit = (Transform) obj;
-		if(hit.tag.Equals("ExperimentTarget") && !hits.Contains(hit));
+		if(hit.tag == "ExperimentTarget" && !hits.Contains(hit))
 		{
+			Debug.Log((hit.tag == "ExperimentTarget"), hit.gameObject);
 			hits.Add(hit);
 			GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 		}

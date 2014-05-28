@@ -9,7 +9,7 @@ using UnityEditor;
 public class GazeCalculator : MonoBehaviour
 {
 
-	public delegate void OnGazeObjectHitDelegate(Object obj);
+	public delegate void OnGazeObjectHitDelegate(Transform hit);
 	public event OnGazeObjectHitDelegate OnGazeObjectHit;
 
 	[SerializeField]

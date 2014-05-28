@@ -1,17 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\GazeExample\Scripts\Experiement\ExperimentSpawner.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs">
     <Files>
-      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Experiement\ExperimentSpawner.cs" Line="214" Column="2" />
-      <File FileName="UnityProject.sln" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Experiement\ExperimentSpawner.cs" Line="152" Column="24" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="109" Column="31" />
+      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Experiement\ExperimentSpawner.cs" Line="151" Column="72" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="193" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerDataValidator.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="56" Column="38" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="264" Column="39" />
+      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="40" Column="44" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="167" Column="6" />
       <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Character&amp;Camera\CalibCamera.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="77" Column="28" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="144" Column="84" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
