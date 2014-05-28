@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GazeMetricsCollecter : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class GazeMetricsCollecter : MonoBehaviour
 	private ExperimentSpawner experiment;
 
 	private GazeCalculator gazeCalculator;
+
+	private HashSet<Transform> hits = new HashSet<Transform>();
 
 	void Start()
 	{
@@ -52,6 +55,11 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private void OnGazeObjectHit(Object obj)
 	{
-		GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
+		Transform hit = (Transform) obj;
+		if(hit.tag.Equals("ExperimentTarget") && !hits.Contains(hit));
+		{
+			hits.Add(hit);
+			GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
+		}
 	}
 }

@@ -32,6 +32,8 @@ public class ExperimentSpawner : MonoBehaviour
 	[SerializeField]
 	private Transform
 		background;
+	[SerializeField]
+	private GazeCalculator gazeCalculator;
 
 	private bool canRun;
 	private bool isRunning;
@@ -90,6 +92,11 @@ public class ExperimentSpawner : MonoBehaviour
 					StopAllCoroutines();
 					for(int i = 0; i < targets.Length; i++)
 					{
+						if(!targets[i])
+						{
+							targets[i] = Instantiate(targets[i]) as Transform;
+							targets[i].parent = transform;
+						}
 						targets[i].gameObject.SetActive(false);
 					}
 					canRun = true;
@@ -125,6 +132,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private IEnumerator RunContrastExperimentFor(float runtime, int difficulty)
 	{
 		elapsedTime = 0f;
+		bool isLerping = true;
 		for(int i = 0; i < targets.Length; i++)
 		{
 			targets[i].GetChild(0).renderer.material.color = backgroundColor;
@@ -132,18 +140,22 @@ public class ExperimentSpawner : MonoBehaviour
 			targets[i].localScale = Vector3.one / difficulty;
 			targets[i].gameObject.SetActive(true);
 		}
-		while(elapsedTime < runtime)
+		while(elapsedTime < runtime && isLerping)
 		{
 			for(int i = 0; i < targets.Length; i++)
 			{
 				Color col = targets[i].GetChild(0).renderer.material.color;
-				targets[i].GetChild(0).renderer.material.color = Color.Lerp(col, targetColors.ToArray()[i], elapsedTime * speed / difficulty * 0.001f);
-				Debug.Log(col);
+				Color endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
+				targets[i].GetChild(0).renderer.material.color = Color.Lerp(col, endCol, elapsedTime * speed / difficulty * 0.001f);
+				if(endCol == col)
+				{
+					isLerping = false;
+					Debug.Log("sup");
+				}
 			}
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
-
 	}
 
 	private IEnumerator RunSpeedExperimentFor(float runtime, int targetIndex, int difficulty)
@@ -178,6 +190,11 @@ public class ExperimentSpawner : MonoBehaviour
 			yield return null;
 		}
 		target.gameObject.SetActive(false);
+	}
+
+	private void OnTargetHit()
+	{
+
 	}
 
 	private Vector3 GetRandomVerticalPosition(Vector3 point)

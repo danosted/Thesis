@@ -35,6 +35,20 @@ public class GazeMapData : MonoBehaviour
 	[SerializeField]
 	private Material
 		meshMaterial;
+	[SerializeField]
+	private bool isShowingGazeEvents;
+	[SerializeField]
+	private bool isShowingPupilEvents;
+	[SerializeField]
+	private bool isShowingBlinkMap;
+	[SerializeField]
+	private bool isShowingGazeRay;
+	[SerializeField]
+	private bool isShowingObjectName;
+	[SerializeField]
+	private bool isShowingRayOrigin;
+	[SerializeField]
+	private bool isShowingObjectSelectionBox;
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
@@ -44,9 +58,6 @@ public class GazeMapData : MonoBehaviour
 	private float maxHeatMapPointSize = 2f;
 
 	private bool isSaving;
-	private bool isShowingGazeEvents;
-	private bool isShowingPupilEvents;
-	private bool isShowingBlinkMap;
 
 	public float maxPupilSize = 30f;
 	public float minPupilSize = 20f;
@@ -72,8 +83,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		y += btnHeight + padding;
 		bool showProfiler = false;
-		showProfiler = GUI.Toggle(new Rect(x, y, 170, 20), showProfiler, "Show Data Collection");
-		if(showProfiler)
+		if(GUI.Toggle(new Rect(x, y, 170, 20), showProfiler, "Show Data Collection"))
 		{
 			y += btnHeight + padding;
 			//TODO: Data point count
@@ -135,8 +145,11 @@ public class GazeMapData : MonoBehaviour
 	private void DrawGazeEvent(GazeEvent e, Vector3 nextSaccadePoint, int fileindex, int eventindex)
 	{
 		//Gaze Ray
-		Gizmos.color = eventGazeRayColors.Count > 0 ? eventGazeRayColors.ToArray()[fileindex] : Color.cyan;
-		Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
+		if(isShowingGazeRay)
+		{
+			Gizmos.color = eventGazeRayColors.Count > 0 ? eventGazeRayColors.ToArray()[fileindex] : Color.cyan;
+			Gizmos.DrawLine(e.eventOrigin, e.eventHitPoint);
+		}
 		//Saccade Ray
 		if(nextSaccadePoint != e.eventHitPoint)
 		{
@@ -147,16 +160,21 @@ public class GazeMapData : MonoBehaviour
 		Handles.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
 		Handles.DrawSolidDisc(e.eventHitPoint, (Camera.current.transform.position - e.eventHitPoint).normalized, gazeRayHitSphereSize + (0.01f * e.fixationLength));
 		//Event origin color
-		Gizmos.color = eventOriginColors.Count > 0 ? eventOriginColors.ToArray()[fileindex] : Color.blue;
-		Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
+		if(!isShowingPupilEvents && isShowingRayOrigin)
+		{
+			Gizmos.color = eventOriginColors.Count > 0 ? eventOriginColors.ToArray()[fileindex] : Color.blue;
+			Gizmos.DrawCube(e.eventOrigin, Vector3.one * characterCubeSize);
+		}
 		//index of event
 		style.alignment = TextAnchor.MiddleCenter;
 		Handles.color = Color.black;
 		Handles.Label(e.eventHitPoint, (eventindex + 1).ToString(), style);
 		//Name of object that was hit
-		style.alignment = TextAnchor.MiddleCenter;
-		Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
-
+		if(isShowingObjectName)
+		{
+			style.alignment = TextAnchor.MiddleCenter;
+			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
+		}
 		//TODO:
 		/*
 		 * Save asset at savepath
@@ -170,21 +188,6 @@ public class GazeMapData : MonoBehaviour
 //		Graphics.DrawMesh();
 
 
-	}
-
-	public void ToggleHitmap()
-	{
-		isShowingGazeEvents = !isShowingGazeEvents;
-	}
-
-	public void TogglePupilMap()
-	{
-		isShowingPupilEvents = !isShowingPupilEvents;
-	}
-
-	public void ToggleBlinkMap()
-	{
-		isShowingBlinkMap = !isShowingBlinkMap;
 	}
 
 	public void CreateSaveFile()
@@ -253,6 +256,12 @@ public class GazeMapData : MonoBehaviour
 	public void LoadFilesOnDisk()
 	{
 		isShowingGazeEvents = false;
+		isShowingPupilEvents = false;
+		isShowingBlinkMap = false;
+		isShowingGazeRay = false;
+		isShowingObjectName = false;
+		isShowingRayOrigin = false;
+		isShowingObjectSelectionBox = false;
 		if(savedFilenames.Count == 0 || filenameToGazeEvent.Count == 0)
 		{
 			eventOriginColors.Clear();
@@ -273,6 +282,13 @@ public class GazeMapData : MonoBehaviour
 	
 	public void ClearLoadedData()
 	{
+		isShowingGazeEvents = false;
+		isShowingPupilEvents = false;
+		isShowingBlinkMap = false;
+		isShowingGazeRay = false;
+		isShowingObjectName = false;
+		isShowingRayOrigin = false;
+		isShowingObjectSelectionBox = false;
 		gazeDataList.Clear();
 		filenameToGazeEvent.Clear();
 		dataToCompare.Clear();
@@ -387,6 +403,12 @@ public class GazeMapData : MonoBehaviour
 		get
 		{
 			return isShowingBlinkMap;
+		}
+	}
+
+	public bool IsShowingObjectSelectionBox {
+		get {
+			return isShowingObjectSelectionBox;
 		}
 	}
 }

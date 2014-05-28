@@ -106,7 +106,10 @@ public class GazeCalculator : MonoBehaviour
 			{
 				currentTarget = hit.transform;
 				gazeHitPoint = hit.point;
-				OnGazeObjectHit(hit.transform);
+				if(OnGazeObjectHit != null)
+				{
+					OnGazeObjectHit(hit.transform);
+				}
 				isHit = true;
 			}
 			else
