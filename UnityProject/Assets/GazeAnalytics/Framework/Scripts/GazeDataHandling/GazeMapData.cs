@@ -371,7 +371,7 @@ public class GazeMapData : MonoBehaviour
 		dataToCompare.Remove(filename);
 	}
 
-	public void ProcessGazeData(string filename)
+	public void ProcessGazeData()
 	{
 		foreach(string filename in dataToCompare)
 		{
