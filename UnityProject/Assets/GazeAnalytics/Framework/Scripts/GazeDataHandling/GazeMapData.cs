@@ -152,7 +152,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		//Hit point color
 		Handles.color = eventHitPointColors.Count > 0 ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		Handles.DrawSolidDisc(e.eventHitPoint, (Camera.current.transform.position - e.eventHitPoint).normalized, gazeRayHitSphereSize + (0.01f * e.fixationLength));
+		Handles.DrawSolidDisc(e.eventHitPoint, (Camera.current.transform.position - e.eventHitPoint).normalized, gazeRayHitSphereSize + (0.001f * e.fixationLength));
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
