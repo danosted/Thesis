@@ -371,6 +371,18 @@ public class GazeMapData : MonoBehaviour
 		dataToCompare.Remove(filename);
 	}
 
+	public void ProcessGazeData(string filename)
+	{
+		foreach(string filename in dataToCompare)
+		{
+			List<GazeEvent> ge = filenameToGazeEvent[filename];
+			ge = ProcessGazeData(ge, 10);
+			string newProcFilename = "processed" + filename;
+			savedFilenames.Add(newProcFilename);
+			filenameToGazeEvent.Add(newProcFilename, ge);
+		}
+	}
+	
 	public void LoadFilesOnDisk()
 	{
 		isShowingGazeEvents = false;
@@ -390,19 +402,14 @@ public class GazeMapData : MonoBehaviour
 			int i = 0;
 			foreach(string filename in savedFilenames)
 			{
-				//Test start
-				List<GazeEvent> ge = Serializer.Instance.DeserializeHitmap(filename);
-				ge = ProcessGazeData(ge, 10);
-				filenameToGazeEvent.Add(filename, ge);
-				//test end
-//				filenameToGazeEvent.Add(filename, Serializer.Instance.DeserializeHitmap(filename));
+				filenameToGazeEvent.Add(filename, Serializer.Instance.DeserializeHitmap(filename));
 				eventOriginColors.Add(Color.blue);
 				eventGazeRayColors.Add(Color.cyan);
 				eventHitPointColors.Add(Color.yellow);
 			}
 		}
 	}
-	
+
 	public void ClearLoadedData()
 	{
 		isShowingGazeEvents = false;
@@ -431,7 +438,6 @@ public class GazeMapData : MonoBehaviour
 		else
 		{
 			Debug.Log(filename + " not found.");
-			Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
 		}
 	}
 

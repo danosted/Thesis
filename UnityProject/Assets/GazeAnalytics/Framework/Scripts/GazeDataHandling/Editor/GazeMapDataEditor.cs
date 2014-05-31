@@ -70,6 +70,17 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.EndHorizontal();
 
 		EditorGUILayout.BeginHorizontal();
+		if(GUILayout.Button("Process data", GUILayout.MaxWidth(100f)))
+		{
+			try
+			{
+				gazeMapData.ProcessGazeData();
+			}
+			catch(System.Exception e)
+			{
+				Debug.Log(e);
+			}
+		}
 		if(GUILayout.Button("Clear data", GUILayout.MaxWidth(100f)))
 		{
 			try
@@ -173,7 +184,7 @@ public class GazeMapDataEditor : Editor
 		Rect window = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
 		if(showWarningWindow)
 		{
-		   GUI.Window(0, window, WarningWindow, "Are you sure?");
+			GUI.Window(0, window, WarningWindow, "Are you sure?");
 		}
 		if(deleteAllFiles)
 		{
