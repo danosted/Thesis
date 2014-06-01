@@ -244,10 +244,8 @@ public class GazeMapData : MonoBehaviour
 			{
 				ClusterPoint moid = medoids[i];
 				ClusterPoint nonmoid = nonMedoidPoints[j];
-				nonMedoidPoints.Remove(nonmoid);
-				medoids.Remove(moid);
-				nonMedoidPoints.Add(moid);
-				medoids.Add(nonmoid);
+				nonMedoidPoints[j] = moid;
+				medoids[i] = nonmoid;
 				//index = pointIndex, value = medoid gaze index
 				int[] point2closestMedoid = new int[nonMedoidPoints.Count];
 				//Assign to clusters based on the smallest distance
@@ -280,10 +278,8 @@ public class GazeMapData : MonoBehaviour
 				}
 				else
 				{
-					nonMedoidPoints.Remove(moid);
-					medoids.Remove(nonmoid);
-					nonMedoidPoints.Add(nonmoid);
-					medoids.Add(moid);
+					nonMedoidPoints[j] = nonmoid;
+					medoids[i] = moid;
 				}
 			}
 		}
