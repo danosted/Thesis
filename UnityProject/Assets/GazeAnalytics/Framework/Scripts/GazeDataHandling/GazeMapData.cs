@@ -181,21 +181,123 @@ public class GazeMapData : MonoBehaviour
 		public Vector3 position;
 	}
 
-	private List<GazeEvent> ProcessGazeData(List<GazeEvent> rawGazeEvents, int k)
+	private List<GazeEvent> ProcessGazeData(List<GazeEvent> rawGazeEvents, float thresh)
 	{
-		//k-medoids algorithm
-		//preprocessing
-		if(k > rawGazeEvents.Count)
+
+		//k-medoids algorithm adaptation
+
+		/* preprocessing:
+		 * Convert rawGazeEvents to clusterpoints for simplicity
+		 * Find the different clusters by looking at the ditance between points.
+		 * If two points are too far away it means that the next point belongs to
+		 * another cluster
+		 */
+		List<ClusterPoint> allClusterPoints = new List<ClusterPoint>();
+		for(int i = 0; i < rawGazeEvents.Count; i++)
 		{
-			k = rawGazeEvents.Count / 2;
+			ClusterPoint point;
+			point.gazeIndex = i;
+			point.position = rawGazeEvents[i].eventHitPoint;
+			allClusterPoints.Add(point);
 		}
+		List<int> clusterSteps = new List<int>();
+		for(int i = 0; i < rawGazeEvents.Count-1; i++)
+		{
+			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > thresh)
+			{
+				clusterSteps.Add(i);
+				Debug.Log("clusterstep: " + i);
+			}
+		}
+		Debug.Log(clusterSteps.Count);
+		ClusterPoint[] medoids = new ClusterPoint[clusterSteps.Count];
+		int[] lastPoint2closestMedoid = new int[rawGazeEvents.Count - clusterSteps.Count];
+		int indexCorrection = 0;
+		for(int j = 0; j < clusterSteps.Count; j++)
+		{
+			List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
+			ClusterPoint medoid;
+			ClusterPoint nonmedoid;
+			startIndex = j > 0 ? clusterSteps[j - 1] : 0;
+			Debug.Log("startInd: " + startIndex);
+			for(int i = startIndex; i < clusterSteps[j]; i++)
+			{
+				nonMedoidPoints.Add(allClusterPoints[i]);
+
+			}
+			Debug.Log("j: " + j + ", clusterstep: " + clusterSteps[j]);
+			Debug.Log("nonMedoidPoints.Count: " + nonMedoidPoints.Count);
+			if(nonMedoidPoints.Count > 0)
+			{
+				if(nonMedoidPoints.Count == 1)
+				{
+					indexCorrection++;
+				}
+				int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
+				medoid = nonMedoidPoints[rindex];
+				nonMedoidPoints.RemoveAt(rindex);
+				float minCost = float.MaxValue;
+				float lastCost = float.MaxValue;
+				bool first = true;
+				for(int x = 0; x < nonMedoidPoints.Count; x++)
+				{
+					if(first)
+					{
+						first = false;
+					}
+					else
+					{
+						nonmedoid = nonMedoidPoints[x];
+						nonMedoidPoints[x] = medoid;
+						medoid = nonmedoid;
+					}
+					//index = pointIndex, value = medoid gaze index
+					int[] point2closestMedoid = new int[nonMedoidPoints.Count];
+					float[] costs = new float[nonMedoidPoints.Count];
+					//Assign to clusters based on the smallest distance
+					for(int c = 0; c < nonMedoidPoints.Count; c++)
+					{
+						float curCost = Vector3.Distance(medoid.position, nonMedoidPoints[c].position);
+						if(curCost <= minCost)
+						{
+							point2closestMedoid[c] = medoid.gazeIndex;
+							minCost = curCost;
+						}
+						costs[c] = minCost;
+					}
+					//Calculate total cost
+					float totalCost = 0f;
+					for(int c = 0; c < point2closestMedoid.Length; c++)
+					{
+						totalCost += costs[c];
+					}
+					if(totalCost < lastCost)
+					{
+						lastCost = totalCost;
+						for(int y = 0; y < point2closestMedoid.Length; y++)
+						{
+							Debug.Log("lastPoint2closestMedoid: " + lastPoint2closestMedoid.Length + ", startIndex+y: " + (startIndex + y - indexCorrection));
+							lastPoint2closestMedoid[startIndex + y - indexCorrection] = point2closestMedoid[y];
+						}
+//					Debug.Log("medoids: " + medoids.Length + ", j; " + j);
+						medoids[j] = medoid;
+					}
+					else
+					{
+						ClusterPoint tempMedoid = nonMedoidPoints[x];
+						nonMedoidPoints[x] = medoid;
+						medoid = tempMedoid;
+					}
+				}
+			}
+		}
+
+		/*
 		List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
 		List<ClusterPoint> medoids = new List<ClusterPoint>(k);
-		float lastCost = 0f;
-		int i = 0;
+
 		int debugSteps = 0;
-		bool hasLooped = false, hasChanged = false;
-		for(i = 0; i < rawGazeEvents.Count; i++)
+		for(int i = 0; i < rawGazeEvents.Count; i++)
 		{
 			ClusterPoint point;
 			point.gazeIndex = i;
@@ -203,9 +305,9 @@ public class GazeMapData : MonoBehaviour
 			nonMedoidPoints.Add(point);
 		}
 		//Step 1:
-		//initialize
-		//random select centers
-		for(i = 0; i < k; i++)
+		//
+		//random select a center 
+		for(int i = 0; i < k; i++)
 		{
 			int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
 			medoids.Add(nonMedoidPoints[rindex]);
@@ -232,13 +334,14 @@ public class GazeMapData : MonoBehaviour
 //			Debug.Log(c + ", " + minCost);
 			Debug.Log("p: " + nonMedoidPoints[c].gazeIndex + ", m: " + lastPoint2closestMedoid[c]);
 		}
-		//Calculate total cost
+		//Calculate initial total cost
+		float lastCost = 0f;
 		for(int c = 0; c < lastPoint2closestMedoid.Length; c++)
 		{
 			lastCost += costs[c];
 		}
 		//core loop
-		for(i = 0; i < medoids.Count; i++)
+		for(int i = 0; i < medoids.Count; i++)
 		{
 			for(int j = 0; j < nonMedoidPoints.Count; j++)
 			{
@@ -283,20 +386,23 @@ public class GazeMapData : MonoBehaviour
 				}
 			}
 		}
+		*/
+
+
 		//post processing
 		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o => o.gazeIndex).ToList();
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
-		for(i = 0; i < medoids.Count; i++)
+		for(int i = 0; i < medoids.Length; i++)
 		{
 			GazeEvent cluster2single = new GazeEvent();
 			cluster2single.eventHitPoint = sortedMedoids[i].position;
-			for(int j = 0; j < nonMedoidPoints.Count; j++)
+			for(int j = 0; j < lastPoint2closestMedoid.Length; j++)
 			{
 				if(lastPoint2closestMedoid[j] == medoids[i].gazeIndex)
 				{
 					//Mouse debug:
-//					cluster2single.fixationLength += 0.5f;
-					cluster2single.fixationLength += rawGazeEvents[nonMedoidPoints[j].gazeIndex].fixationLength;
+					cluster2single.fixationLength += 0.5f;
+//					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
 				}
 			}
 			processedEvents.Add(cluster2single);
@@ -372,7 +478,7 @@ public class GazeMapData : MonoBehaviour
 		foreach(string filename in dataToCompare)
 		{
 			List<GazeEvent> ge = filenameToGazeEvent[filename];
-			ge = ProcessGazeData(ge, 10);
+			ge = ProcessGazeData(ge, 0.2f);
 			string newProcFilename = "processed" + filename;
 			savedFilenames.Add(newProcFilename);
 			filenameToGazeEvent.Add(newProcFilename, ge);
