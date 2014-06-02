@@ -190,7 +190,6 @@ public class GazeCalculator : MonoBehaviour
 			else
 			{
 				path = AssetDatabase.GetAssetPath(parentObject);
-				Debug.Log(path);
 				if(path != "")
 				{
 					return path;
@@ -267,14 +266,18 @@ public class GazeCalculator : MonoBehaviour
 		}
 	}
 
-	public float CurrentFixationLength {
-		get {
+	public float CurrentFixationLength
+	{
+		get
+		{
 			return currentFixationLength;
 		}
 	}
 
-	public float LastFixationLength {
-		get {
+	public float LastFixationLength
+	{
+		get
+		{
 			return lastFixationLength;
 		}
 	}

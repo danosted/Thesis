@@ -8,7 +8,8 @@ public class GazeMetricsCollecter : MonoBehaviour
 	private float
 		timeBetweenDataCollects = 0.5f;
 	[SerializeField]
-	private ExperimentSpawner experiment;
+	private ExperimentSpawner
+		experiment;
 
 	private GazeCalculator gazeCalculator;
 
@@ -37,7 +38,6 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       gazeCalculator.CurrentFixationLength,
 			                                       gazeCalculator.GetCurrentTargetObjectPath());
-			Debug.Log (Application.targetFrameRate);
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
 	}

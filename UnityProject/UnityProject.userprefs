@@ -1,12 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs">
     <Files>
       <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Experiement\ExperimentSpawner.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerDataValidator.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="1" Column="1" />
+      <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="40" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="235" Column="6" />
       <File FileName="Assets\GazeAnalytics\GazeExample\Scripts\Character&amp;Camera\CalibCamera.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="1" Column="1" />
