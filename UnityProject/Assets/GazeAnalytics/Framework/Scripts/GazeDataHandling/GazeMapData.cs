@@ -138,6 +138,7 @@ public class GazeMapData : MonoBehaviour
 
 	private void DrawGazeEvent(GazeEvent e, Vector3 nextSaccadePoint, int fileindex, int eventindex)
 	{
+		Vector3 camDir = (Camera.current.transform.position - e.eventHitPoint).normalized;
 		//Gaze Ray
 		if(isShowingGazeRay)
 		{
@@ -150,9 +151,9 @@ public class GazeMapData : MonoBehaviour
 			Gizmos.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
 			Gizmos.DrawLine(e.eventHitPoint, nextSaccadePoint);
 		}
-		//Hit point color
+		//HitPoint
 		Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		Handles.DrawSolidDisc(e.eventHitPoint, (Camera.current.transform.position - e.eventHitPoint).normalized, gazeRayHitSphereSize + (0.001f * e.fixationLength));
+		Handles.DrawSolidDisc(e.eventHitPoint, camDir, gazeRayHitSphereSize + (0.001f * e.fixationLength));
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
@@ -161,12 +162,14 @@ public class GazeMapData : MonoBehaviour
 		}
 		//index of event
 		style.alignment = TextAnchor.MiddleCenter;
+		style.fontStyle = FontStyle.Bold;
+		style.fontSize = 10 + (int)(0.02f * e.fixationLength);
+		string eventIndexString = (eventindex + 1).ToString();
 		Handles.color = Color.black;
-		Handles.Label(e.eventHitPoint, (eventindex + 1).ToString(), style);
+		Handles.Label(e.eventHitPoint, eventIndexString , style);
 		//Name of object that was hit
 		if(isShowingObjectName)
 		{
-			style.alignment = TextAnchor.MiddleCenter;
 			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
 		}
 		/*
@@ -180,7 +183,7 @@ public class GazeMapData : MonoBehaviour
 		foreach(string filename in dataToCompare)
 		{
 			List<GazeEvent> geIn = filenameToGazeEvent[filename];
-			List<GazeEvent> geOut = ProcessGazeData(geIn, 0.3f);
+			List<GazeEvent> geOut = ProcessGazeData(geIn, 1f);
 			string newProcFilename = "processed_" + filename;
 			savedFilenames.Add(newProcFilename);
 			filenameToGazeEvent.Add(newProcFilename, geOut);
