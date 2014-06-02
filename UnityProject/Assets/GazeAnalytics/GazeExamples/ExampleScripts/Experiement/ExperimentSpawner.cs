@@ -5,15 +5,21 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class ExperimentSpawner : MonoBehaviour
 {
+	public delegate void OnExperimentStartedDelegate();
+	public event OnExperimentStartedDelegate OnExperimentStarted;
+
 	[SerializeField]
 	private float
 		experiementLength = 60f;
 	[SerializeField]
-	private bool contrastExperiment = true;
+	private bool
+		contrastExperiment = true;
 	[SerializeField]
-	private bool sizeExperiment = false;
+	private bool
+		sizeExperiment = false;
 	[SerializeField]
-	private bool speedExperiment = false;
+	private bool
+		speedExperiment = false;
 	[SerializeField]
 	private float
 		speed = 1f;
@@ -33,7 +39,8 @@ public class ExperimentSpawner : MonoBehaviour
 	private Transform
 		background;
 	[SerializeField]
-	private GazeCalculator gazeCalculator;
+	private GazeCalculator
+		gazeCalculator;
 
 	private bool canRun;
 	private bool isRunning;
@@ -112,6 +119,10 @@ public class ExperimentSpawner : MonoBehaviour
 		{
 			for(int i = 0; i < experimentSteps; i++)
 			{
+				if(OnExperimentStarted != null)
+				{
+					OnExperimentStarted();
+				}
 				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, i + 1));
 			}
 			canRun = true;
@@ -137,7 +148,7 @@ public class ExperimentSpawner : MonoBehaviour
 		{
 			targets[i].GetChild(0).renderer.material.color = backgroundColor;
 			targets[i].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
-			targets[i].localScale = Vector3.one / difficulty;
+//			targets[i].localScale = Vector3.one / difficulty;
 			targets[i].gameObject.SetActive(true);
 		}
 		while(elapsedTime < runtime)
@@ -148,9 +159,9 @@ public class ExperimentSpawner : MonoBehaviour
 				Vector3 col = new Vector3(c.r, c.g, c.b);
 				Vector3 endCol = new Vector3(targetColors.ToArray()[i].r, targetColors.ToArray()[i].g, targetColors.ToArray()[i].b);
 //				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
-				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed * 0.01f / Mathf.Pow(2f,difficulty));
+				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed / Mathf.Pow(4f, difficulty));
 				targets[i].GetChild(0).renderer.material.color = new Color(col.x, col.y, col.z);
-				if(endCol == col)
+				if(Vector3.Distance(endCol, col) < 0.1f)
 				{
 					for(int j = 0; j < targets.Length; j++)
 					{
@@ -215,8 +226,10 @@ public class ExperimentSpawner : MonoBehaviour
 		return new Vector3(point.x, point.y * Random.value, point.z);
 	}
 
-	public float ElapsedTime {
-		get {
+	public float ElapsedTime
+	{
+		get
+		{
 			return elapsedTime;
 		}
 	}

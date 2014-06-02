@@ -42,11 +42,15 @@ public class GazeMetricsCollecter : MonoBehaviour
 		}
 	}
 
+	private void OnExperimentStarted()
+	{
+		hits.Clear();
+	}
+
 	private void OnGazeObjectHit(Transform hit)
 	{
 		if(hit.tag == "ExperimentTarget" && !hits.Contains(hit))
 		{
-			Debug.Log((hit.tag == "ExperimentTarget"), hit.gameObject);
 			hits.Add(hit);
 			GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 		}
