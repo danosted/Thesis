@@ -408,6 +408,7 @@ public class GazeMapData : MonoBehaviour
 		{
 			GazeEvent cluster2single = new GazeEvent();
 			cluster2single.eventHitPoint = rawGazeEvents[medoids[i].gazeIndex].eventHitPoint;
+			cluster2single.fixationLength = rawGazeEvents[medoids[i].gazeIndex].fixationLength;
 			for(int j = 0; j < lastPoint2closestMedoid.Length; j++)
 			{
 				if(lastPoint2closestMedoid[j] == medoids[i].gazeIndex)
