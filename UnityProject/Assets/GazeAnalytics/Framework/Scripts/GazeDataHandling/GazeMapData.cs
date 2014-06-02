@@ -410,8 +410,8 @@ public class GazeMapData : MonoBehaviour
 				if(lastPoint2closestMedoid[j] == medoids[i].gazeIndex)
 				{
 					//Mouse debug:
-					cluster2single.fixationLength += 5f;
-//					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
+//					cluster2single.fixationLength += 5f;
+					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
 				}
 			}
 //			Debug.Log("medoid " + medoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
