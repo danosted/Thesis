@@ -240,7 +240,7 @@ public class GazeMapData : MonoBehaviour
 			{
 				if(nonMedoidPoints.Count == 1)
 				{
-					if(rawGazeEvents[nonMedoidPoints[0]].fixationLength > 0.5f)
+					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > 0.5f)
 					{
 						medoids[j] = nonMedoidPoints[0];
 					}
