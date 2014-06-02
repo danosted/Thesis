@@ -19,6 +19,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
+		experiment.OnExperimentStarted += OnExperimentStarted;
 		StartCoroutine(CollectEyeMetrics());
 	}
 
@@ -51,8 +52,10 @@ public class GazeMetricsCollecter : MonoBehaviour
 	{
 		if(hit.tag == "ExperimentTarget" && !hits.Contains(hit))
 		{
+			int index = experiment.Targets.IndexOf(hit);
+			string material = experiment.TargetMaterials[index].name;
 			hits.Add(hit);
-			GA.API.Design.NewEvent("GazeHitObjectTime", experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
+			GA.API.Design.NewEvent("Hit: " + hit.name + ", material: " + material, experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 		}
 	}
 }

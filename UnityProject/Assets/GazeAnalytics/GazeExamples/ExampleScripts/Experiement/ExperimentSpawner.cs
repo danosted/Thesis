@@ -27,14 +27,14 @@ public class ExperimentSpawner : MonoBehaviour
 	private int
 		experimentSteps = 3;
 	[SerializeField]
-	private List<Color>
-		targetColors = new List<Color>();
+	private List<Material>
+		targetMaterial = new List<Material>();
 	[SerializeField]
 	private Color
 		backgroundColor = Color.grey;
 	[SerializeField]
-	private Transform[]
-		targets;
+	private List<Transform>
+		targets = new List<Transform>();
 	[SerializeField]
 	private Transform
 		background;
@@ -60,7 +60,7 @@ public class ExperimentSpawner : MonoBehaviour
 			}
 			else
 			{
-				for(int i = 0; i < targets.Length; i++)
+				for(int i = 0; i < targets.Count; i++)
 				{
 					targets[i] = Instantiate(targets[i]) as Transform;
 					targets[i].parent = transform;
@@ -97,7 +97,7 @@ public class ExperimentSpawner : MonoBehaviour
 				if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Stop Experiment"))
 				{
 					StopAllCoroutines();
-					for(int i = 0; i < targets.Length; i++)
+					for(int i = 0; i < targets.Count; i++)
 					{
 						if(!targets[i])
 						{
@@ -144,7 +144,7 @@ public class ExperimentSpawner : MonoBehaviour
 	{
 		elapsedTime = 0f;
 		bool isLerping = true;
-		for(int i = 0; i < targets.Length; i++)
+		for(int i = 0; i < targets.Count; i++)
 		{
 			targets[i].GetChild(0).renderer.material.color = backgroundColor;
 			targets[i].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
@@ -153,17 +153,17 @@ public class ExperimentSpawner : MonoBehaviour
 		}
 		while(elapsedTime < runtime)
 		{
-			for(int i = 0; i < targets.Length; i++)
+			for(int i = 0; i < targets.Count; i++)
 			{
 				Color c = targets[i].GetChild(0).renderer.material.color;
 				Vector3 col = new Vector3(c.r, c.g, c.b);
-				Vector3 endCol = new Vector3(targetColors.ToArray()[i].r, targetColors.ToArray()[i].g, targetColors.ToArray()[i].b);
+				Vector3 endCol = new Vector3(targetMaterial.ToArray()[i].color.r, targetMaterial.ToArray()[i].color.g, targetMaterial.ToArray()[i].color.b);
 //				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
 				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed / Mathf.Pow(4f, difficulty));
 				targets[i].GetChild(0).renderer.material.color = new Color(col.x, col.y, col.z);
 				if(Vector3.Distance(endCol, col) < 0.1f)
 				{
-					for(int j = 0; j < targets.Length; j++)
+					for(int j = 0; j < targets.Count; j++)
 					{
 						targets[j].GetChild(0).renderer.material.color = backgroundColor;
 						targets[j].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
@@ -231,6 +231,22 @@ public class ExperimentSpawner : MonoBehaviour
 		get
 		{
 			return elapsedTime;
+		}
+	}
+
+	public List<Transform> Targets
+	{
+		get
+		{
+			return targets;
+		}
+	}
+
+	public List<Material> TargetMaterials
+	{
+		get
+		{
+			return targetMaterial;
 		}
 	}
 }
