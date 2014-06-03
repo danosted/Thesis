@@ -14,16 +14,8 @@ public class GazeMapData : MonoBehaviour
 	
 	[SerializeField]
 	private List<string>
-		dataToCompare;
-	[SerializeField]
-	private Color
-		pupilColor = Color.yellow;
-	[SerializeField]
-	private string
-		staticfilename = "static.xml";
-	[SerializeField]
-	private List<string>
-		savedFilenames = new List<string>();
+		loadedFiles;
+
 	[SerializeField]
 	private List<Color>
 		eventOriginColors = new List<Color>();
@@ -34,8 +26,16 @@ public class GazeMapData : MonoBehaviour
 	private List<Color>
 		eventHitPointColors = new List<Color>();
 	[SerializeField]
-	private Material
-		meshMaterial;
+	private Color
+		pupilColor = Color.yellow;
+
+	[SerializeField]
+	private float
+		fixationDistanceThreshold = 0.1f;
+	[SerializeField]
+	private float
+		fixationLengthThreshold = 0.5f;
+
 	[SerializeField]
 	private bool
 		isShowingGazeEvents;
@@ -60,6 +60,7 @@ public class GazeMapData : MonoBehaviour
 
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
+	private List<string> savedFilenames = new List<string>();
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.1f;
@@ -67,15 +68,19 @@ public class GazeMapData : MonoBehaviour
 
 	private bool isSaving;
 
+	private int startIndex = 0;
+	private int endIndex = 0;
+	
+	private GUIStyle style = new GUIStyle();
+
+	#region publicEditorFields
+	public float maxFixationSize = 0.1f;
+	public float minFixationSize = 1f;
 	public float maxPupilSize = 30f;
 	public float minPupilSize = 20f;
 	public float minGazeDataIndex = 0f;
 	public float maxGazeDataIndex = 1f;
-
-	private int startIndex = 0;
-	private int endIndex = 0;
-
-	private GUIStyle style = new GUIStyle();
+	#endregion
 
 	void OnGUI()
 	{
@@ -96,12 +101,12 @@ public class GazeMapData : MonoBehaviour
 	{
 		if(isShowingGazeEvents || isShowingPupilEvents || isShowingBlinkMap)
 		{
-			for(int fileindex = 0; fileindex < dataToCompare.Count; fileindex++)
+			for(int fileindex = 0; fileindex < loadedFiles.Count; fileindex++)
 			{
 				foreach(KeyValuePair<string, List<GazeEvent>> entry in filenameToGazeEvent)
 				{
 					//If filename matches what is selected to be shown in the inspector
-					if(entry.Key == dataToCompare.ToArray()[fileindex])
+					if(entry.Key == loadedFiles.ToArray()[fileindex])
 					{
 						GazeEvent[] gazeArray = entry.Value.ToArray();
 						int i = 0;
@@ -166,7 +171,7 @@ public class GazeMapData : MonoBehaviour
 		style.fontSize = 10 + (int)(0.02f * e.fixationLength);
 		string eventIndexString = (eventindex + 1).ToString();
 		Handles.color = Color.black;
-		Handles.Label(e.eventHitPoint, eventIndexString , style);
+		Handles.Label(e.eventHitPoint, eventIndexString, style);
 		//Name of object that was hit
 		if(isShowingObjectName)
 		{
@@ -178,16 +183,13 @@ public class GazeMapData : MonoBehaviour
 		 */
 	}
 
-	public void ProcessGazeData()
+	public void ProcessGazeData(string filename)
 	{
-		foreach(string filename in dataToCompare)
-		{
-			List<GazeEvent> geIn = filenameToGazeEvent[filename];
-			List<GazeEvent> geOut = ProcessGazeData(geIn, 1f);
-			string newProcFilename = "processed_" + filename;
-			savedFilenames.Add(newProcFilename);
-			filenameToGazeEvent.Add(newProcFilename, geOut);
-		}
+		List<GazeEvent> geIn = filenameToGazeEvent[filename];
+		List<GazeEvent> geOut = ProcessGazeData(geIn);
+		string newProcFilename = "processed_" + filename;
+		savedFilenames.Add(newProcFilename);
+		filenameToGazeEvent.Add(newProcFilename, geOut);
 	}
 
 	private struct ClusterPoint
@@ -195,7 +197,7 @@ public class GazeMapData : MonoBehaviour
 		public int gazeIndex;
 	}
 
-	private List<GazeEvent> ProcessGazeData(List<GazeEvent> rawGazeEvents, float thresh)
+	private List<GazeEvent> ProcessGazeData(List<GazeEvent> rawGazeEvents)
 	{
 
 		//k-medoids algorithm adaptation
@@ -217,7 +219,7 @@ public class GazeMapData : MonoBehaviour
 //		int debugCount = 0;
 		for(int i = 0; i < rawGazeEvents.Count-1; i++)
 		{
-			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > thresh || (i + 1) == rawGazeEvents.Count - 1)
+			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > fixationDistanceThreshold || (i + 1) == rawGazeEvents.Count - 1)
 			{
 				clusterSteps.Add(i + 1);
 //				Debug.Log("clusterstep[" + debugCount + "]: " + i);
@@ -243,7 +245,7 @@ public class GazeMapData : MonoBehaviour
 			{
 				if(nonMedoidPoints.Count == 1)
 				{
-					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > 0.5f)
+					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > fixationLengthThreshold)
 					{
 						medoids[j] = nonMedoidPoints[0];
 					}
@@ -307,105 +309,7 @@ public class GazeMapData : MonoBehaviour
 			}
 		}
 
-		/*
-		List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
-		List<ClusterPoint> medoids = new List<ClusterPoint>(k);
-
-		int debugSteps = 0;
-		for(int i = 0; i < rawGazeEvents.Count; i++)
-		{
-			ClusterPoint point;
-			point.gazeIndex = i;
-			point.position = rawGazeEvents[i].eventHitPoint;
-			nonMedoidPoints.Add(point);
-		}
-		//Step 1:
-		//
-		//random select a center 
-		for(int i = 0; i < k; i++)
-		{
-			int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
-			medoids.Add(nonMedoidPoints[rindex]);
-			nonMedoidPoints.RemoveAt(rindex);
-		}
-		//Step 2:
-		//Calculate distance to associate points to nearest medoid
-		int[] lastPoint2closestMedoid = new int[nonMedoidPoints.Count];
-		float[] costs = new float[nonMedoidPoints.Count];
-		//Assign to clusters based on the smallest distance
-		for(int c = 0; c < nonMedoidPoints.Count; c++)
-		{
-			float minCost = float.MaxValue;
-			for(int r = 0; r < medoids.Count; r++)
-			{
-				float curCost = Vector3.Distance(medoids[r].position, nonMedoidPoints[c].position);
-				if(curCost <= minCost)
-				{
-					lastPoint2closestMedoid[c] = medoids[r].gazeIndex;
-					minCost = curCost;
-				}
-			}
-			costs[c] = minCost;
-//			Debug.Log(c + ", " + minCost);
-			Debug.Log("p: " + nonMedoidPoints[c].gazeIndex + ", m: " + lastPoint2closestMedoid[c]);
-		}
-		//Calculate initial total cost
-		float lastCost = 0f;
-		for(int c = 0; c < lastPoint2closestMedoid.Length; c++)
-		{
-			lastCost += costs[c];
-		}
-		//core loop
-		for(int i = 0; i < medoids.Count; i++)
-		{
-			for(int j = 0; j < nonMedoidPoints.Count; j++)
-			{
-				ClusterPoint moid = medoids[i];
-				ClusterPoint nonmoid = nonMedoidPoints[j];
-				nonMedoidPoints[j] = moid;
-				medoids[i] = nonmoid;
-				//index = pointIndex, value = medoid gaze index
-				int[] point2closestMedoid = new int[nonMedoidPoints.Count];
-				//Assign to clusters based on the smallest distance
-				for(int c = 0; c < nonMedoidPoints.Count; c++)
-				{
-					float minCost = float.MaxValue;
-					for(int r = 0; r < medoids.Count; r++)
-					{
-						float curCost = Vector3.Distance(medoids[r].position, nonMedoidPoints[c].position);
-						if(curCost <= minCost)
-						{
-							point2closestMedoid[c] = medoids[r].gazeIndex;
-							minCost = curCost;
-						}
-					}
-
-
-					costs[c] = minCost;
-				}
-				//Calculate total cost
-				float totalCost = 0f;
-				for(int c = 0; c < point2closestMedoid.Length; c++)
-				{
-					totalCost += costs[c];
-				}
-				if(totalCost < lastCost)
-				{
-					lastCost = totalCost;
-					lastPoint2closestMedoid = point2closestMedoid;
-				}
-				else
-				{
-					nonMedoidPoints[j] = nonmoid;
-					medoids[i] = moid;
-				}
-			}
-		}
-		*/
-
-
 		//post processing
-//		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o => o.gazeIndex).ToList();
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
 		for(int i = 0; i < medoids.Length; i++)
 		{
@@ -446,7 +350,7 @@ public class GazeMapData : MonoBehaviour
 		HashSet<string> eventNames = data.EventNames;
 		try
 		{
-			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
+			savedFilenames = Serializer.Instance.DeserializeFilenames();
 		}
 		catch(System.Exception e)
 		{
@@ -466,7 +370,7 @@ public class GazeMapData : MonoBehaviour
 			}
 			SaveGazeEventDataToFile(gazeEventList, filename);
 		}
-		Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
+		Serializer.Instance.SerializeFilenames(savedFilenames);
 		Debug.Log("saved " + savedFilenames.Count.ToString() + " filenames.");
 		isSaving = false;
 		yield return null;
@@ -481,13 +385,13 @@ public class GazeMapData : MonoBehaviour
 
 	public void ShowGazeData(string filename)
 	{
-		dataToCompare.Add(filename);
+		loadedFiles.Add(filename);
 //		gazeDataList = Serializer.Instance.DeserializeHitmap(filename);
 	}
 
 	public void HideGazeData(string filename)
 	{
-		dataToCompare.Remove(filename);
+		loadedFiles.Remove(filename);
 	}
 
 	public void LoadFilesOnDisk()
@@ -504,8 +408,8 @@ public class GazeMapData : MonoBehaviour
 			eventOriginColors.Clear();
 			eventGazeRayColors.Clear();
 			eventHitPointColors.Clear();
-			dataToCompare.Clear();
-			savedFilenames = Serializer.Instance.DeserializeFilenames(staticfilename);
+			loadedFiles.Clear();
+			savedFilenames = Serializer.Instance.DeserializeFilenames();
 			int i = 0;
 			foreach(string filename in savedFilenames)
 			{
@@ -539,7 +443,7 @@ public class GazeMapData : MonoBehaviour
 		isShowingObjectSelectionBox = false;
 		gazeDataList.Clear();
 		filenameToGazeEvent.Clear();
-		dataToCompare.Clear();
+		loadedFiles.Clear();
 		eventOriginColors.Clear();
 		eventGazeRayColors.Clear();
 		eventHitPointColors.Clear();
@@ -551,7 +455,7 @@ public class GazeMapData : MonoBehaviour
 		{
 			Debug.Log(filename + " deleted!");
 			savedFilenames.Remove(filename);
-			Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
+			Serializer.Instance.SerializeFilenames(savedFilenames);
 		}
 		else
 		{
@@ -575,7 +479,7 @@ public class GazeMapData : MonoBehaviour
 				}
 			}
 			savedFilenames.Clear();
-			Serializer.Instance.SerializeFilenames(savedFilenames, staticfilename);
+			Serializer.Instance.SerializeFilenames(savedFilenames);
 		}
 		else
 		{
@@ -625,7 +529,7 @@ public class GazeMapData : MonoBehaviour
 	{
 		get
 		{
-			return dataToCompare;
+			return loadedFiles;
 		}
 	}
 

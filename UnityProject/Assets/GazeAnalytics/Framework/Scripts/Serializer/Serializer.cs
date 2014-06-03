@@ -7,7 +7,9 @@ using System.Xml.Serialization;
 
 public class Serializer
 {
+	private string fileLogname = "filelog.xml";
 	private string filepath = Application.persistentDataPath + "/";
+
 	private static Serializer instance;
 	
 	public static Serializer Instance
@@ -62,9 +64,9 @@ public class Serializer
 		return o;
 	}
 
-	public void SerializeFilenames(List<string> o, string filename)
+	public void SerializeFilenames(List<string> o)
 	{
-		FileStream fs = new FileStream(filepath + filename, FileMode.Create);
+		FileStream fs = new FileStream(filepath + fileLogname, FileMode.Create);
 		XmlSerializer formatter = new XmlSerializer(typeof(List<string>));
 		try
 		{
@@ -81,9 +83,9 @@ public class Serializer
 		}
 	}
 	
-	public List<string> DeserializeFilenames(string filename)
+	public List<string> DeserializeFilenames()
 	{
-		FileStream fs = new FileStream(filepath + filename, FileMode.Open);
+		FileStream fs = new FileStream(filepath + fileLogname, FileMode.Open);
 		List<string> o = null;
 		try
 		{
@@ -101,50 +103,4 @@ public class Serializer
 		}
 		return o;
 	}
-
-//	public void SerializeEyedata(List<EyeEvent> o)
-//	{
-//		FileStream fs = new FileStream(eyeDataPath, FileMode.Create);
-//		XmlSerializer formatter = new XmlSerializer(typeof(List<EyeEvent>));
-//		try
-//		{
-//			formatter.Serialize(fs, o);
-//		}
-//		catch(XmlException e)
-//		{
-//			Debug.Log("Failed to serialize. Reason: " + e.Message);
-//			throw;
-//		}
-//		finally
-//		{
-//			fs.Close();
-//		}
-//	}
-//	
-//	public List<EyeEvent> DeserializeEyedata()
-//	{
-//		FileStream fs = new FileStream(eyeDataPath, FileMode.Open);
-//		List<EyeEvent> o = null;
-//		try
-//		{
-//			XmlSerializer formatter = new XmlSerializer(typeof(List<EyeEvent>));
-//			
-//			// Deserialize the hashtable from the file and  
-//			// assign the reference to the local variable.
-//			o = (List<EyeEvent>)formatter.Deserialize(fs);
-//			
-//		}
-//		catch(XmlException e)
-//		{
-//			Debug.Log("Failed to deserialize. Reason: " + e.Message);
-//			throw;
-//		}
-//		finally
-//		{
-//			fs.Close();
-//		}
-//		return o;
-//	}
-
-
 }

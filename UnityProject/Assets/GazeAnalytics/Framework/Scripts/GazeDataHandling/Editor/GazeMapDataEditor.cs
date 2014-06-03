@@ -7,18 +7,26 @@ using System.Collections.Generic;
 public class GazeMapDataEditor : Editor
 {
 
+	private static GUIStyle headerStyle = new GUIStyle();
 	private int index = 0;
 	private bool deleteAllFiles;
 	private bool showWarningWindow;
 
+	static GazeMapDataEditor()
+	{
+		headerStyle.fontSize = 14;
+		headerStyle.fontStyle = FontStyle.Bold;
+	}
+
 	override public void OnInspectorGUI()
 	{
 		GazeMapData gazeMapData = target as GazeMapData;
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
 		#region filehandling
-		EditorGUILayout.LabelField("Gaze Data Editor", EditorStyles.label);
-
+		EditorGUILayout.TextField("Data File Handling", headerStyle);
 		EditorGUILayout.BeginHorizontal();
-		if(GUILayout.Button("Load all files"))
+		if(GUILayout.Button("Find save files", GUILayout.MaxWidth(120f)))
 		{
 			try
 			{
@@ -29,59 +37,11 @@ public class GazeMapDataEditor : Editor
 				Debug.Log(e);
 			}
 		}
-		if(GUILayout.Button("Delete all files"))
+		if(GUILayout.Button("Delete save files", GUILayout.MaxWidth(120f)))
 		{
 			showWarningWindow = true;
 		}
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
-		index = EditorGUILayout.Popup(index, gazeMapData.Filenames.ToArray());
-		if(GUILayout.Button("Load"))
-		{
-			if(gazeMapData.Filenames.Count > 0)
-			{
-				if(!gazeMapData.DataToCompare.Contains(gazeMapData.Filenames.ToArray()[index]))
-				{
-					gazeMapData.ShowGazeData(gazeMapData.Filenames.ToArray()[index]);
-				}
-				else
-				{
-					gazeMapData.HideGazeData(gazeMapData.Filenames.ToArray()[index]);
-				}
-				SceneView.RepaintAll();
-			}
-		}
-		if(GUILayout.Button("Delete"))
-		{
-			try
-			{
-				if(gazeMapData.Filenames.Count > 0)
-				{
-					gazeMapData.DeleteSaveFile(gazeMapData.Filenames.ToArray()[index]);
-					index = index > 0 ? index - 1 : 0;
-				}
-			}
-			catch(System.Exception e)
-			{
-				Debug.Log(e);
-			}
-		}
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
-		if(GUILayout.Button("Process data", GUILayout.MaxWidth(100f)))
-		{
-			try
-			{
-				gazeMapData.ProcessGazeData();
-			}
-			catch(System.Exception e)
-			{
-				Debug.Log(e);
-			}
-		}
-		if(GUILayout.Button("Clear data", GUILayout.MaxWidth(100f)))
+		if(GUILayout.Button("Reset data", GUILayout.MaxWidth(120f)))
 		{
 			try
 			{
@@ -93,31 +53,132 @@ public class GazeMapDataEditor : Editor
 			}
 		}
 		EditorGUILayout.EndHorizontal();
-		#endregion
 
+//		EditorGUILayout.BeginHorizontal();
+		foreach(string filename in gazeMapData.Filenames)
+		{
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(new GUIContent(filename));
+			string loadText = !gazeMapData.DataToCompare.Contains(filename) ? "Load" : "Unload";
+			if(GUILayout.Button(loadText))
+			{
+//				if(gazeMapData.Filenames.Count > 0)
+//				{
+				if(!gazeMapData.DataToCompare.Contains(filename))
+				{
+					gazeMapData.ShowGazeData(filename);
+				}
+				else
+				{
+					gazeMapData.HideGazeData(filename);
+				}
+				SceneView.RepaintAll();
+//				}
+
+			}
+
+			if(GUILayout.Button("Delete"))
+			{
+				gazeMapData.DeleteSaveFile(filename);
+				index = index > 0 ? index - 1 : 0;
+			}
+
+			if(GUILayout.Button("Process", GUILayout.MaxWidth(100f)))
+			{
+				gazeMapData.ProcessGazeData(filename);
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+//		index = EditorGUILayout.Popup(index, gazeMapData.Filenames.ToArray());
+//		if(GUILayout.Button("Load"))
+//		{
+//			if(gazeMapData.Filenames.Count > 0)
+//			{
+//				if(!gazeMapData.DataToCompare.Contains(gazeMapData.Filenames.ToArray()[index]))
+//				{
+//					gazeMapData.ShowGazeData(gazeMapData.Filenames.ToArray()[index]);
+//				}
+//				else
+//				{
+//					gazeMapData.HideGazeData(gazeMapData.Filenames.ToArray()[index]);
+//				}
+//				SceneView.RepaintAll();
+//			}
+//		}
+//		if(GUILayout.Button("Delete"))
+//		{
+//			try
+//			{
+//				if(gazeMapData.Filenames.Count > 0)
+//				{
+//					gazeMapData.DeleteSaveFile(gazeMapData.Filenames.ToArray()[index]);
+//					index = index > 0 ? index - 1 : 0;
+//				}
+//			}
+//			catch(System.Exception e)
+//			{
+//				Debug.Log(e);
+//			}
+//		}
+//		EditorGUILayout.EndHorizontal();
+		#endregion
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
+		#region gazeDataProcessing
+		EditorGUILayout.TextField("Gaze Data Processing Parameters", headerStyle);
+
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField(new GUIContent("Max Saccade Jump Length (units)"), GUILayout.MaxWidth(200));
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationDistanceThreshold"), new GUIContent(""), true, GUILayout.MaxWidth(30));
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField(new GUIContent("Min Fixation Duration (seconds)"), GUILayout.MaxWidth(200));
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationLengthThreshold"), new GUIContent(""), true, GUILayout.MaxWidth(30));
+		EditorGUILayout.EndHorizontal();
+
+//		serializedObject.Update();
+//		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationDistanceThreshold"), new GUIContent("Max Saccade Jump Length (units)"), true);
+//		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationLengthThreshold"), new GUIContent("Min Fixation Duration Threshold (seconds)"), true);
+//		serializedObject.ApplyModifiedProperties();
+//		EditorGUILayout.BeginHorizontal();
+//		if(GUILayout.Button("Process data", GUILayout.MaxWidth(100f)))
+//		{
+//			try
+//			{
+//				gazeMapData.ProcessGazeData();
+//			}
+//			catch(System.Exception e)
+//			{
+//				Debug.Log(e);
+//			}
+//		}
+//		EditorGUILayout.EndHorizontal();
+		#endregion
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
 		#region gazemaprender
-		serializedObject.Update();
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingGazeEvents"), new GUIContent("Show Gaze Events"), true);
-		SceneView.RepaintAll();
-		serializedObject.ApplyModifiedProperties();
+		EditorGUILayout.TextField("Gaze Visualization", headerStyle);
 		//Prevent out of bounds exception due to slider inaccuracy:
 		gazeMapData.minGazeDataIndex = (gazeMapData.minGazeDataIndex < 0f || gazeMapData.minGazeDataIndex > 1f) ? 0f : gazeMapData.minGazeDataIndex;
 		gazeMapData.maxGazeDataIndex = (gazeMapData.maxGazeDataIndex < 0f || gazeMapData.maxGazeDataIndex > 1f) ? 1f : gazeMapData.maxGazeDataIndex;
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(new GUIContent("Timeline: "), GUILayout.MaxWidth(80));
+		EditorGUILayout.LabelField(new GUIContent("Timeline (%)"), GUILayout.MaxWidth(80));
 		EditorGUILayout.FloatField(gazeMapData.minGazeDataIndex, GUILayout.Width(30f));
 		EditorGUILayout.MinMaxSlider(ref gazeMapData.minGazeDataIndex, ref gazeMapData.maxGazeDataIndex, 0f, 1f);
 		EditorGUILayout.FloatField(gazeMapData.maxGazeDataIndex, GUILayout.Width(30f));
 		EditorGUILayout.EndHorizontal();
 		SceneView.RepaintAll();
 		serializedObject.Update();
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingGazeEvents"), new GUIContent("Show Gaze Events"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingGazeRay"), new GUIContent("Show Gaze Rays"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingObjectName"), new GUIContent("Show Object Names"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingRayOrigin"), new GUIContent("Show Ray Origin"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingObjectSelectionBox"), new GUIContent("Show Object Selection Box"), true);
 		serializedObject.ApplyModifiedProperties();
+		SceneView.RepaintAll();
 		#endregion
-
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
 		#region pupilmaprender
 		serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingPupilEvents"), new GUIContent("Show Pupil Dilation Events"), true);
@@ -136,8 +197,7 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventOriginColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventGazeRayColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventHitPointColors"), true);
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("dataToCompare"), true);
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("savedFilenames"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("loadedFiles"), true);
 		serializedObject.ApplyModifiedProperties();
 	}
 
