@@ -95,7 +95,9 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		if(null != gp)
 		{
 			Point2D sp = UnityGazeUtils.getGazeCoordsToUnityWindowCoords(gp);
+			Debug.Log(((float)sp.X).ToString() + "," +((float)sp.Y).ToString());
 			return new Vector3((float)sp.X, (float)sp.Y, 0f);
+//			return new Vector3((float)gp.X, (float)gp.Y, 0f);
 		}
 		else
 		{

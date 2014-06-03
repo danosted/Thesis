@@ -126,21 +126,22 @@ namespace Assets.Scripts
 					}
 
 					currentFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
+					// if gaze coordinates available, cache both raw and smoothed
+					if(/*(gd.State & GazeData.STATE_TRACKING_GAZE) != 0 && */null == gazeCoords && gd.RawCoordinates.X != 0 && gd.RawCoordinates.Y != 0)
+					{
+						gazeCoords = gd.RawCoordinates;
+						gazeCoordsSmooth = gd.SmoothedCoordinates;
+					}
+					
+					// break loop if valid values found
+					if(null != right && null != left && null != gazeCoords)
+					{
+						break;
+					}   
 
 				}
 
-				// if gaze coordinates available, cache both raw and smoothed
-				if(/*(gd.State & GazeData.STATE_TRACKING_GAZE) != 0 && */null == gazeCoords && gd.RawCoordinates.X != 0 && gd.RawCoordinates.Y != 0)
-				{
-					gazeCoords = gd.RawCoordinates;
-					gazeCoordsSmooth = gd.SmoothedCoordinates;
-				}
-
-				// break loop if valid values found
-				if(null != right && null != left && null != gazeCoords)
-				{
-					break;
-				}    
+	 
 			}
 
 			if(null != left)
