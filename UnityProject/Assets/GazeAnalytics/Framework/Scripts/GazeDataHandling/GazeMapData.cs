@@ -57,7 +57,7 @@ public class GazeMapData : MonoBehaviour
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
 	private List<string> savedFilenames = new List<string>();
-	private List<string> loadedFiles;
+	private List<string> loadedFiles = new List<string>();
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.1f;
