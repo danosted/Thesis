@@ -7,15 +7,24 @@ using System.Collections.Generic;
 public class GazeMapDataEditor : Editor
 {
 
-	private static GUIStyle headerStyle = new GUIStyle();
+	private static GUIStyle largeHeaderStyle = new GUIStyle();
+	private static GUIStyle mediumHeaderStyle = new GUIStyle();
+	private static GUIStyle smallFontStyle = new GUIStyle();
+	private static GUIStyle boldFontStyle = new GUIStyle();
+
 	private int index = 0;
 	private bool deleteAllFiles;
 	private bool showWarningWindow;
 
 	static GazeMapDataEditor()
 	{
-		headerStyle.fontSize = 14;
-		headerStyle.fontStyle = FontStyle.Bold;
+		largeHeaderStyle.fontSize = 14;
+		largeHeaderStyle.fontStyle = FontStyle.Bold;
+		mediumHeaderStyle.fontSize = 11;
+		mediumHeaderStyle.fontStyle = FontStyle.Bold;
+//		smallFontStyle.fontSize = 8;
+//		boldFontStyle.fontSize = 8;
+		boldFontStyle.fontStyle = FontStyle.Bold;
 	}
 
 	override public void OnInspectorGUI()
@@ -24,7 +33,7 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 		#region filehandling
-		EditorGUILayout.TextField("Data File Handling", headerStyle);
+		EditorGUILayout.LabelField("Data File Handling", largeHeaderStyle);
 		EditorGUILayout.BeginHorizontal();
 		if(GUILayout.Button("Find save files", GUILayout.MaxWidth(120f)))
 		{
@@ -37,10 +46,26 @@ public class GazeMapDataEditor : Editor
 				Debug.Log(e);
 			}
 		}
-		if(GUILayout.Button("Delete save files", GUILayout.MaxWidth(120f)))
+		if(!showWarningWindow)
 		{
-			showWarningWindow = true;
+			if(GUILayout.Button("Delete save files", GUILayout.MaxWidth(120f)))
+			{
+				showWarningWindow = true;
+			}
 		}
+		else
+		{
+			if(GUILayout.Button("Yes", GUILayout.MaxWidth(60f)))
+			{
+				gazeMapData.DeleteAllSaveFiles();
+				showWarningWindow = false;
+			}
+			if(GUILayout.Button("No", GUILayout.MaxWidth(60f)))
+			{
+				showWarningWindow = false;
+			}
+		}
+
 		if(GUILayout.Button("Reset data", GUILayout.MaxWidth(120f)))
 		{
 			try
@@ -53,24 +78,35 @@ public class GazeMapDataEditor : Editor
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+		#endregion
 
-//		EditorGUILayout.BeginHorizontal();
-		foreach(string filename in gazeMapData.Filenames)
+		#region fileVisualization
+		if(gazeMapData.Filenames.Count > 0)
 		{
+			EditorGUILayout.LabelField("Data files on disk", largeHeaderStyle);
+		}
+		foreach(string filename in gazeMapData.Filenames.ToArray())
+		{
+			bool isLoaded = gazeMapData.LoadedFiles.Contains(filename);
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField(new GUIContent(filename));
-			string loadText = !gazeMapData.DataToCompare.Contains(filename) ? "Load" : "Unload";
+			if(!isLoaded)
+			{
+				EditorGUILayout.LabelField(new GUIContent(filename), smallFontStyle);
+			}
+			else
+			{
+				EditorGUILayout.LabelField(new GUIContent(filename), boldFontStyle);
+			}
+			string loadText = !isLoaded ? "Load" : "Unload";
 			if(GUILayout.Button(loadText))
 			{
-//				if(gazeMapData.Filenames.Count > 0)
-//				{
-				if(!gazeMapData.DataToCompare.Contains(filename))
+				if(!isLoaded)
 				{
-					gazeMapData.ShowGazeData(filename);
+					gazeMapData.LoadedFiles.Add(filename);
 				}
 				else
 				{
-					gazeMapData.HideGazeData(filename);
+					gazeMapData.LoadedFiles.Remove(filename);
 				}
 				SceneView.RepaintAll();
 //				}
@@ -80,52 +116,20 @@ public class GazeMapDataEditor : Editor
 			if(GUILayout.Button("Delete"))
 			{
 				gazeMapData.DeleteSaveFile(filename);
-				index = index > 0 ? index - 1 : 0;
 			}
 
 			if(GUILayout.Button("Process", GUILayout.MaxWidth(100f)))
 			{
-				gazeMapData.ProcessGazeData(filename);
+				gazeMapData.CreateProcessedGazeDataFile(filename);
 			}
 			EditorGUILayout.EndHorizontal();
 		}
-//		index = EditorGUILayout.Popup(index, gazeMapData.Filenames.ToArray());
-//		if(GUILayout.Button("Load"))
-//		{
-//			if(gazeMapData.Filenames.Count > 0)
-//			{
-//				if(!gazeMapData.DataToCompare.Contains(gazeMapData.Filenames.ToArray()[index]))
-//				{
-//					gazeMapData.ShowGazeData(gazeMapData.Filenames.ToArray()[index]);
-//				}
-//				else
-//				{
-//					gazeMapData.HideGazeData(gazeMapData.Filenames.ToArray()[index]);
-//				}
-//				SceneView.RepaintAll();
-//			}
-//		}
-//		if(GUILayout.Button("Delete"))
-//		{
-//			try
-//			{
-//				if(gazeMapData.Filenames.Count > 0)
-//				{
-//					gazeMapData.DeleteSaveFile(gazeMapData.Filenames.ToArray()[index]);
-//					index = index > 0 ? index - 1 : 0;
-//				}
-//			}
-//			catch(System.Exception e)
-//			{
-//				Debug.Log(e);
-//			}
-//		}
-//		EditorGUILayout.EndHorizontal();
+
 		#endregion
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 		#region gazeDataProcessing
-		EditorGUILayout.TextField("Gaze Data Processing Parameters", headerStyle);
+		EditorGUILayout.LabelField("Gaze Data Processing Parameters", largeHeaderStyle);
 
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField(new GUIContent("Max Saccade Jump Length (units)"), GUILayout.MaxWidth(200));
@@ -157,7 +161,7 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 		#region gazemaprender
-		EditorGUILayout.TextField("Gaze Visualization", headerStyle);
+		EditorGUILayout.LabelField("Gaze Visualization", largeHeaderStyle);
 		//Prevent out of bounds exception due to slider inaccuracy:
 		gazeMapData.minGazeDataIndex = (gazeMapData.minGazeDataIndex < 0f || gazeMapData.minGazeDataIndex > 1f) ? 0f : gazeMapData.minGazeDataIndex;
 		gazeMapData.maxGazeDataIndex = (gazeMapData.maxGazeDataIndex < 0f || gazeMapData.maxGazeDataIndex > 1f) ? 1f : gazeMapData.maxGazeDataIndex;
@@ -197,7 +201,6 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventOriginColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventGazeRayColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventHitPointColors"), true);
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("loadedFiles"), true);
 		serializedObject.ApplyModifiedProperties();
 	}
 
@@ -209,7 +212,7 @@ public class GazeMapDataEditor : Editor
 		{
 			if(gazeMapData.IsShowingGazeEvents || gazeMapData.IsShowingPupilEvents || gazeMapData.IsShowingBlinkMap)
 			{
-				List<string> dataToCompare = gazeMapData.DataToCompare;
+				List<string> dataToCompare = gazeMapData.LoadedFiles;
 				for(int fileindex = 0; fileindex < dataToCompare.Count; fileindex++)
 				{
 					foreach(KeyValuePair<string, List<GazeEvent>> entry in gazeMapData.FilenameToGazeEvent)
@@ -242,30 +245,30 @@ public class GazeMapDataEditor : Editor
 		int width = 200;
 		int height = 50;
 		Rect window = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
-		if(showWarningWindow)
-		{
-			GUI.Window(0, window, WarningWindow, "Are you sure?");
-		}
-		if(deleteAllFiles)
-		{
-			deleteAllFiles = false;
-			gazeMapData.DeleteAllSaveFiles();
-		}
+//		if(showWarningWindow)
+//		{
+//			GUI.Window(0, window, WarningWindow, "Are you sure?");
+//		}
+//		if(deleteAllFiles)
+//		{
+//			deleteAllFiles = false;
+//			gazeMapData.DeleteAllSaveFiles();
+//		}
 	}
 
-	void WarningWindow(int windowID)
-	{
-		GUILayout.BeginHorizontal();
-		if(GUILayout.Button("Yes"))
-		{
-			deleteAllFiles = true;
-			showWarningWindow = false;
-		}
-		if(GUILayout.Button("No"))
-		{
-			showWarningWindow = false;
-		}
-		GUILayout.EndHorizontal();
-	}
+//	void WarningWindow(int windowID)
+//	{
+//		GUILayout.BeginHorizontal();
+//		if(GUILayout.Button("Yes"))
+//		{
+//			deleteAllFiles = true;
+//			showWarningWindow = false;
+//		}
+//		if(GUILayout.Button("No"))
+//		{
+//			showWarningWindow = false;
+//		}
+//		GUILayout.EndHorizontal();
+//	}
 
 }

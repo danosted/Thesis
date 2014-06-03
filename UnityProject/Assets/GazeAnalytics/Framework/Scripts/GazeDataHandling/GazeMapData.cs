@@ -11,10 +11,6 @@ using UnityEditor;
 public class GazeMapData : MonoBehaviour
 {
 	private GazeMetricEvents data = GazeMetricEvents.Instance;
-	
-	[SerializeField]
-	private List<string>
-		loadedFiles;
 
 	[SerializeField]
 	private List<Color>
@@ -61,6 +57,7 @@ public class GazeMapData : MonoBehaviour
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
 	private List<string> savedFilenames = new List<string>();
+	private List<string> loadedFiles;
 
 	private float characterCubeSize = 0.5f;
 	private float gazeRayHitSphereSize = 0.1f;
@@ -106,7 +103,7 @@ public class GazeMapData : MonoBehaviour
 				foreach(KeyValuePair<string, List<GazeEvent>> entry in filenameToGazeEvent)
 				{
 					//If filename matches what is selected to be shown in the inspector
-					if(entry.Key == loadedFiles.ToArray()[fileindex])
+					if(entry.Key == loadedFiles[fileindex])
 					{
 						GazeEvent[] gazeArray = entry.Value.ToArray();
 						int i = 0;
@@ -183,7 +180,7 @@ public class GazeMapData : MonoBehaviour
 		 */
 	}
 
-	public void ProcessGazeData(string filename)
+	public void CreateProcessedGazeDataFile(string filename)
 	{
 		List<GazeEvent> geIn = filenameToGazeEvent[filename];
 		List<GazeEvent> geOut = ProcessGazeData(geIn);
@@ -383,17 +380,6 @@ public class GazeMapData : MonoBehaviour
 		Debug.Log("Data has been saved to file: " + filename, gameObject);
 	}
 
-	public void ShowGazeData(string filename)
-	{
-		loadedFiles.Add(filename);
-//		gazeDataList = Serializer.Instance.DeserializeHitmap(filename);
-	}
-
-	public void HideGazeData(string filename)
-	{
-		loadedFiles.Remove(filename);
-	}
-
 	public void LoadFilesOnDisk()
 	{
 		isShowingGazeEvents = false;
@@ -459,7 +445,8 @@ public class GazeMapData : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log(filename + " not found.");
+			savedFilenames.Remove(filename);
+			Debug.Log(filename + " not found on disk. Removing from list.");
 		}
 	}
 
@@ -525,7 +512,7 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
-	public List<string> DataToCompare
+	public List<string> LoadedFiles
 	{
 		get
 		{
