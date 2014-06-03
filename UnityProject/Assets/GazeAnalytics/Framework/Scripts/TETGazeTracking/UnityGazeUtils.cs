@@ -18,8 +18,8 @@ namespace Assets.Scripts
         /// <returns>2d point mapped to unity window space</returns>
         public static Point2D getGazeCoordsToUnityWindowCoords(Point2D gp)
         {
-            double rx = gp.X * ((double)Screen.width / GazeManager.Instance.ScreenResolutionWidth);
-            double ry = (GazeManager.Instance.ScreenResolutionHeight - gp.Y) * ((double)Screen.height / GazeManager.Instance.ScreenResolutionHeight);
+            double rx = gp.X;
+            double ry = (GazeManager.Instance.ScreenResolutionHeight - gp.Y);
 
             return new Point2D(rx, ry);
         }

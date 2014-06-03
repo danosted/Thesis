@@ -69,7 +69,7 @@ public class ExperimentSpawner : MonoBehaviour
 				canRun = true;
 			}
 			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z - background.position.z));
-			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.position.z));
+			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.position.z + 0.5f));
 		}
 	}
 	
@@ -147,7 +147,7 @@ public class ExperimentSpawner : MonoBehaviour
 		for(int i = 0; i < targets.Count; i++)
 		{
 			targets[i].GetChild(0).renderer.material.color = backgroundColor;
-			targets[i].position = new Vector3(Random.Range(lowerBounds.x + targets[i].localScale.x * 0.5f, upperBounds.x -  targets[i].localScale.x * 0.5f), Random.Range(lowerBounds.y +  targets[i].localScale.y * 0.5f, upperBounds.y - targets[i].localScale.y * 0.5f), -upperBounds.z);
+			targets[i].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
 //			targets[i].localScale = Vector3.one / difficulty;
 			targets[i].gameObject.SetActive(true);
 		}
@@ -166,8 +166,8 @@ public class ExperimentSpawner : MonoBehaviour
 					for(int j = 0; j < targets.Count; j++)
 					{
 						targets[j].GetChild(0).renderer.material.color = backgroundColor;
-//						targets[j].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
-						targets[i].position = new Vector3(Random.Range(lowerBounds.x + targets[i].localScale.x * 0.5f, upperBounds.x -  targets[i].localScale.x * 0.5f), Random.Range(lowerBounds.y +  targets[i].localScale.y * 0.5f, upperBounds.y - targets[i].localScale.y * 0.5f), -upperBounds.z);
+						targets[j].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
+						targets[j].localScale = Vector3.one / difficulty;
 						targets[j].gameObject.SetActive(true);
 					}
 				}
