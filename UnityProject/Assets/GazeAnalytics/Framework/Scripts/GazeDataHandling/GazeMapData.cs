@@ -60,7 +60,7 @@ public class GazeMapData : MonoBehaviour
 	private List<string> loadedFiles = new List<string>();
 
 	private float characterCubeSize = 0.5f;
-	private float gazeRayHitSphereSize = 0.1f;
+	private float gazeRayHitSphereRadius = 0.1f;
 	private float maxHeatMapPointSize = 2f;
 
 	private bool isSaving;
@@ -155,7 +155,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		//HitPoint
 		Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		Handles.DrawSolidDisc(e.eventHitPoint, camDir, gazeRayHitSphereSize + (0.001f * e.fixationLength));
+		Handles.DrawSolidDisc(e.eventHitPoint, camDir, gazeRayHitSphereRadius + Mathf.Log(e.fixationLength, 10) * 0.01f);
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
@@ -172,7 +172,7 @@ public class GazeMapData : MonoBehaviour
 		//Name of object that was hit
 		if(isShowingObjectName)
 		{
-			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereSize, e.eventHitName, style);
+			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.eventHitName, style);
 		}
 		/*
 		 * Note to self:
@@ -182,11 +182,14 @@ public class GazeMapData : MonoBehaviour
 
 	public void CreateProcessedGazeDataFile(string filename)
 	{
-		List<GazeEvent> geIn = filenameToGazeEvent[filename];
-		List<GazeEvent> geOut = ProcessGazeData(geIn);
 		string newProcFilename = "processed_" + filename;
-		savedFilenames.Add(newProcFilename);
-		filenameToGazeEvent.Add(newProcFilename, geOut);
+		if(!filenameToGazeEvent.ContainsKey(newProcFilename))
+		{
+			List<GazeEvent> geIn = filenameToGazeEvent[filename];
+			List<GazeEvent> geOut = ProcessGazeData(geIn);
+			savedFilenames.Add(newProcFilename);
+			filenameToGazeEvent.Add(newProcFilename, geOut);
+		}
 	}
 
 	private struct ClusterPoint
@@ -197,13 +200,13 @@ public class GazeMapData : MonoBehaviour
 	private List<GazeEvent> ProcessGazeData(List<GazeEvent> rawGazeEvents)
 	{
 
-		//k-medoids algorithm adaptation
-
-		/* preprocessing:
+		/*
+		 * K-medoids algorithm adaptation
+		 * preprocessing:
 		 * Convert rawGazeEvents to clusterpoints for simplicity
 		 * Find the different clusters by looking at the ditance between points.
 		 * If two points are too far away it means that the next point belongs to
-		 * another cluster
+		 * another cluster.
 		 */
 		List<ClusterPoint> allClusterPoints = new List<ClusterPoint>();
 		for(int i = 0; i < rawGazeEvents.Count; i++)
@@ -216,7 +219,7 @@ public class GazeMapData : MonoBehaviour
 //		int debugCount = 0;
 		for(int i = 0; i < rawGazeEvents.Count-1; i++)
 		{
-			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > fixationDistanceThreshold || (i + 1) == rawGazeEvents.Count - 1)
+			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > fixationDistanceThreshold || (i + 1) == (rawGazeEvents.Count - 1))
 			{
 				clusterSteps.Add(i + 1);
 //				Debug.Log("clusterstep[" + debugCount + "]: " + i);
@@ -225,14 +228,14 @@ public class GazeMapData : MonoBehaviour
 			}
 		}
 //		Debug.Log(clusterSteps.Count);
-		ClusterPoint[] medoids = new ClusterPoint[clusterSteps.Count];
+		List<ClusterPoint> medoids = new List<ClusterPoint>();
 		int[] lastPoint2closestMedoid = new int[rawGazeEvents.Count];
-		int indexCorrection = 0;
 		for(int j = 0; j < clusterSteps.Count; j++)
 		{
 			List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
 			ClusterPoint medoid;
 			startIndex = j > 0 ? clusterSteps[j - 1] : 0;
+			int medoidIndex = 0;
 //			Debug.Log("startInd: " + startIndex);
 			for(int i = startIndex; i < clusterSteps[j]; i++)
 			{
@@ -244,13 +247,14 @@ public class GazeMapData : MonoBehaviour
 				{
 					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > fixationLengthThreshold)
 					{
-						medoids[j] = nonMedoidPoints[0];
+						medoids.Add(nonMedoidPoints[0]);
 					}
 				}
 				else
 				{
 					int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
 					medoid = nonMedoidPoints[rindex];
+					medoids.Add(medoid);
 					nonMedoidPoints.RemoveAt(rindex);
 					float minCost = float.MaxValue;
 					float lastCost = float.MaxValue;
@@ -263,9 +267,9 @@ public class GazeMapData : MonoBehaviour
 						}
 						else
 						{
-							ClusterPoint onmedoidtemp = nonMedoidPoints[x];
+							ClusterPoint newMedoid = nonMedoidPoints[x];
 							nonMedoidPoints[x] = medoid;
-							medoid = onmedoidtemp;
+							medoid = newMedoid;
 						}
 						//index = pointIndex, value = medoid gaze index
 						int[] point2closestMedoid = new int[nonMedoidPoints.Count];
@@ -293,36 +297,40 @@ public class GazeMapData : MonoBehaviour
 								lastPoint2closestMedoid[startIndex + y] = point2closestMedoid[y];
 							}
 //					Debug.Log("medoids: " + medoids.Length + ", j; " + j);
-							medoids[j] = medoid;
+							medoids[medoidIndex] = medoid;
+							Debug.Log("medoid gazeindex" + medoid.gazeIndex);
 						}
 						else
 						{
-							ClusterPoint tempMedoid = nonMedoidPoints[x];
+							ClusterPoint previousMedoid = nonMedoidPoints[x];
 							nonMedoidPoints[x] = medoid;
-							medoid = tempMedoid;
+							medoid = previousMedoid;
 						}
 					}
 				}
 			}
+			medoidIndex++;
 		}
 
 		//post processing
+		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o=>o.gazeIndex).ToList();
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
-		for(int i = 0; i < medoids.Length; i++)
+		for(int i = 0; i < sortedMedoids.Count; i++)
 		{
+			Debug.Log("sortedmedoid gazeindex" + sortedMedoids[i].gazeIndex);
 			GazeEvent cluster2single = new GazeEvent();
-			cluster2single.eventHitPoint = rawGazeEvents[medoids[i].gazeIndex].eventHitPoint;
-			cluster2single.fixationLength = rawGazeEvents[medoids[i].gazeIndex].fixationLength;
+			cluster2single.eventHitPoint = rawGazeEvents[sortedMedoids[i].gazeIndex].eventHitPoint;
+			cluster2single.fixationLength = rawGazeEvents[sortedMedoids[i].gazeIndex].fixationLength;
 			for(int j = 0; j < lastPoint2closestMedoid.Length; j++)
 			{
-				if(lastPoint2closestMedoid[j] == medoids[i].gazeIndex)
+				if(lastPoint2closestMedoid[j] == sortedMedoids[i].gazeIndex)
 				{
 					//Mouse debug:
 //					cluster2single.fixationLength += 5f;
 					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
 				}
 			}
-//			Debug.Log("medoid " + medoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
+			Debug.Log("medoid " + sortedMedoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
 			processedEvents.Add(cluster2single);
 		}
 		return processedEvents;
