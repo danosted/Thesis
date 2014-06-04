@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TETCSharpClient;
 
 [ExecuteInEditMode]
 public class ExperimentSpawner : MonoBehaviour
@@ -27,8 +28,14 @@ public class ExperimentSpawner : MonoBehaviour
 	private int
 		experimentSteps = 3;
 	[SerializeField]
+	private List<float> 
+		targetStartSizes = new List<float>();
+	[SerializeField]
+	private List<float>
+		targetEndSizes = new List<float>();
+	[SerializeField]
 	private List<Material>
-		targetMaterial = new List<Material>();
+		targetMaterials = new List<Material>();
 	[SerializeField]
 	private Color
 		backgroundColor = Color.grey;
@@ -68,8 +75,16 @@ public class ExperimentSpawner : MonoBehaviour
 				}
 				canRun = true;
 			}
-			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z - background.position.z));
-			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.position.z + 0.5f));
+			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height,  Camera.main.transform.position.z - background.transform.position.z));
+			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.transform.position.z + 0.5f));
+			float resheight = Screen.currentResolution.height;
+			float reswidth = Screen.currentResolution.width;
+			float h = Screen.height;
+			float w = Screen.width;
+			Debug.Log("reshw: " + resheight + "," + reswidth);
+			Debug.Log("hw: " + h + "," + w);
+//			Debug.Log("upper: " + upperBounds.x + "," + upperBounds.y);
+//			Debug.Log("Lower: " + lowerBounds.x + "," + lowerBounds.y);
 		}
 	}
 	
@@ -108,7 +123,7 @@ public class ExperimentSpawner : MonoBehaviour
 					}
 					canRun = true;
 				}
-				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
+//				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
 			}
 		}
 	}
@@ -123,12 +138,26 @@ public class ExperimentSpawner : MonoBehaviour
 				{
 					OnExperimentStarted();
 				}
-				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, i + 1));
+				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, 1));
+				yield return new WaitForSeconds(Random.Range(1f, 4f));
 			}
+			ResetTargets();
 			canRun = true;
 		}
 		else if(sizeExperiment)
 		{
+			for(int i = 0; i < experimentSteps; i++)
+			{
+				if(OnExperimentStarted != null)
+				{
+					OnExperimentStarted();
+				}
+				yield return StartCoroutine(RunSizeExperimentFor(length / experimentSteps, 1));
+				ResetTargets();
+				yield return new WaitForSeconds(Random.Range(1f, 4f));
+			}
+			ResetTargets();
+			canRun = true;
 		}
 		else if(speedExperiment)
 		{
@@ -136,6 +165,7 @@ public class ExperimentSpawner : MonoBehaviour
 			{
 				yield return StartCoroutine(RunSpeedExperimentFor(length / experimentSteps, 0, i + 1));
 			}
+			ResetTargets();
 			canRun = true;
 		}
 	}
@@ -143,33 +173,66 @@ public class ExperimentSpawner : MonoBehaviour
 	private IEnumerator RunContrastExperimentFor(float runtime, int difficulty)
 	{
 		elapsedTime = 0f;
-		bool isLerping = true;
+		bool isDone = false;
 		for(int i = 0; i < targets.Count; i++)
 		{
 			targets[i].GetChild(0).renderer.material.color = backgroundColor;
-			targets[i].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
-//			targets[i].localScale = Vector3.one / difficulty;
+			targets[i].position = new Vector3(Random.Range(lowerBounds.x + targets[i].localScale.x, upperBounds.x -targets[i].localScale.x), Random.Range(lowerBounds.y + targets[i].localScale.y, upperBounds.y  - targets[i].localScale.y), -upperBounds.z);
+			targets[i].localScale = Vector3.one * targetStartSizes[i];
 			targets[i].gameObject.SetActive(true);
 		}
-		while(elapsedTime < runtime)
+		while(elapsedTime < runtime && !isDone)
 		{
 			for(int i = 0; i < targets.Count; i++)
 			{
 				Color c = targets[i].GetChild(0).renderer.material.color;
 				Vector3 col = new Vector3(c.r, c.g, c.b);
-				Vector3 endCol = new Vector3(targetMaterial.ToArray()[i].color.r, targetMaterial.ToArray()[i].color.g, targetMaterial.ToArray()[i].color.b);
+				Vector3 endCol = new Vector3(targetMaterials[i].color.r, targetMaterials[i].color.g, targetMaterials[i].color.b);
 //				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
-				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed / Mathf.Pow(4f, difficulty));
+				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * speed / Mathf.Pow(2f, difficulty));
 				targets[i].GetChild(0).renderer.material.color = new Color(col.x, col.y, col.z);
 				if(Vector3.Distance(endCol, col) < 0.1f)
 				{
 					for(int j = 0; j < targets.Count; j++)
 					{
 						targets[j].GetChild(0).renderer.material.color = backgroundColor;
-						targets[j].position = new Vector3(Random.Range(lowerBounds.x, upperBounds.x), Random.Range(lowerBounds.y, upperBounds.y), -upperBounds.z);
-						targets[j].localScale = Vector3.one / difficulty;
-						targets[j].gameObject.SetActive(true);
 					}
+					isDone = true;
+				}
+			}
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
+	}
+
+	private IEnumerator RunSizeExperimentFor(float runtime, int difficulty)
+	{
+		elapsedTime = 0f;
+		bool isDone = false;
+		for(int i = 0; i < targets.Count; i++)
+		{
+			targets[i].GetChild(0).renderer.material.color = targetMaterials[i].color;
+			targets[i].position = new Vector3(Random.Range(lowerBounds.x + targets[i].localScale.x, upperBounds.x -targets[i].localScale.x), Random.Range(lowerBounds.y + targets[i].localScale.y, upperBounds.y  - targets[i].localScale.y), -upperBounds.z);
+			targets[i].localScale = Vector3.one * targetStartSizes[i];
+			targets[i].gameObject.SetActive(true);
+		}
+		while(elapsedTime < runtime && !isDone)
+		{
+			for(int i = 0; i < targets.Count; i++)
+			{
+				Vector3 scale = targets[i].localScale;
+				Vector3 endScale = Vector3.one * targetEndSizes[i];
+				//				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
+				scale = Vector3.MoveTowards(scale, endScale, Time.deltaTime * speed / Mathf.Pow(2f, difficulty));
+				targets[i].localScale = scale;
+				if(Vector3.Distance(endScale, scale) < 0.1f)
+				{
+					for(int j = 0; j < targets.Count; j++)
+					{
+						targets[j].GetChild(0).renderer.material.color = backgroundColor;
+						targets[j].localScale = Vector3.one * targetStartSizes[j];
+					}
+					isDone = true;
 				}
 			}
 			elapsedTime += Time.deltaTime;
@@ -199,6 +262,7 @@ public class ExperimentSpawner : MonoBehaviour
 			}
 			if(elapsedTime > thresh || Mathf.Abs(targetPoint.x - target.position.x) < 0.1f)
 			{
+
 				targetPoint = new Vector3(target.position.x + step, upperBounds.y * Random.Range(-1f, 1f), -lowerBounds.z);
 				thresh += elapsedTime;
 //				Debug.Log("next step");
@@ -209,6 +273,14 @@ public class ExperimentSpawner : MonoBehaviour
 			yield return null;
 		}
 		target.gameObject.SetActive(false);
+	}
+
+	private void ResetTargets()
+	{
+		for(int i = 0; i < targets.Count; i++)
+		{
+			targets[i].gameObject.SetActive(false);
+		}
 	}
 
 	private void OnTargetHit()
@@ -246,7 +318,7 @@ public class ExperimentSpawner : MonoBehaviour
 	{
 		get
 		{
-			return targetMaterial;
+			return targetMaterials;
 		}
 	}
 }

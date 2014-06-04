@@ -130,15 +130,10 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.Space();
 		#region gazeDataProcessing
 		EditorGUILayout.LabelField("Gaze Data Processing Parameters", largeHeaderStyle);
-
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(new GUIContent("Max Saccade Jump Length (units)"), GUILayout.MaxWidth(200));
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationDistanceThreshold"), new GUIContent(""), true, GUILayout.MaxWidth(30));
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(new GUIContent("Min Fixation Duration (seconds)"), GUILayout.MaxWidth(200));
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationLengthThreshold"), new GUIContent(""), true, GUILayout.MaxWidth(30));
-		EditorGUILayout.EndHorizontal();
+		float sacJump = gazeMapData.maxSaccadeJumpDistance;
+		gazeMapData.maxSaccadeJumpDistance = EditorGUILayout.Slider("Max Saccade Jump Dist (units)", sacJump, 0f, 2f); 
+		float fix = gazeMapData.minFixationDuration;
+		gazeMapData.minFixationDuration = EditorGUILayout.Slider("Min fixation duration (seconds)", fix, 0f, 2f); 
 
 //		serializedObject.Update();
 //		EditorGUILayout.PropertyField(serializedObject.FindProperty("fixationDistanceThreshold"), new GUIContent("Max Saccade Jump Length (units)"), true);

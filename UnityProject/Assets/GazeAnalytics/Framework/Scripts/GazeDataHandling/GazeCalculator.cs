@@ -16,6 +16,9 @@ public class GazeCalculator : MonoBehaviour
 	private float
 		hitRayMaxDistance = 100f;
 	[SerializeField]
+	private float
+		hitRaySearchRadius = 1f;
+	[SerializeField]
 	private Color
 		rayColor = Color.cyan;
 	[SerializeField]
@@ -100,10 +103,24 @@ public class GazeCalculator : MonoBehaviour
 		while(true)
 		{
 			//Gaze Ray
+//			if(mouseAsGaze)
+//			{
+//				gazeRay = gazeCamera.ScreenPointToRay(Input.mousePosition);
+//			}
+//			else
+//			{
+//				gazeRay = HandleUtility.GUIPointToWorldRay(new Vector2(gazeData.GetGazeScreenPosition().x, gazeData.GetGazeScreenPosition().y));
+//			}
 			gazeRay = mouseAsGaze ? gazeCamera.ScreenPointToRay(Input.mousePosition) : gazeCamera.ScreenPointToRay(gazeData.GetGazeScreenPosition());
+//			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
+//			Vector2 pos = new Vector2(EditorWindow.GetWindow(T).position.x,EditorWindow.GetWindow(T).position.y);
+//			Debug.Log("game rect: " + pos.x + "," + pos.y);
 			RaycastHit hit;
-			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
+
+//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
+			if(Physics.SphereCast(gazeRay, hitRaySearchRadius, out hit))
 			{
+//				Debug.Log("hit: " + hit.transform.name);
 				currentTarget = hit.transform;
 				gazeHitPoint = hit.point;
 				if(OnGazeObjectHit != null)
@@ -125,19 +142,7 @@ public class GazeCalculator : MonoBehaviour
 			if(showLiveGazeDebug)
 			{
 				target.position = gazeHitPoint;
-				float width, height;
-				width = Mathf.Abs(upperBounds.x - lowerBounds.x);
-				height = Mathf.Abs(upperBounds.y - lowerBounds.y);
-				if(width > height)
-				{
-					float size = height * 0.01f;
-					target.localScale = new Vector3(size, size, size);
-				}
-				else
-				{
-					float size = width * 0.01f;
-					target.localScale = new Vector3(size, size, size);
-				}
+				target.localScale = new Vector3(hitRaySearchRadius, hitRaySearchRadius, hitRaySearchRadius);
 				target.gameObject.SetActive(true);
 			}
 			else

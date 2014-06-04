@@ -3,6 +3,7 @@ using System.Collections;
 using TETCSharpClient;
 using TETCSharpClient.Data;
 using Assets.Scripts;
+using UnityEditor;
 
 public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
@@ -91,11 +92,13 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 	public Vector3 GetGazeScreenPosition()
 	{
 		Point2D gp = gazeUtils.GetLastValidSmoothedGazeCoordinates();
+//		Point2D gp = gazeUtils.GetLastValidRawGazeCoordinates();
 
 		if(null != gp)
 		{
 			Point2D sp = UnityGazeUtils.getGazeCoordsToUnityWindowCoords(gp);
-			Debug.Log(((float)sp.X).ToString() + "," +((float)sp.Y).ToString());
+			Debug.Log("gaze: " + ((float)sp.X).ToString() + "," +((float)sp.Y).ToString());
+			Debug.Log("mouse: " + Input.mousePosition.x.ToString() + "," + Input.mousePosition.y.ToString());
 			return new Vector3((float)sp.X, (float)sp.Y, 0f);
 //			return new Vector3((float)gp.X, (float)gp.Y, 0f);
 		}

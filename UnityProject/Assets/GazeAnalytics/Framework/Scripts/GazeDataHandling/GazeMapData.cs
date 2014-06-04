@@ -26,13 +26,6 @@ public class GazeMapData : MonoBehaviour
 		pupilColor = Color.yellow;
 
 	[SerializeField]
-	private float
-		fixationDistanceThreshold = 0.1f;
-	[SerializeField]
-	private float
-		fixationLengthThreshold = 0.5f;
-
-	[SerializeField]
 	private bool
 		isShowingGazeEvents;
 	[SerializeField]
@@ -60,7 +53,7 @@ public class GazeMapData : MonoBehaviour
 	private List<string> loadedFiles = new List<string>();
 
 	private float characterCubeSize = 0.5f;
-	private float gazeRayHitSphereRadius = 0.1f;
+	private float gazeRayHitSphereRadius = 0.5f;
 	private float maxHeatMapPointSize = 2f;
 
 	private bool isSaving;
@@ -71,6 +64,8 @@ public class GazeMapData : MonoBehaviour
 	private GUIStyle style = new GUIStyle();
 
 	#region publicEditorFields
+	public float maxSaccadeJumpDistance = 0.1f;
+	public float minFixationDuration = 0.5f;
 	public float maxFixationSize = 0.1f;
 	public float minFixationSize = 1f;
 	public float maxPupilSize = 30f;
@@ -155,7 +150,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		//HitPoint
 		Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		Handles.DrawSolidDisc(e.eventHitPoint, camDir, gazeRayHitSphereRadius + Mathf.Log(e.fixationLength, 10) * 0.01f);
+		Handles.DrawSolidDisc(e.eventHitPoint, camDir, gazeRayHitSphereRadius + Mathf.Log(e.fixationLength, 10) * 0.4f);
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
@@ -165,7 +160,7 @@ public class GazeMapData : MonoBehaviour
 		//index of event
 		style.alignment = TextAnchor.MiddleCenter;
 		style.fontStyle = FontStyle.Bold;
-		style.fontSize = 10 + (int)(0.02f * e.fixationLength);
+		style.fontSize = 10 + (int)(Mathf.Log(e.fixationLength, 10) * 0.1f);
 		string eventIndexString = (eventindex + 1).ToString();
 		Handles.color = Color.black;
 		Handles.Label(e.eventHitPoint, eventIndexString, style);
@@ -219,13 +214,18 @@ public class GazeMapData : MonoBehaviour
 //		int debugCount = 0;
 		for(int i = 0; i < rawGazeEvents.Count-1; i++)
 		{
-			if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > fixationDistanceThreshold || (i + 1) == (rawGazeEvents.Count - 1))
+			if((i + 1) == (rawGazeEvents.Count - 1))
+			{
+				clusterSteps.Add(i + 1);
+			}
+			else if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > maxSaccadeJumpDistance)
 			{
 				clusterSteps.Add(i + 1);
 //				Debug.Log("clusterstep[" + debugCount + "]: " + i);
 //				Debug.Log("rawGazeEvents[" + (i + 1) + "]: " + ", end: " + rawGazeEvents.Count - 1);
 //				debugCount++;
 			}
+
 		}
 //		Debug.Log(clusterSteps.Count);
 		List<ClusterPoint> medoids = new List<ClusterPoint>();
@@ -239,13 +239,16 @@ public class GazeMapData : MonoBehaviour
 //			Debug.Log("startInd: " + startIndex);
 			for(int i = startIndex; i < clusterSteps[j]; i++)
 			{
-				nonMedoidPoints.Add(allClusterPoints[i]);
+				if(rawGazeEvents[allClusterPoints[i].gazeIndex].fixationLength > 0f)
+				{
+					nonMedoidPoints.Add(allClusterPoints[i]);
+				}
 			}
 			if(nonMedoidPoints.Count > 0)
 			{
 				if(nonMedoidPoints.Count == 1)
 				{
-					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > fixationLengthThreshold)
+					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > minFixationDuration)
 					{
 						medoids.Add(nonMedoidPoints[0]);
 					}
@@ -298,7 +301,7 @@ public class GazeMapData : MonoBehaviour
 							}
 //					Debug.Log("medoids: " + medoids.Length + ", j; " + j);
 							medoids[medoidIndex] = medoid;
-							Debug.Log("medoid gazeindex" + medoid.gazeIndex);
+//							Debug.Log("medoid gazeindex" + medoid.gazeIndex);
 						}
 						else
 						{
@@ -317,7 +320,7 @@ public class GazeMapData : MonoBehaviour
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
 		for(int i = 0; i < sortedMedoids.Count; i++)
 		{
-			Debug.Log("sortedmedoid gazeindex" + sortedMedoids[i].gazeIndex);
+//			Debug.Log("sortedmedoid gazeindex" + sortedMedoids[i].gazeIndex);
 			GazeEvent cluster2single = new GazeEvent();
 			cluster2single.eventHitPoint = rawGazeEvents[sortedMedoids[i].gazeIndex].eventHitPoint;
 			cluster2single.fixationLength = rawGazeEvents[sortedMedoids[i].gazeIndex].fixationLength;
@@ -330,7 +333,7 @@ public class GazeMapData : MonoBehaviour
 					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
 				}
 			}
-			Debug.Log("medoid " + sortedMedoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
+//			Debug.Log("medoid " + sortedMedoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
 			processedEvents.Add(cluster2single);
 		}
 		return processedEvents;

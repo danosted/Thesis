@@ -5,6 +5,9 @@ using System.Text;
 using TETCSharpClient;
 using TETCSharpClient.Data;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Assets.Scripts
 {
@@ -18,11 +21,16 @@ namespace Assets.Scripts
         /// <returns>2d point mapped to unity window space</returns>
         public static Point2D getGazeCoordsToUnityWindowCoords(Point2D gp)
         {
+#if UNITY_EDITOR
+			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
+			Vector2 windowPos = new Vector2(EditorWindow.GetWindow(T).position.x,EditorWindow.GetWindow(T).position.y);
+			
+			double rx = gp.X - windowPos.x;
+			double ry = (GazeManager.Instance.ScreenResolutionHeight - gp.Y) - windowPos.y;
+#else
 			double rx = gp.X * ((double)Screen.width / GazeManager.Instance.ScreenResolutionWidth);
 			double ry = (GazeManager.Instance.ScreenResolutionHeight - gp.Y) * ((double)Screen.height / GazeManager.Instance.ScreenResolutionHeight);
-//			double rx = gp.X;
-//			double ry = (GazeManager.Instance.ScreenResolutionHeight - gp.Y);
-
+#endif
             return new Point2D(rx, ry);
         }
 
