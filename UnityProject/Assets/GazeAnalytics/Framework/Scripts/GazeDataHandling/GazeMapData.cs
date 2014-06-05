@@ -154,6 +154,7 @@ public class GazeMapData : MonoBehaviour
 //								
 //							}
 						}
+						//We need to hide the instantiated prefabs for those events not shown
 						for(i = 0; i < startIndex; i++)
 						{
 							GazeEvent e = gazeArray[i];
@@ -174,6 +175,14 @@ public class GazeMapData : MonoBehaviour
 						}
 					}
 				}
+			}
+		}
+		//We need to hide the instantiated prefabs when not showing gaze events
+		if(!isShowingGazeEvents)
+		{
+			foreach(KeyValuePair<string, GameObject> entry in filepathToGameObject)
+			{
+				entry.Value.SetActive(false);
 			}
 		}
 	}
@@ -288,18 +297,24 @@ public class GazeMapData : MonoBehaviour
 //		int debugCount = 0;
 		for(int i = 0; i < rawGazeEvents.Count-1; i++)
 		{
-			if((i + 1) == (rawGazeEvents.Count - 1))
+			if(rawGazeEvents[i].filePath != "")
 			{
 				clusterSteps.Add(i + 1);
+				Debug.Log("clusterstep: " + (i + 1));
+			}
+			else if((i + 1) == (rawGazeEvents.Count - 1))
+			{
+				clusterSteps.Add(i + 1);
+				Debug.Log("clusterstep: " + (i + 1));
 			}
 			else if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > maxSaccadeJumpDistance)
 			{
 				clusterSteps.Add(i + 1);
+				Debug.Log("clusterstep: " + (i + 1));
 //				Debug.Log("clusterstep[" + debugCount + "]: " + i);
 //				Debug.Log("rawGazeEvents[" + (i + 1) + "]: " + ", end: " + rawGazeEvents.Count - 1);
 //				debugCount++;
 			}
-
 		}
 //		Debug.Log(clusterSteps.Count);
 		List<ClusterPoint> medoids = new List<ClusterPoint>();
@@ -310,21 +325,27 @@ public class GazeMapData : MonoBehaviour
 			ClusterPoint medoid;
 			startIndex = j > 0 ? clusterSteps[j - 1] : 0;
 			int medoidIndex = 0;
-//			Debug.Log("startInd: " + startIndex);
+			Debug.Log("startInd: " + startIndex);
 			for(int i = startIndex; i < clusterSteps[j]; i++)
 			{
-				if(rawGazeEvents[allClusterPoints[i].gazeIndex].fixationLength > 0f)
+				if(startIndex == 12)
+				{
+					Debug.Log(i);
+				}
+				if(rawGazeEvents[allClusterPoints[i].gazeIndex].fixationLength > 0f || rawGazeEvents[allClusterPoints[i].gazeIndex].filePath != "")
 				{
 					nonMedoidPoints.Add(allClusterPoints[i]);
+					Debug.Log("hizoo");
 				}
 			}
 			if(nonMedoidPoints.Count > 0)
 			{
 				if(nonMedoidPoints.Count == 1)
 				{
-					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > minFixationDuration)
+					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > minFixationDuration || rawGazeEvents[nonMedoidPoints[0].gazeIndex].filePath != "")
 					{
 						medoids.Add(nonMedoidPoints[0]);
+						Debug.Log("heroo");
 					}
 				}
 				else
@@ -398,13 +419,44 @@ public class GazeMapData : MonoBehaviour
 			GazeEvent cluster2single = new GazeEvent();
 			cluster2single.eventHitPoint = rawGazeEvents[sortedMedoids[i].gazeIndex].eventHitPoint;
 			cluster2single.fixationLength = rawGazeEvents[sortedMedoids[i].gazeIndex].fixationLength;
+			bool hasFilepath = false;
+			string filepath = rawGazeEvents[sortedMedoids[i].gazeIndex].filePath;
+			if(filepath != "")
+			{
+				GazeEvent ge = rawGazeEvents[sortedMedoids[i].gazeIndex];
+				cluster2single.filePath = filepath;
+				cluster2single.eventHitObjectPosition = ge.eventHitObjectPosition;
+				cluster2single.eventHitScale = ge.eventHitScale;
+				cluster2single.eventHitRotation = ge.eventHitRotation;
+				cluster2single.eventHitColor = ge.eventHitColor;
+				hasFilepath = true;
+			}
 			for(int j = 0; j < lastPoint2closestMedoid.Length; j++)
 			{
 				if(lastPoint2closestMedoid[j] == sortedMedoids[i].gazeIndex)
 				{
 					//Mouse debug:
 //					cluster2single.fixationLength += 5f;
-					cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
+					filepath = rawGazeEvents[allClusterPoints[j].gazeIndex].filePath;
+					if(filepath != "")
+					{
+						if(!hasFilepath)
+						{
+							Debug.Log("double filepath: " + allClusterPoints[j].gazeIndex);
+							GazeEvent ge = rawGazeEvents[allClusterPoints[j].gazeIndex];
+							cluster2single.filePath = filepath;
+							cluster2single.eventHitObjectPosition = ge.eventHitObjectPosition;
+							cluster2single.eventHitScale = ge.eventHitScale;
+							cluster2single.eventHitRotation = ge.eventHitRotation;
+							cluster2single.eventHitColor = ge.eventHitColor;
+							cluster2single.filePath = filepath;
+							hasFilepath = true;
+						}
+					}
+					else
+					{
+						cluster2single.fixationLength += rawGazeEvents[allClusterPoints[j].gazeIndex].fixationLength;
+					}
 				}
 			}
 //			Debug.Log("medoid " + sortedMedoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
@@ -530,6 +582,20 @@ public class GazeMapData : MonoBehaviour
 		eventOriginColors.Clear();
 		eventGazeRayColors.Clear();
 		eventHitPointColors.Clear();
+	}
+
+	public void UnloadFile(string filename)
+	{
+		loadedFiles.Remove(filename);
+		foreach(KeyValuePair<string, GameObject> entry in filepathToGameObject)
+		{
+			entry.Value.SetActive(false);
+		}
+	}
+
+	public void LoadFile(string filename)
+	{
+		loadedFiles.Add(filename);
 	}
 
 #if UNITY_EDITOR

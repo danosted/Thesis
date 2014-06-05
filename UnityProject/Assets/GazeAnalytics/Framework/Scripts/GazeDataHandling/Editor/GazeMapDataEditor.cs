@@ -102,11 +102,11 @@ public class GazeMapDataEditor : Editor
 			{
 				if(!isLoaded)
 				{
-					gazeMapData.LoadedFiles.Add(filename);
+					gazeMapData.LoadFile(filename);
 				}
 				else
 				{
-					gazeMapData.LoadedFiles.Remove(filename);
+					gazeMapData.UnloadFile(filename);
 				}
 				SceneView.RepaintAll();
 //				}
