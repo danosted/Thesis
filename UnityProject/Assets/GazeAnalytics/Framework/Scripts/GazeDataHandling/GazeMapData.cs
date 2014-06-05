@@ -88,6 +88,7 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
+#if UNITY_EDITOR
 	//Render 3D GazeMap
 	void OnDrawGizmosSelected()
 	{
@@ -174,6 +175,7 @@ public class GazeMapData : MonoBehaviour
 		 * Asset prefab path selection is located in the editor class
 		 */
 	}
+#endif
 
 	public void CreateProcessedGazeDataFile(string filename)
 	{
@@ -446,6 +448,7 @@ public class GazeMapData : MonoBehaviour
 		eventHitPointColors.Clear();
 	}
 
+#if UNITY_EDITOR
 	public void DeleteSaveFile(string filename)
 	{
 		if(FileUtil.DeleteFileOrDirectory(Application.persistentDataPath + "/" + filename))
@@ -460,6 +463,7 @@ public class GazeMapData : MonoBehaviour
 			Debug.Log(filename + " not found on disk. Removing from list.");
 		}
 	}
+
 
 	public void DeleteAllSaveFiles()
 	{
@@ -484,6 +488,7 @@ public class GazeMapData : MonoBehaviour
 			Debug.Log("no files found");
 		}
 	}
+#endif
 
 	private string CreateFilename(string eventName)
 	{

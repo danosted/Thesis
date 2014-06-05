@@ -115,20 +115,46 @@ public class GazeCalculator : MonoBehaviour
 //			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
 //			Vector2 pos = new Vector2(EditorWindow.GetWindow(T).position.x,EditorWindow.GetWindow(T).position.y);
 //			Debug.Log("game rect: " + pos.x + "," + pos.y);
-			RaycastHit hit;
-
-//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
-			if(Physics.SphereCast(gazeRay, hitRaySearchRadius, out hit))
+//			RaycastHit hit;
+			RaycastHit[] hits;
+			hits = Physics.SphereCastAll(gazeRay, hitRaySearchRadius);
+			if(hits.Length > 0)
 			{
-//				Debug.Log("hit: " + hit.transform.name);
-				currentTarget = hit.transform;
-				gazeHitPoint = hit.point;
-				if(OnGazeObjectHit != null)
+				foreach(RaycastHit hit in hits)
 				{
-					OnGazeObjectHit(hit.transform);
+					if(hit.transform.GetComponent<GazePrefabTracker>())
+					{
+//						Debug.Log("hit: " + hit.transform.name);
+						currentTarget = hit.transform;
+						gazeHitPoint = hit.point;
+						if(OnGazeObjectHit != null)
+						{
+							OnGazeObjectHit(hit.transform);
+						}
+						isHit = true;
+						break;
+					}
+					else
+					{
+//						Debug.Log("hit: " + hit.transform.name);
+						currentTarget = hit.transform;
+						gazeHitPoint = hit.point;
+						isHit = true;
+					}
 				}
-				isHit = true;
 			}
+//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
+//			if(Physics.SphereCast(gazeRay, hitRaySearchRadius, out hit))
+//			{
+//				Debug.Log("hit: " + hit.transform.name);
+//				currentTarget = hit.transform;
+//				gazeHitPoint = hit.point;
+//				if(OnGazeObjectHit != null)
+//				{
+//					OnGazeObjectHit(hit.transform);
+//				}
+//				isHit = true;
+//			}
 			else
 			{
 				currentTarget = null;
@@ -142,7 +168,7 @@ public class GazeCalculator : MonoBehaviour
 			if(showLiveGazeDebug)
 			{
 				target.position = gazeHitPoint;
-				target.localScale = new Vector3(hitRaySearchRadius, hitRaySearchRadius, hitRaySearchRadius);
+				target.localScale = new Vector3(hitRaySearchRadius * 2f, hitRaySearchRadius * 2f, hitRaySearchRadius * 2f);
 				target.gameObject.SetActive(true);
 			}
 			else
@@ -173,11 +199,13 @@ public class GazeCalculator : MonoBehaviour
 		}
 	}
 
+
 	public string GetCurrentTargetObjectPath()
 	{
 		string path = "";
 		if(currentTarget)
 		{
+#if UNITY_EDITOR
 			Transform parentObject = (Transform)PrefabUtility.GetPrefabParent(currentTarget);
 			if(!parentObject)
 			{
@@ -199,8 +227,19 @@ public class GazeCalculator : MonoBehaviour
 				{
 					return path;
 				}
-			}
 
+			}
+#else
+			GazePrefabTracker gpt = currentTarget.GetComponent<GazePrefabTracker>();
+			if(gpt)
+			{
+				path = gpt.GetAssetPath();
+			}
+			else
+			{
+				Debug.Log("Add the GazePrefabTracker script to Instantiated objects.");
+			}
+#endif
 		}
 		return path;
 	}

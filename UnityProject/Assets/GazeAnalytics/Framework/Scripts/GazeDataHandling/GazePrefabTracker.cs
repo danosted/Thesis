@@ -2,20 +2,16 @@
 using System.Collections;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
+
 
 [InitializeOnLoad]
+#endif
 public class GazePrefabTracker : MonoBehaviour
 {
 	[SerializeField]
 	private string
-		assetPath;
-
-	public GazePrefabTracker()
-	{
-		SetAssetPath();
-	}
-
+		assetPath = "";
+	#if UNITY_EDITOR
 	public void SetAssetPath()
 	{
 		if(assetPath == "")
@@ -23,7 +19,7 @@ public class GazePrefabTracker : MonoBehaviour
 			assetPath = AssetDatabase.GetAssetPath(gameObject);
 		}
 	}
-
+	#endif
 	public string GetAssetPath()
 	{
 		return this.assetPath;

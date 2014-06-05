@@ -56,7 +56,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private float elapsedTime;
 
 	// Use this for initialization
-	void Start()
+	void Awake()
 	{
 		if(Application.isPlaying)
 		{
@@ -77,14 +77,9 @@ public class ExperimentSpawner : MonoBehaviour
 			}
 			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height,  Camera.main.transform.position.z - background.transform.position.z));
 			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.transform.position.z + 0.5f));
-			float resheight = Screen.currentResolution.height;
-			float reswidth = Screen.currentResolution.width;
-			float h = Screen.height;
-			float w = Screen.width;
-			Debug.Log("reshw: " + resheight + "," + reswidth);
-			Debug.Log("hw: " + h + "," + w);
 //			Debug.Log("upper: " + upperBounds.x + "," + upperBounds.y);
 //			Debug.Log("Lower: " + lowerBounds.x + "," + lowerBounds.y);
+			gazeCalculator.OnGazeObjectHit += OnTargetHit;
 		}
 	}
 	
@@ -193,9 +188,10 @@ public class ExperimentSpawner : MonoBehaviour
 				targets[i].GetChild(0).renderer.material.color = new Color(col.x, col.y, col.z);
 				if(Vector3.Distance(endCol, col) < 0.1f)
 				{
+					yield return new WaitForSeconds(3f);
 					for(int j = 0; j < targets.Count; j++)
 					{
-						targets[j].GetChild(0).renderer.material.color = backgroundColor;
+						targets[j].gameObject.SetActive(false);
 					}
 					isDone = true;
 				}
@@ -283,9 +279,14 @@ public class ExperimentSpawner : MonoBehaviour
 		}
 	}
 
-	private void OnTargetHit()
+	private void ResetTarget(Transform target)
 	{
+		targets.Find(x => x.Equals(target)).gameObject.SetActive(false);
+	}
 
+	private void OnTargetHit(Transform hit)
+	{
+		ResetTarget(hit);
 	}
 
 	private Vector3 GetRandomVerticalPosition(Vector3 point)

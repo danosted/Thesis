@@ -3,7 +3,9 @@ using System.Collections;
 using TETCSharpClient;
 using TETCSharpClient.Data;
 using Assets.Scripts;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
