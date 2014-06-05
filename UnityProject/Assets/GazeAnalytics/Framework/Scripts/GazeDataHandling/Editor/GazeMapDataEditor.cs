@@ -173,6 +173,7 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingObjectName"), new GUIContent("Show Object Names"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingRayOrigin"), new GUIContent("Show Ray Origin"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingObjectSelectionBox"), new GUIContent("Show Object Selection Box"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingTargetPrefab"), new GUIContent("Show Target Object"), true);
 		serializedObject.ApplyModifiedProperties();
 		SceneView.RepaintAll();
 		#endregion

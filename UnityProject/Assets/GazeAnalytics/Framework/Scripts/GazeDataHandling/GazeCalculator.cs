@@ -137,7 +137,7 @@ public class GazeCalculator : MonoBehaviour
 					else
 					{
 //						Debug.Log("hit: " + hit.transform.name);
-						currentTarget = hit.transform;
+						currentTarget = null;
 						gazeHitPoint = hit.point;
 						isHit = true;
 					}
@@ -302,6 +302,18 @@ public class GazeCalculator : MonoBehaviour
 		return this.gazeHitPoint;
 	}
 
+	public Color GetCurrentTargetColor()
+	{
+		if(this.currentTarget)
+		{
+			if(this.currentTarget.GetComponent<Renderer>())
+			{
+				return this.currentTarget.renderer.material.color;
+			}
+		}
+		return Color.white;
+	}
+	
 	public float PupilSize
 	{
 		get

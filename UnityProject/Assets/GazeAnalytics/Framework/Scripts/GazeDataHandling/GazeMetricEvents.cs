@@ -35,10 +35,10 @@ public class GazeMetricEvents
 //		gazeDataList.Add(newEvent);
 //	}
 
-	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPosition, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationLength, string filePath)
+	public void NewGazeEvent(string eventName, Vector3 eventOrigin, Vector3 eventHitPoint, Vector3 eventHitObjectPosition, Vector3 eventHitScale, Quaternion eventHitRotation, Color eventHitColor, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationLength, string filePath)
 	{
 		eventNames.Add(eventName);
-		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPosition, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationLength, filePath);
+		GazeEvent newEvent = new GazeEvent(eventName, eventOrigin, eventHitPoint, eventHitObjectPosition, eventHitScale, eventHitRotation, eventHitColor, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationLength, filePath);
 		gazeDataList.Add(newEvent);
 	}
 
@@ -65,6 +65,10 @@ public class GazeEvent
 	public string eventName;
 	public Vector3 eventOrigin;
 	public Vector3 eventHitPoint;
+	public Vector3 eventHitObjectPosition;
+	public Vector3 eventHitScale;
+	public Quaternion eventHitRotation;
+	public Color eventHitColor;
 	public string eventHitName;
 	public Ray eventGazeRay;
 	public float pupilMeanSize;
@@ -79,6 +83,10 @@ public class GazeEvent
 		this.eventName = "";
 		this.eventOrigin = Vector3.zero;
 		this.eventHitPoint = Vector3.zero;
+		this.eventHitObjectPosition = Vector3.zero;
+		this.eventHitScale = Vector3.zero;
+		this.eventHitRotation = Quaternion.identity;
+		this.eventHitColor = Color.white;
 		this.eventHitName = "";
 		this.eventGazeRay = new Ray();
 		this.pupilMeanSize = 0f;
@@ -120,7 +128,11 @@ public class GazeEvent
 	//With hit object paremeters
 	public GazeEvent(string eventName, 
 	                 Vector3 eventOrigin, 
-	                 Vector3 eventHitPosition, 
+	                 Vector3 eventHitPoint,
+	                 Vector3 eventHitObjectPosition,
+	                 Vector3 eventHitScale,
+	                 Quaternion eventHitRotation,
+	                 Color eventHitColor,
 	                 string eventHitName, 
 	                 Ray eventGazeRay, 
 	                 float pupilMeanSize, 
@@ -132,7 +144,11 @@ public class GazeEvent
 	{
 		this.eventName = eventName;
 		this.eventOrigin = eventOrigin;
-		this.eventHitPoint = eventHitPosition;
+		this.eventHitPoint = eventHitPoint;
+		this.eventHitObjectPosition = eventHitObjectPosition;
+		this.eventHitScale = eventHitScale;
+		this.eventHitRotation = eventHitRotation;
+		this.eventHitColor = eventHitColor;
 		this.eventHitName = eventHitName;
 		this.eventGazeRay = eventGazeRay;
 		this.pupilMeanSize = pupilMeanSize;

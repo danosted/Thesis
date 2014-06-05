@@ -46,7 +46,11 @@ public class GazeMapData : MonoBehaviour
 	[SerializeField]
 	private bool
 		isShowingObjectSelectionBox;
+	[SerializeField]
+	private bool
+		isShowingTargetPrefab;
 
+	private Dictionary<string, GameObject> filepathToGameObject = new Dictionary<string, GameObject>();
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
 	private List<string> savedFilenames = new List<string>();
@@ -73,6 +77,20 @@ public class GazeMapData : MonoBehaviour
 	public float minGazeDataIndex = 0f;
 	public float maxGazeDataIndex = 1f;
 	#endregion
+
+	void Awake()
+	{
+		//Cleanup
+		if(Application.isPlaying)
+		{
+			Transform trashcan = transform.GetChild(0);
+			for(int i = 0; i < trashcan.childCount; i++)
+			{
+				Destroy(trashcan.GetChild(i).gameObject);
+			}
+			filepathToGameObject.Clear();
+		}
+	}
 
 	void OnGUI()
 	{
@@ -115,6 +133,14 @@ public class GazeMapData : MonoBehaviour
 //								Vector3 nextSaccadePoint = gazeArray[i + 1].eventHitPoint;
 								DrawGazeEvent(e, nextSaccadePoint, fileindex, i);
 							}
+							else
+							{
+								string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+								if(filepathToGameObject.ContainsKey(filepath2Color2position))
+								{
+									filepathToGameObject[filepath2Color2position].SetActive(false);
+								}
+							}
 							if(isShowingPupilEvents)
 							{
 								float pupilSize = gazeArray[i].pupilMeanSize;
@@ -123,9 +149,27 @@ public class GazeMapData : MonoBehaviour
 								Gizmos.color = new Color(pupilColor.r * map, pupilColor.g * map, pupilColor.b * map, 0.8f);
 								Gizmos.DrawSphere(gazeArray[i].eventOrigin, maxHeatMapPointSize * (map + 0.1f));
 							}
-							if(isShowingBlinkMap)
+//							if(isShowingBlinkMap)
+//							{
+//								
+//							}
+						}
+						for(i = 0; i < startIndex; i++)
+						{
+							GazeEvent e = gazeArray[i];
+							string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+							if(filepathToGameObject.ContainsKey(filepath2Color2position))
 							{
-								
+								filepathToGameObject[filepath2Color2position].SetActive(false);
+							}
+						}
+						for(i = endIndex; i < gazeArray.Length; i++)
+						{
+							GazeEvent e = gazeArray[i];
+							string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+							if(filepathToGameObject.ContainsKey(filepath2Color2position))
+							{
+								filepathToGameObject[filepath2Color2position].SetActive(false);
 							}
 						}
 					}
@@ -169,6 +213,34 @@ public class GazeMapData : MonoBehaviour
 		if(isShowingObjectName)
 		{
 			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.eventHitName, style);
+		}
+		if(isShowingTargetPrefab)
+		{
+			if(e.filePath != "")
+			{
+				string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+				if(filepathToGameObject.ContainsKey(filepath2Color2position))
+				{
+					filepathToGameObject[filepath2Color2position].SetActive(true);
+				}
+				else
+				{
+					Object prefab = AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
+					GameObject go = Instantiate(prefab, e.eventHitObjectPosition, e.eventHitRotation) as GameObject;
+					go.transform.localScale = e.eventHitScale;
+					go.transform.renderer.material.color = e.eventHitColor;
+					go.transform.parent = transform.GetChild(0);
+					filepathToGameObject.Add(filepath2Color2position, go);
+				}
+			}
+		}
+		else
+		{
+			string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+			if(filepathToGameObject.ContainsKey(filepath2Color2position))
+			{
+				filepathToGameObject[filepath2Color2position].SetActive(false);
+			}
 		}
 		/*
 		 * Note to self:
@@ -318,7 +390,7 @@ public class GazeMapData : MonoBehaviour
 		}
 
 		//post processing
-		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o=>o.gazeIndex).ToList();
+		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o => o.gazeIndex).ToList();
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
 		for(int i = 0; i < sortedMedoids.Count; i++)
 		{
@@ -402,6 +474,7 @@ public class GazeMapData : MonoBehaviour
 		isShowingObjectName = false;
 		isShowingRayOrigin = false;
 		isShowingObjectSelectionBox = false;
+		isShowingTargetPrefab = false;
 		if(savedFilenames.Count == 0 || filenameToGazeEvent.Count == 0)
 		{
 			eventOriginColors.Clear();
@@ -440,6 +513,17 @@ public class GazeMapData : MonoBehaviour
 		isShowingObjectName = false;
 		isShowingRayOrigin = false;
 		isShowingObjectSelectionBox = false;
+		isShowingTargetPrefab = false;
+		Transform trashcan = transform.GetChild(0);
+//		for(int i = 0; i < trashcan.childCount; i++)
+//		{
+//			DestroyImmediate(trashcan.GetChild(i).gameObject);
+//		}
+		while(trashcan.childCount > 0)
+		{
+			DestroyImmediate(trashcan.GetChild(0).gameObject);
+		}
+		filepathToGameObject.Clear();
 		gazeDataList.Clear();
 		filenameToGazeEvent.Clear();
 		loadedFiles.Clear();

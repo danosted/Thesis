@@ -1,17 +1,19 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\GazeExamples\ExampleScripts\Experiement\ExperimentSpawner.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazePrefabTrackerEditor.cs">
     <Files>
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="15" Column="1" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="127" Column="49" />
-      <File FileName="Assets\GazeAnalytics\GazeExamples\ExampleScripts\Experiement\ExperimentSpawner.cs" Line="194" Column="45" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="484" Column="37" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="8" Column="7" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazeMapDataEditor.cs" Line="247" Column="6" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs" Line="91" Column="12" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMapData.cs" Line="201" Column="18" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerData.cs" Line="1" Column="1" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\TETGazeTrackerDataValidator.cs" Line="1" Column="1" />
       <File FileName="Assets\GameAnalytics\Plugins\Framework\Scripts\GA.cs" Line="1" Column="1" />
-      <File FileName="Assets\GazeAnalytics\GazeExamples\ExampleScripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="41" Column="66" />
       <File FileName="Assets\GazeAnalytics\Framework\Scripts\TETGazeTracking\UnityGazeUtils.cs" Line="29" Column="41" />
-      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazePrefabTracker.cs" Line="24" Column="3" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazePrefabTracker.cs" Line="1" Column="1" />
+      <File FileName="Assets\GazeAnalytics\GazeExamples\Scripts\Experiement\ExperimentSpawner.cs" Line="182" Column="18" />
+      <File FileName="Assets\GazeAnalytics\GazeExamples\Scripts\GazeDataHandling\GazeMetricsCollecter.cs" Line="37" Column="43" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeMetricEvents.cs" Line="41" Column="77" />
+      <File FileName="Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\Editor\GazePrefabTrackerEditor.cs" Line="14" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
