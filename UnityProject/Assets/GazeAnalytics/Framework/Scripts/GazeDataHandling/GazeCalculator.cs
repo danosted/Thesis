@@ -53,6 +53,8 @@ public class GazeCalculator : MonoBehaviour
 	private float currentFixationLength;
 	private float lastFixationLength;
 
+	private int fixationIndex;
+
 	void Start()
 	{
 		//Don't find another camera if it is already assigned
@@ -337,4 +339,11 @@ public class GazeCalculator : MonoBehaviour
 			return lastFixationLength;
 		}
 	}
+
+	public int FixationIndex {
+		get {
+			return fixationIndex;
+		}
+	}
+
 }

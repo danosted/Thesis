@@ -9,6 +9,7 @@ using UnityEditor;
 
 public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
+
 	private TETGazeTrackerDataValidator gazeUtils;
 
 	private bool trackerIsActive;
@@ -150,6 +151,11 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 	public float GetLastFixationLength()
 	{
 		return gazeUtils.LastFixationTime;
+	}
+
+	public int GetFixationIndex()
+	{
+		return gazeUtils.FixationIndex;
 	}
 
 	public bool isFixating()

@@ -12,12 +12,14 @@ public class GazeMetricsCollecter : MonoBehaviour
 		experiment;
 
 	private GazeCalculator gazeCalculator;
+	private TETGazeTrackerData gazeDataTracker;
 
 	private HashSet<Transform> hits = new HashSet<Transform>();
 
 	void Start()
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
+		gazeDataTracker = GetComponent<TETGazeTrackerData>();
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
 		experiment.OnExperimentStarted += OnExperimentStarted;
 		StartCoroutine(CollectEyeMetrics());
@@ -41,6 +43,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       0f, 
 			                                       gazeCalculator.CurrentFixationLength,
+			                                       gazeCalculator.FixationIndex,
 			                                       gazeCalculator.GetCurrentTargetObjectPath());
 			yield return new WaitForSeconds(timeBetweenDataCollects);
 		}
@@ -76,6 +79,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                                       0f, 
 			                                       0f, 
 			                                       gazeCalculator.CurrentFixationLength,
+			                                       gazeCalculator.FixationIndex,
 			                                       gazeCalculator.GetCurrentTargetObjectPath());
 		}
 	}

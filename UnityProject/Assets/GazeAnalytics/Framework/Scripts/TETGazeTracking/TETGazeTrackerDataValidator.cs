@@ -47,6 +47,7 @@ namespace Assets.Scripts
 		private static Stopwatch blinkTimer;
 		private static Stopwatch fixationTimer;
 		private int blinkCount;
+		private int fixationIndex = 0;
 		private long timeSinceLastClose;
 		private long closeTime;
 		private bool hasClosed;
@@ -119,6 +120,7 @@ namespace Assets.Scripts
 					{
 						lastFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
 						fixationTimer.Reset();
+						fixationIndex++;
 					}
 					if(!fixationTimer.IsRunning && gd.IsFixated)
 					{
@@ -303,6 +305,12 @@ namespace Assets.Scripts
 			get 
 			{
 				return lastFixationTime;
+			}
+		}
+
+		public int FixationIndex {
+			get {
+				return fixationIndex;
 			}
 		}
 	}
