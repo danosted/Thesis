@@ -109,19 +109,21 @@ public class GazeMapDataEditor : Editor
 					gazeMapData.UnloadFile(filename);
 				}
 				SceneView.RepaintAll();
-//				}
-
 			}
-
+			if(GUILayout.Button("Process", GUILayout.MaxWidth(100f)))
+			{
+				gazeMapData.CreateProcessedGazeDataFile(filename);
+			}
+			if(GUILayout.Button("Serialize", GUILayout.MaxWidth(100f)))
+			{
+				gazeMapData.CreateSaveFile(filename);
+			}
 			if(GUILayout.Button("Delete"))
 			{
 				gazeMapData.DeleteSaveFile(filename);
 			}
 
-			if(GUILayout.Button("Process", GUILayout.MaxWidth(100f)))
-			{
-				gazeMapData.CreateProcessedGazeDataFile(filename);
-			}
+
 			EditorGUILayout.EndHorizontal();
 		}
 

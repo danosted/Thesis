@@ -52,6 +52,7 @@ public class GazeCalculator : MonoBehaviour
 	private float pupilSize;
 	private float currentFixationLength;
 	private float lastFixationLength;
+	private float currentTime;
 
 	private int fixationIndex;
 
@@ -113,6 +114,7 @@ public class GazeCalculator : MonoBehaviour
 //			{
 //				gazeRay = HandleUtility.GUIPointToWorldRay(new Vector2(gazeData.GetGazeScreenPosition().x, gazeData.GetGazeScreenPosition().y));
 //			}
+			currentTime = Time.time;
 			gazeRay = mouseAsGaze ? gazeCamera.ScreenPointToRay(Input.mousePosition) : gazeCamera.ScreenPointToRay(gazeData.GetGazeScreenPosition());
 //			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
 //			Vector2 pos = new Vector2(EditorWindow.GetWindow(T).position.x,EditorWindow.GetWindow(T).position.y);
@@ -165,6 +167,7 @@ public class GazeCalculator : MonoBehaviour
 			}
 			//Fixation
 			currentFixationLength = gazeData.GetCurrentFixationLength();
+			fixationIndex = gazeData.GetFixationIndex();
 			lastFixationLength = gazeData.GetLastFixationLength();
 			//Live Gaze Target
 			if(showLiveGazeDebug)
@@ -255,7 +258,7 @@ public class GazeCalculator : MonoBehaviour
 	{
 		if(!currentTarget)
 		{
-			return "N/A";
+			return "";
 		}
 		else
 		{
@@ -346,4 +349,9 @@ public class GazeCalculator : MonoBehaviour
 		}
 	}
 
+	public float CurrentTime {
+		get {
+			return currentTime;
+		}
+	}
 }

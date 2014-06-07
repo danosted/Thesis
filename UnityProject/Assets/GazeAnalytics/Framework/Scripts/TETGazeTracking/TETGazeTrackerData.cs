@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
-
+	
 	private TETGazeTrackerDataValidator gazeUtils;
 
 	private bool trackerIsActive;

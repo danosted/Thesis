@@ -8,6 +8,9 @@ public class ExperimentSpawner : MonoBehaviour
 {
 	public delegate void OnExperimentStartedDelegate();
 	public event OnExperimentStartedDelegate OnExperimentStarted;
+
+	public delegate void OnExperimentEndedDelegate();
+	public event OnExperimentEndedDelegate OnExperimentEnded;
 	
 	[SerializeField]
 	private ExperimentType
@@ -52,6 +55,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private Vector3 upperBounds;
 	private Vector3 lowerBounds;
 	private float elapsedTime;
+	private float currentTime;
 	private float finishingTime;
 	private float startTime;
 	private int targetHitNum;
@@ -136,6 +140,7 @@ public class ExperimentSpawner : MonoBehaviour
 //				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
 			}
 		}
+		currentTime = Time.time - startTime;
 	}
 
 	private IEnumerator RunExperiementFor(float length)
@@ -182,6 +187,7 @@ public class ExperimentSpawner : MonoBehaviour
 		ResetTargets();
 		StopAllCoroutines();
 		finishingTime = Time.time - startTime;
+		OnExperimentEnded();
 		StartCoroutine(ShowEndResults(targetHitNum, finishingTime));
 	}
 
@@ -393,4 +399,11 @@ public class ExperimentSpawner : MonoBehaviour
 			return targetMaterials;
 		}
 	}
+
+	public float CurrentTime {
+		get {
+			return currentTime;
+		}
+	}
+
 }
