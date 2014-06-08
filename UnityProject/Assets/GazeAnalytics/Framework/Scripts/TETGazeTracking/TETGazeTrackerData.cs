@@ -62,13 +62,18 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		else
 		{
 			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.CloseTime.ToString());
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.EyesCloseTime.ToString());
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "curfix: " + gazeUtils.CurrentFixationTime.ToString());
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "lastfix: " + gazeUtils.LastFixationTime.ToString());
+			y += btnHeight + padding;
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "closetime: " + gazeUtils.EyesCloseTime.ToString());
+			y += btnHeight + padding;
+			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "blinks: " + gazeUtils.BlinkCount.ToString());
+//			y += btnHeight + padding;
+//			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "blinks: " + gazeUtils.Dist.ToString());
 		}
-
 //		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
 //		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
 //		Debug.Log ("left eye pupil: " + pupil_left);
@@ -100,8 +105,8 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 		if(null != gp)
 		{
 			Point2D sp = UnityGazeUtils.getGazeCoordsToUnityWindowCoords(gp);
-			Debug.Log("gaze: " + ((float)sp.X).ToString() + "," +((float)sp.Y).ToString());
-			Debug.Log("mouse: " + Input.mousePosition.x.ToString() + "," + Input.mousePosition.y.ToString());
+//			Debug.Log("gaze: " + ((float)sp.X).ToString() + "," +((float)sp.Y).ToString());
+//			Debug.Log("mouse: " + Input.mousePosition.x.ToString() + "," + Input.mousePosition.y.ToString());
 			return new Vector3((float)sp.X, (float)sp.Y, 0f);
 //			return new Vector3((float)gp.X, (float)gp.Y, 0f);
 		}
@@ -112,30 +117,21 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 
 	}
 
-	public float GetPupilDilationLeft()
-	{
-		float pupil_right = (float)gazeUtils.GetLastValidRightEye().PupilSize;
-		return pupil_right;
-	}
-
-	public float GetPupilDilationRight()
-	{
-		float pupil_left = (float)gazeUtils.GetLastValidLeftEye().PupilSize;
-		return pupil_left;
-	}
-
 	public float GetMeanPupilDilation()
 	{
-		float pupil_left = (float)gazeUtils.GetLastValidLeftEye().PupilSize;
-		float pupil_right = (float)gazeUtils.GetLastValidRightEye().PupilSize;
-		float pupil = (pupil_left + pupil_right) * 0.5f;
-//		Debug.Log("pupil size: " + pupil);
-		return pupil;
+		if(gazeUtils.GetLastValidLeftEye() != null && gazeUtils.GetLastValidRightEye() != null)
+		{
+			float pupil_left = (float)gazeUtils.GetLastValidLeftEye().PupilSize;
+			float pupil_right = (float)gazeUtils.GetLastValidRightEye().PupilSize;
+			float pupil = (pupil_left + pupil_right) * 0.5f;
+			return pupil;
+		}
+		return 0f;
 	}
 
-	public long GetTimeSinceLastBlink()
+	public float GetEyesClosedTime()
 	{
-		return gazeUtils.CloseTime;
+		return gazeUtils.EyesCloseTime;
 	}
 
 	public int GetBlinkCount()

@@ -136,7 +136,7 @@ public class GazeMapData : MonoBehaviour
 							}
 							else
 							{
-								string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+								string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 								if(filepathToGameObject.ContainsKey(filepath2Color2position))
 								{
 									filepathToGameObject[filepath2Color2position].SetActive(false);
@@ -159,7 +159,7 @@ public class GazeMapData : MonoBehaviour
 						for(i = 0; i < startIndex; i++)
 						{
 							GazeEvent e = gazeArray[i];
-							string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+							string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 							if(filepathToGameObject.ContainsKey(filepath2Color2position))
 							{
 								filepathToGameObject[filepath2Color2position].SetActive(false);
@@ -168,7 +168,7 @@ public class GazeMapData : MonoBehaviour
 						for(i = endIndex; i < gazeArray.Length; i++)
 						{
 							GazeEvent e = gazeArray[i];
-							string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+							string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 							if(filepathToGameObject.ContainsKey(filepath2Color2position))
 							{
 								filepathToGameObject[filepath2Color2position].SetActive(false);
@@ -230,7 +230,7 @@ public class GazeMapData : MonoBehaviour
 			if(e.filePath != "")
 			{
 				Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.filePath, style);
-				string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+				string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 				if(filepathToGameObject.ContainsKey(filepath2Color2position))
 				{
 					filepathToGameObject[filepath2Color2position].SetActive(true);
@@ -248,7 +248,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		else
 		{
-			string filepath2Color2position = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+			string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 			if(filepathToGameObject.ContainsKey(filepath2Color2position))
 			{
 				filepathToGameObject[filepath2Color2position].SetActive(false);
@@ -295,6 +295,7 @@ public class GazeMapData : MonoBehaviour
 		{
 			ClusterPoint point;
 			point.gazeIndex = i;
+			point.medoidGazeIndex = -1;
 			allClusterPoints.Add(point);
 		}
 		List<int> clusterSteps = new List<int>();
@@ -305,7 +306,7 @@ public class GazeMapData : MonoBehaviour
 			if((i + 1) == (rawGazeEvents.Count - 1))
 			{
 				clusterSteps.Add(i + 1);
-				//				Debug.Log("clusterstep: " + (i + 1));
+//								Debug.Log("clusterstep: " + (i + 1));
 			}
 			else
 			{
@@ -313,7 +314,19 @@ public class GazeMapData : MonoBehaviour
 				{
 					if(foundHit)
 					{
-						clusterSteps.Add(i);
+						if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i - 1].eventHitPoint) > maxSaccadeJumpDistance)
+						{
+							clusterSteps.Add(i);
+						}
+						else 
+						{
+							string currentFP = CreateUniqueHiteventFilepath(rawGazeEvents[i]);
+							string lastFP = CreateUniqueHiteventFilepath(rawGazeEvents[i-1]);
+							if(!currentFP.Equals(lastFP))
+							{
+								clusterSteps.Add(i);
+							}
+						}
 //						Debug.Log("clusterstep: " + i);
 					}
 					else
@@ -336,16 +349,17 @@ public class GazeMapData : MonoBehaviour
 //		Debug.Log(clusterSteps.Count);
 		List<ClusterPoint> medoids = new List<ClusterPoint>();
 		int[] lastPoint2closestMedoid = new int[rawGazeEvents.Count];
+		int medoidIndex = 0;
 		for(int j = 0; j < clusterSteps.Count; j++)
 		{
 			List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
 			ClusterPoint medoid;
 			startIndex = j > 0 ? clusterSteps[j - 1] : 0;
-			int medoidIndex = 0;
 //			Debug.Log("startInd: " + startIndex + ", clusterstep[j]: " + clusterSteps[j]);
 			for(int i = startIndex; i < clusterSteps[j]; i++)
 			{
 				nonMedoidPoints.Add(allClusterPoints[i]);
+//				Debug.Log("added: " + i);
 			}
 			if(nonMedoidPoints.Count > 0)
 			{
@@ -353,15 +367,21 @@ public class GazeMapData : MonoBehaviour
 				{
 					if(rawGazeEvents[nonMedoidPoints[0].gazeIndex].fixationLength > minFixationDuration || rawGazeEvents[nonMedoidPoints[0].gazeIndex].filePath != "")
 					{
+//						Debug.Log("medoid: " + nonMedoidPoints[0].gazeIndex);
 						medoids.Add(nonMedoidPoints[0]);
+					}
+					else
+					{
+						medoidIndex--;
 					}
 				}
 				else if(nonMedoidPoints.Count == 2)
 				{
 					int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
-					medoids[medoidIndex] = nonMedoidPoints[rindex];
+					medoids.Add(nonMedoidPoints[rindex]);
 					nonMedoidPoints.RemoveAt(rindex);
-					nonMedoidPoints[0].medoidGazeIndex = medoids[medoidIndex].gazeIndex;
+					ClusterPoint cp = allClusterPoints.Find(ge=>ge.Equals(nonMedoidPoints[0]));
+					cp.medoidGazeIndex = medoids[medoidIndex].gazeIndex;
 				}
 				else
 				{
@@ -369,7 +389,6 @@ public class GazeMapData : MonoBehaviour
 					medoid = nonMedoidPoints[rindex];
 					medoids.Add(medoid);
 					nonMedoidPoints.RemoveAt(rindex);
-					float minCost = float.MaxValue;
 					float lastCost = float.MaxValue;
 					bool first = true;
 					for(int x = 0; x < nonMedoidPoints.Count; x++)
@@ -384,27 +403,21 @@ public class GazeMapData : MonoBehaviour
 							nonMedoidPoints[x] = medoid;
 							medoid = newMedoid;
 						}
-						//index = pointIndex, value = medoid gaze index
-						int[] point2closestMedoid = new int[nonMedoidPoints.Count];
-						float[] costs = new float[nonMedoidPoints.Count];
-						//Assign points to current medoid and store the distances
+						//Assign points to current medoid and calculate the cost
 						float totalCost = 0f;
 						for(int c = 0; c < nonMedoidPoints.Count; c++)
 						{
 							totalCost += Vector3.Distance(rawGazeEvents[medoid.gazeIndex].eventHitPoint, rawGazeEvents[nonMedoidPoints[c].gazeIndex].eventHitPoint);
-							allClusterPoints.Find(ge=>ge.Equals(nonMedoidPoints[c])).medoidGazeIndex = medoid.gazeIndex;
+							ClusterPoint cp = allClusterPoints.Find(ge=>ge.Equals(nonMedoidPoints[c]));
+							cp.medoidGazeIndex = medoid.gazeIndex;
 						}
 //						Debug.Log("medoid " + medoid.gazeIndex + " , totalCost: " + totalCost + ", pos: " + rawGazeEvents[medoid.gazeIndex].eventHitPoint);
 						if(totalCost < lastCost)
 						{
 							lastCost = totalCost;
-//							for(int y = 0; y < point2closestMedoid.Length; y++)
-//							{
-////								Debug.Log("startIndex+y: " + (startIndex + y) + " lastindex: " + (rawGazeEvents.Count - 1));
-//								lastPoint2closestMedoid[startIndex + y] = point2closestMedoid[y];
-//							}
+//							Debug.Log("medoidIndex " + medoidIndex + ", medoidsSize: " + medoids.Count);
 							medoids[medoidIndex] = medoid;
-//							Debug.Log("medoid gazeindex" + medoid.gazeIndex);
+						
 						}
 						else
 						{
@@ -427,18 +440,15 @@ public class GazeMapData : MonoBehaviour
 		List<GazeEvent> processedEvents = new List<GazeEvent>();
 		for(int i = 0; i < sortedMedoids.Count; i++)
 		{
-//			Debug.Log("sortedmedoid gazeindex" + sortedMedoids[i].gazeIndex);
+//			Debug.Log("sortedmedoid: " + sortedMedoids[i].gazeIndex);
 			GazeEvent cluster2single = rawGazeEvents[sortedMedoids[i].gazeIndex];
-			bool hasFilepath = false;
+			cluster2single.saccadeCount = (i+1);
 			int curFixIndex = cluster2single.fixationIndex;
 			Dictionary<int, float> fixIndex2duration = new Dictionary<int, float>();
-			if( cluster2single.filePath != "")
+			bool hasFilepath = cluster2single.filePath != "" ? true : false;
+			for(int j = 0; j < allClusterPoints.Count; j++)
 			{
-				hasFilepath = true;
-			}
-			for(int j = 0; j < lastPoint2closestMedoid.Length; j++)
-			{
-				if(lastPoint2closestMedoid[j] == sortedMedoids[i].gazeIndex)
+				if(allClusterPoints[j].medoidGazeIndex == sortedMedoids[i].gazeIndex)
 				{
 					GazeEvent ge = rawGazeEvents[allClusterPoints[j].gazeIndex];
 					string filepath = ge.filePath;
@@ -693,6 +703,12 @@ public class GazeMapData : MonoBehaviour
 			date.TimeOfDay.Minutes + "_" +
 			date.TimeOfDay.Seconds + ".xml";
 		return filename;
+	}
+
+	private string CreateUniqueHiteventFilepath(GazeEvent e)
+	{
+		string fp = e.filePath + e.eventHitColor.ToString() + e.eventHitObjectPosition;
+		return fp;
 	}
 
 	public Dictionary<string, List<GazeEvent>> FilenameToGazeEvent

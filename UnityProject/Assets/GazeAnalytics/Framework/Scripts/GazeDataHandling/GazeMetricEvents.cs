@@ -21,10 +21,10 @@ public class GazeMetricEvents
 		}
 	}
 
-	public void NewGazeEvent(string eventName, float eventTime, Vector3 eventHitPoint, Vector3 eventHitObjectPosition, Vector3 eventHitScale, Quaternion eventHitRotation, Color eventHitColor, string eventHitName, Ray eventGazeRay, float pupilMeanSize, float blinkFrequency, float blinkClosedToOpenedLength, float saccadeFrequency, float fixationLength, int fixationIndex, string filePath)
+	public void NewGazeEvent(string eventName, float eventTime, Vector3 eventHitPoint, Vector3 eventHitObjectPosition, Vector3 eventHitScale, Quaternion eventHitRotation, Color eventHitColor, string eventHitName, Ray eventGazeRay, float pupilMeanSize, int blinkCount, float eyeClosedTime, int saccadeCount, float fixationLength, int fixationIndex, string filePath)
 	{
 		eventNames.Add(eventName);
-		GazeEvent newEvent = new GazeEvent(eventName, eventTime, eventHitPoint, eventHitObjectPosition, eventHitScale, eventHitRotation, eventHitColor, eventHitName, eventGazeRay, pupilMeanSize, blinkFrequency, blinkClosedToOpenedLength, saccadeFrequency, fixationLength, fixationIndex, filePath);
+		GazeEvent newEvent = new GazeEvent(eventName, eventTime, eventHitPoint, eventHitObjectPosition, eventHitScale, eventHitRotation, eventHitColor, eventHitName, eventGazeRay, pupilMeanSize, blinkCount, eyeClosedTime, saccadeCount, fixationLength, fixationIndex, filePath);
 		gazeDataList.Add(newEvent);
 	}
 
@@ -58,9 +58,9 @@ public class GazeEvent
 	public string eventHitName;
 	public Ray eventGazeRay;
 	public float pupilMeanSize;
-	public float blinkFrequency;
-	public float blinkClosedToOpenedLength;
-	public float saccadeFrequency;
+	public int blinkCount;
+	public float eyeClosedTime;
+	public int saccadeCount;
 	public float fixationLength;
 	public int fixationIndex;
 	public string filePath;
@@ -77,9 +77,9 @@ public class GazeEvent
 		this.eventHitName = "";
 		this.eventGazeRay = new Ray();
 		this.pupilMeanSize = 0f;
-		this.blinkFrequency = 0f;
-		this.blinkClosedToOpenedLength = 0f;
-		this.saccadeFrequency = 0f;
+		this.blinkCount = 0;
+		this.eyeClosedTime = 0f;
+		this.saccadeCount = 0;
 		this.fixationLength = 0f;
 		this.fixationIndex = 0;
 		this.filePath = "";
@@ -95,9 +95,9 @@ public class GazeEvent
 	                 string eventHitName, 
 	                 Ray eventGazeRay, 
 	                 float pupilMeanSize, 
-	                 float blinkFrequency, 
-	                 float blinkClosedToOpenedLength, 
-	                 float saccadeFrequency, 
+	                 int blinkCount, 
+	                 float eyeClosedTime, 
+	                 int saccadeCount, 
 	                 float fixationLength, 
 	                 int fixationIndex,
 	                 string filePath)
@@ -112,9 +112,9 @@ public class GazeEvent
 		this.eventHitName = eventHitName;
 		this.eventGazeRay = eventGazeRay;
 		this.pupilMeanSize = pupilMeanSize;
-		this.blinkFrequency = blinkFrequency;
-		this.blinkClosedToOpenedLength = blinkClosedToOpenedLength;
-		this.saccadeFrequency = saccadeFrequency;
+		this.blinkCount = blinkCount;
+		this.eyeClosedTime = eyeClosedTime;
+		this.saccadeCount = saccadeCount;
 		this.fixationLength = fixationLength;
 		this.fixationIndex = fixationIndex;
 		this.filePath = filePath;

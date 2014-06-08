@@ -52,9 +52,11 @@ public class GazeCalculator : MonoBehaviour
 	private float pupilSize;
 	private float currentFixationLength;
 	private float lastFixationLength;
+	private float currentEyesClosedtime;
 	private float currentTime;
 
 	private int fixationIndex;
+	private int blinkCount;
 
 	void Start()
 	{
@@ -118,7 +120,7 @@ public class GazeCalculator : MonoBehaviour
 			gazeRay = mouseAsGaze ? gazeCamera.ScreenPointToRay(Input.mousePosition) : gazeCamera.ScreenPointToRay(gazeData.GetGazeScreenPosition());
 //			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
 //			Vector2 pos = new Vector2(EditorWindow.GetWindow(T).position.x,EditorWindow.GetWindow(T).position.y);
-//			Debug.Log("game rect: " + pos.x + "," + pos.y);
+//			Debug.Log("windowPos: " + pos.x + "," + pos.y);
 //			RaycastHit hit;
 			RaycastHit[] hits;
 			hits = Physics.SphereCastAll(gazeRay, hitRaySearchRadius);
@@ -147,18 +149,6 @@ public class GazeCalculator : MonoBehaviour
 					}
 				}
 			}
-//			if(Physics.Raycast(gazeRay, out hit, hitRayMaxDistance))
-//			if(Physics.SphereCast(gazeRay, hitRaySearchRadius, out hit))
-//			{
-//				Debug.Log("hit: " + hit.transform.name);
-//				currentTarget = hit.transform;
-//				gazeHitPoint = hit.point;
-//				if(OnGazeObjectHit != null)
-//				{
-//					OnGazeObjectHit(hit.transform);
-//				}
-//				isHit = true;
-//			}
 			else
 			{
 				currentTarget = null;
@@ -190,16 +180,8 @@ public class GazeCalculator : MonoBehaviour
 		while(true)
 		{
 			pupilSize = gazeData.GetMeanPupilDilation();
-
-			try
-			{
-//				Debug.Log("TimeSinceLastBlink: ");
-//				Debug.Log(gazeHandler.GetTimeSinceLastBlink());
-			}
-			catch(System.Exception e)
-			{
-				Debug.Log(e, gameObject);
-			}
+			currentEyesClosedtime = gazeData.GetEyesClosedTime();
+			blinkCount = gazeData.GetBlinkCount();
 			yield return null;
 		}
 	}
@@ -352,6 +334,18 @@ public class GazeCalculator : MonoBehaviour
 	public float CurrentTime {
 		get {
 			return currentTime;
+		}
+	}
+
+	public float CurrentEyesClosedTime {
+		get {
+			return currentEyesClosedtime;
+		}
+	}
+
+	public int BlinkCount {
+		get {
+			return blinkCount;
 		}
 	}
 }

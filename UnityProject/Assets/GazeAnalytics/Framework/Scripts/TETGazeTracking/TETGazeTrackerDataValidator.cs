@@ -21,10 +21,13 @@ namespace Assets.Scripts
 		private FixedSizeQueue<GazeData> _Frames;
 
 		private Eye _LastValidLeftEye;
-		private Eye _LastValidRightEye ;
+		private Eye _LastValidRightEye;
+
+		private Eye _LastLeftEye;
+		private Eye _LastRightEye;
 
 		private Eye _currentLeftEye;
-		private Eye _currentRightEye ;
+		private Eye _currentRightEye;
 
 		private Point2D _LastValidRawGazeCoords;
 		private Point2D _LastValidSmoothedGazeCoords;
@@ -48,8 +51,7 @@ namespace Assets.Scripts
 		private static Stopwatch fixationTimer;
 		private int blinkCount;
 		private int fixationIndex = 0;
-		private long timeSinceLastClose;
-		private long closeTime;
+		private float eyesCloseTime;
 		private bool hasClosed;
 
 		public TETGazeTrackerDataValidator(int queueLength)
@@ -92,28 +94,28 @@ namespace Assets.Scripts
 						right = gd.RightEye;
 					}
 
-					if(left == null && right == null)
+					if((left == null && _LastRightEye == null) || (left == null && right == null) || (_LastLeftEye == null && right == null) && !gd.IsFixated)
 					{
 						if(!blinkTimer.IsRunning)
 						{
-							blinkTimer.Start();	
+							blinkTimer.Reset();
+							blinkTimer.Start();
 						}
 					}
-					
-					if(left != null && right != null)
+					else
 					{
-						long t = blinkTimer.ElapsedMilliseconds;
 						if(blinkTimer.IsRunning)
 						{
-//							closeTime = time.ElapsedMilliseconds;
-							if(t > 5 && t < 500)
+							eyesCloseTime = (float)blinkTimer.ElapsedMilliseconds * 0.001f;
+							blinkTimer.Stop();
+							if(eyesCloseTime > 0.02f && eyesCloseTime < 1f)
 							{
-								closeTime = t;
 								blinkCount++;
 							}
-							blinkTimer.Reset();
 						}
 					}
+					_LastLeftEye = left;
+					_LastRightEye = right;
 
 					_isFixating = gd.IsFixated;
 					if(!gd.IsFixated && fixationTimer.IsRunning)
@@ -246,11 +248,11 @@ namespace Assets.Scripts
 			return _LastValidSmoothedGazeCoords;
 		}
 
-		public long CloseTime
+		public float EyesCloseTime
 		{
 			get
 			{
-				return closeTime;
+				return eyesCloseTime;
 			}
 		}
 
