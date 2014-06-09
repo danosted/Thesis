@@ -12,9 +12,13 @@ public class GazeMapDataEditor : Editor
 	private static GUIStyle smallFontStyle = new GUIStyle();
 	private static GUIStyle boldFontStyle = new GUIStyle();
 
+	private float scale;
+	private float speed;
 	private int index = 0;
 	private bool deleteAllFiles;
 	private bool showWarningWindow;
+	private bool playAnimation;
+	private bool isPressedPlay;
 
 	static GazeMapDataEditor()
 	{
@@ -178,21 +182,32 @@ public class GazeMapDataEditor : Editor
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingRayOrigin"), new GUIContent("Show Ray Origin"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingObjectSelectionBox"), new GUIContent("Show Object Selection Box"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingTargetPrefab"), new GUIContent("Show Target Object"), true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingPupilEvents"), new GUIContent("Show Pupil Dilation Events"), true);
+		EditorGUILayout.MinMaxSlider(new GUIContent("Pupil Dilation Threshold"), ref gazeMapData.minPupilSize, ref gazeMapData.maxPupilSize, 0f, 40f);
 		serializedObject.ApplyModifiedProperties();
 		SceneView.RepaintAll();
 		#endregion
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
-		#region pupilmaprender
-		serializedObject.Update();
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowingPupilEvents"), new GUIContent("Show Pupil Dilation Events"), true);
+		#region animation
+		EditorGUILayout.LabelField("Animate", largeHeaderStyle);
+		float tempSpeed = speed;
+		speed = EditorGUILayout.Slider("Animation speed", tempSpeed, 0f, 1f); 
+		if(GUILayout.Button("Play", GUILayout.MaxWidth(100f)))
+		{
+			PlayAnimation();
+		}
+		if(GUILayout.Button("Stop", GUILayout.MaxWidth(100f)))
+		{
+			StopAnimation();
+		}
 		SceneView.RepaintAll();
+		#endregion
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
+		#region pupilmaprender
+		EditorGUILayout.LabelField("Color Coding", largeHeaderStyle);
 		serializedObject.ApplyModifiedProperties();
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.MinMaxSlider(new GUIContent("Pupil Dilation Threshold"), ref gazeMapData.minPupilSize, ref gazeMapData.maxPupilSize, 0f, 40f);
-		EditorGUILayout.EndHorizontal();
-
-		serializedObject.Update();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("pupilColor"), true);
 		serializedObject.ApplyModifiedProperties();
 		#endregion
@@ -222,7 +237,7 @@ public class GazeMapDataEditor : Editor
 						{
 							GazeEvent[] gazeArray = entry.Value.ToArray();
 							int i = 0;
-							for(i = (int)(gazeMapData.minGazeDataIndex*(gazeArray.Length-1)); i < (int)(gazeMapData.maxGazeDataIndex*(gazeArray.Length-1)); i++)
+							for(i = (int)(gazeMapData.minGazeDataIndex*(gazeArray.Length-1)); i < (int)(gazeMapData.maxGazeDataIndex*(gazeArray.Length)); i++)
 							{
 								GazeEvent e = gazeArray[i];
 								if(e.filePath != "")
@@ -245,6 +260,40 @@ public class GazeMapDataEditor : Editor
 				}
 			}
 		}
+
+		float realSpeed = speed * 0.0001f;
+		if(isPressedPlay)
+		{
+			isPressedPlay = false;
+			scale = gazeMapData.maxGazeDataIndex - gazeMapData.minGazeDataIndex;
+			gazeMapData.minGazeDataIndex = 0f;
+			gazeMapData.maxGazeDataIndex = 0f;
+			playAnimation = true;
+		}
+		if(playAnimation && gazeMapData.maxGazeDataIndex + realSpeed <= 1f)
+		{
+			if(gazeMapData.maxGazeDataIndex - gazeMapData.minGazeDataIndex < scale)
+			{
+				gazeMapData.maxGazeDataIndex += realSpeed;
+			}
+			else
+			{
+				gazeMapData.minGazeDataIndex += realSpeed;
+				gazeMapData.maxGazeDataIndex += realSpeed;
+			}
+			SceneView.RepaintAll();
+		}
 	}
+
+	public void StopAnimation()
+	{
+		playAnimation = false;
+	}
+	
+	public void PlayAnimation()
+	{
+		isPressedPlay = true;
+	}
+
 
 }
