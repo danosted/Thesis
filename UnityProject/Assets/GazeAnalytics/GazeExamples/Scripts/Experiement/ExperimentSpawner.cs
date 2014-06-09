@@ -89,7 +89,7 @@ public class ExperimentSpawner : MonoBehaviour
 				}
 				canRun = true;
 			}
-			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z - background.transform.position.z));
+			upperBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height - 50, Camera.main.transform.position.z - background.transform.position.z));
 			lowerBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.position.z - background.transform.position.z + 0.5f));
 //			Debug.Log("upper: " + upperBounds.x + "," + upperBounds.y);
 //			Debug.Log("Lower: " + lowerBounds.x + "," + lowerBounds.y);
@@ -140,6 +140,10 @@ public class ExperimentSpawner : MonoBehaviour
 //				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
 			}
 		}
+	}
+
+	void Update()
+	{
 		currentTime = Time.time - startTime;
 	}
 
@@ -159,6 +163,11 @@ public class ExperimentSpawner : MonoBehaviour
 					OnExperimentStarted();
 				}
 				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, 1));
+				ResetTargets();
+				if(OnExperimentEnded != null)
+				{	
+					OnExperimentEnded();
+				}
 				yield return new WaitForSeconds(Random.Range(2f, 5f));
 			}
 		}
@@ -173,6 +182,10 @@ public class ExperimentSpawner : MonoBehaviour
 				}
 				yield return StartCoroutine(RunSizeExperimentFor(length, 1));
 				ResetTargets();
+				if(OnExperimentEnded != null)
+				{	
+					OnExperimentEnded();
+				}
 				yield return new WaitForSeconds(Random.Range(2f, 5f));
 			}
 		}
@@ -187,7 +200,6 @@ public class ExperimentSpawner : MonoBehaviour
 		ResetTargets();
 		StopAllCoroutines();
 		finishingTime = Time.time - startTime;
-		OnExperimentEnded();
 		StartCoroutine(ShowEndResults(targetHitNum, finishingTime));
 	}
 

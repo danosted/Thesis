@@ -85,7 +85,9 @@ public class GazeMapDataEditor : Editor
 		{
 			EditorGUILayout.LabelField("Data files on disk", largeHeaderStyle);
 		}
-		foreach(string filename in gazeMapData.Filenames.ToArray())
+		string[] filenames = new string[gazeMapData.Filenames.Count];
+		gazeMapData.Filenames.CopyTo(filenames);
+		foreach(string filename in filenames)
 		{
 			bool isLoaded = gazeMapData.LoadedFiles.Contains(filename);
 			EditorGUILayout.BeginHorizontal();
@@ -230,7 +232,10 @@ public class GazeMapDataEditor : Editor
 									if(Handles.Button(e.eventHitPoint, Quaternion.LookRotation(cam.transform.position - e.eventHitPoint), 0.5f, 0.5f, Handles.RectangleCap))
 									{
 										GameObject go = (GameObject)AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
-										Selection.activeGameObject = go;
+										if(go != null)
+										{
+											Selection.activeGameObject = go;
+										}
 									}
 									
 								}
@@ -240,33 +245,6 @@ public class GazeMapDataEditor : Editor
 				}
 			}
 		}
-		int width = 200;
-		int height = 50;
-		Rect window = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
-//		if(showWarningWindow)
-//		{
-//			GUI.Window(0, window, WarningWindow, "Are you sure?");
-//		}
-//		if(deleteAllFiles)
-//		{
-//			deleteAllFiles = false;
-//			gazeMapData.DeleteAllSaveFiles();
-//		}
 	}
-
-//	void WarningWindow(int windowID)
-//	{
-//		GUILayout.BeginHorizontal();
-//		if(GUILayout.Button("Yes"))
-//		{
-//			deleteAllFiles = true;
-//			showWarningWindow = false;
-//		}
-//		if(GUILayout.Button("No"))
-//		{
-//			showWarningWindow = false;
-//		}
-//		GUILayout.EndHorizontal();
-//	}
 
 }

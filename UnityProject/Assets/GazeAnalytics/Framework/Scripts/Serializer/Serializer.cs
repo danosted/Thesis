@@ -64,10 +64,10 @@ public class Serializer
 		return o;
 	}
 
-	public void SerializeFilenames(List<string> o)
+	public void SerializeFilenames(HashSet<string> o)
 	{
 		FileStream fs = new FileStream(filepath + fileLogname, FileMode.Create);
-		XmlSerializer formatter = new XmlSerializer(typeof(List<string>));
+		XmlSerializer formatter = new XmlSerializer(typeof(HashSet<string>));
 		try
 		{
 			formatter.Serialize(fs, o);
@@ -83,14 +83,14 @@ public class Serializer
 		}
 	}
 	
-	public List<string> DeserializeFilenames()
+	public HashSet<string> DeserializeFilenames()
 	{
 		FileStream fs = new FileStream(filepath + fileLogname, FileMode.Open);
-		List<string> o = null;
+		HashSet<string> o = null;
 		try
 		{
-			XmlSerializer formatter = new XmlSerializer(typeof(List<string>));
-			o = (List<string>)formatter.Deserialize(fs);
+			XmlSerializer formatter = new XmlSerializer(typeof(HashSet<string>));
+			o = (HashSet<string>)formatter.Deserialize(fs);
 		}
 		catch(XmlException e)
 		{

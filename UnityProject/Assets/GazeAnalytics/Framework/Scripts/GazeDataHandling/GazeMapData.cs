@@ -53,7 +53,7 @@ public class GazeMapData : MonoBehaviour
 	private Dictionary<string, GameObject> filepathToGameObject = new Dictionary<string, GameObject>();
 	private Dictionary<string, List<GazeEvent>> filenameToGazeEvent = new Dictionary<string, List<GazeEvent>>();
 	private List<GazeEvent> gazeDataList = new List<GazeEvent>();
-	private List<string> savedFilenames = new List<string>();
+	private HashSet<string> savedFilenames = new HashSet<string>();
 	private List<string> loadedFiles = new List<string>();
 
 	private float characterCubeSize = 0.5f;
@@ -229,7 +229,7 @@ public class GazeMapData : MonoBehaviour
 		{
 			if(e.filePath != "")
 			{
-				Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.filePath, style);
+//				Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.filePath, style);
 				string filepath2Color2position = CreateUniqueHiteventFilepath(e);
 				if(filepathToGameObject.ContainsKey(filepath2Color2position))
 				{
@@ -238,11 +238,14 @@ public class GazeMapData : MonoBehaviour
 				else
 				{
 					Object prefab = AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
-					GameObject go = Instantiate(prefab, e.eventHitObjectPosition, e.eventHitRotation) as GameObject;
-					go.transform.localScale = e.eventHitScale;
-					go.transform.renderer.material.color = e.eventHitColor;
-					go.transform.parent = transform.GetChild(0);
-					filepathToGameObject.Add(filepath2Color2position, go);
+					if(prefab != null)
+					{
+						GameObject go = Instantiate(prefab, e.eventHitObjectPosition, e.eventHitRotation) as GameObject;
+						go.transform.localScale = e.eventHitScale;
+						go.transform.renderer.material.color = e.eventHitColor;
+						go.transform.parent = transform.GetChild(0);
+						filepathToGameObject.Add(filepath2Color2position, go);	
+					}
 				}
 			}
 		}
@@ -258,6 +261,10 @@ public class GazeMapData : MonoBehaviour
 		 * Note to self:
 		 * Asset prefab path selection is located in the editor class
 		 */
+
+		//Debug
+//		Handles.Label(e.eventHitPoint, e.fixationIndex.ToString(), style);
+
 	}
 #endif
 
@@ -301,30 +308,35 @@ public class GazeMapData : MonoBehaviour
 		List<int> clusterSteps = new List<int>();
 //		int debugCount = 0;
 		bool foundHit = false;
+		string lastFP = "";
 		for(int i = 0; i < rawGazeEvents.Count-1; i++)
 		{
 			if((i + 1) == (rawGazeEvents.Count - 1))
 			{
 				clusterSteps.Add(i + 1);
-//								Debug.Log("clusterstep: " + (i + 1));
+//				Debug.Log("clusterstep: " + (i + 1));
 			}
 			else
 			{
 				if(rawGazeEvents[i].filePath != "")
 				{
+//					Debug.Log("foundhit: " + (i));
 					if(foundHit)
 					{
 						if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i - 1].eventHitPoint) > maxSaccadeJumpDistance)
 						{
 							clusterSteps.Add(i);
+							lastFP = CreateUniqueHiteventFilepath(rawGazeEvents[i]);
+//							Debug.Log("addedhit: " + (i));
 						}
 						else 
 						{
-							string currentFP = CreateUniqueHiteventFilepath(rawGazeEvents[i]);
-							string lastFP = CreateUniqueHiteventFilepath(rawGazeEvents[i-1]);
-							if(!currentFP.Equals(lastFP))
+							string thisFP = CreateUniqueHiteventFilepath(rawGazeEvents[i]);
+							lastFP = CreateUniqueHiteventFilepath(rawGazeEvents[i-1]);
+							if(!thisFP.Equals(lastFP))
 							{
 								clusterSteps.Add(i);
+//								Debug.Log("addedhit: " + (i));
 							}
 						}
 //						Debug.Log("clusterstep: " + i);
@@ -334,8 +346,13 @@ public class GazeMapData : MonoBehaviour
 						foundHit = true;
 					}
 				}
-
-				if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > maxSaccadeJumpDistance)
+				else if(foundHit)
+				{
+					clusterSteps.Add(i);
+					foundHit = false;
+//					Debug.Log("addedhit: " + (i));
+				} 
+				else if(Vector3.Distance(rawGazeEvents[i].eventHitPoint, rawGazeEvents[i + 1].eventHitPoint) > maxSaccadeJumpDistance)
 				{
 					clusterSteps.Add(i + 1);
 					foundHit = false;
@@ -380,7 +397,7 @@ public class GazeMapData : MonoBehaviour
 					int rindex = Random.Range(0, nonMedoidPoints.Count - 1);
 					medoids.Add(nonMedoidPoints[rindex]);
 					nonMedoidPoints.RemoveAt(rindex);
-					ClusterPoint cp = allClusterPoints.Find(ge=>ge.Equals(nonMedoidPoints[0]));
+					ClusterPoint cp = allClusterPoints.Find(ge=>ge.gazeIndex.Equals(nonMedoidPoints[0].gazeIndex));
 					cp.medoidGazeIndex = medoids[medoidIndex].gazeIndex;
 				}
 				else
@@ -408,7 +425,7 @@ public class GazeMapData : MonoBehaviour
 						for(int c = 0; c < nonMedoidPoints.Count; c++)
 						{
 							totalCost += Vector3.Distance(rawGazeEvents[medoid.gazeIndex].eventHitPoint, rawGazeEvents[nonMedoidPoints[c].gazeIndex].eventHitPoint);
-							ClusterPoint cp = allClusterPoints.Find(ge=>ge.Equals(nonMedoidPoints[c]));
+							ClusterPoint cp = allClusterPoints.Find(ge=>ge.gazeIndex.Equals(nonMedoidPoints[c].gazeIndex));
 							cp.medoidGazeIndex = medoid.gazeIndex;
 						}
 //						Debug.Log("medoid " + medoid.gazeIndex + " , totalCost: " + totalCost + ", pos: " + rawGazeEvents[medoid.gazeIndex].eventHitPoint);
@@ -442,10 +459,18 @@ public class GazeMapData : MonoBehaviour
 		{
 //			Debug.Log("sortedmedoid: " + sortedMedoids[i].gazeIndex);
 			GazeEvent cluster2single = rawGazeEvents[sortedMedoids[i].gazeIndex];
+			if(i > 0)
+			{
+				float saccadeJumpLength = Vector3.Distance(cluster2single.eventHitPoint, rawGazeEvents[sortedMedoids[i-1].gazeIndex].eventHitPoint);
+				cluster2single.saccadeJumpLength = saccadeJumpLength;
+			}
 			cluster2single.saccadeCount = (i+1);
+//			Debug.Log((i+1));
 			int curFixIndex = cluster2single.fixationIndex;
 			Dictionary<int, float> fixIndex2duration = new Dictionary<int, float>();
 			bool hasFilepath = cluster2single.filePath != "" ? true : false;
+//			Debug.Log(hasFilepath);
+//			Debug.Log(allClusterPoints.Count);
 			for(int j = 0; j < allClusterPoints.Count; j++)
 			{
 				if(allClusterPoints[j].medoidGazeIndex == sortedMedoids[i].gazeIndex)
@@ -454,6 +479,7 @@ public class GazeMapData : MonoBehaviour
 					string filepath = ge.filePath;
 					if(filepath != "")
 					{
+//						Debug.Log("hasFilepath");
 						if(!hasFilepath)
 						{
 //							Debug.Log("double filepath: " + allClusterPoints[j].gazeIndex);
@@ -586,7 +612,7 @@ public class GazeMapData : MonoBehaviour
 			loadedFiles.Clear();
 			savedFilenames = Serializer.Instance.DeserializeFilenames();
 			int i = 0;
-			foreach(string filename in savedFilenames)
+			foreach(string filename in savedFilenames.ToArray())
 			{
 				List<GazeEvent> eventToAdd = new List<GazeEvent>();
 				try
@@ -597,13 +623,13 @@ public class GazeMapData : MonoBehaviour
 				{
 					Debug.Log("!GazeDebug! Filename: " + filename + " not found on disk. Removing from filelog.");
 					savedFilenames.Remove(filename);
-					return;
 				}
-				filenameToGazeEvent.Add(filename, eventToAdd);
-				eventOriginColors.Add(Color.blue);
-				eventGazeRayColors.Add(Color.cyan);
-				eventHitPointColors.Add(Color.yellow);
+				if(savedFilenames.Contains(filename))
+				{
+					filenameToGazeEvent.Add(filename, eventToAdd);
+				}
 			}
+			Serializer.Instance.SerializeFilenames(savedFilenames);
 		}
 	}
 
@@ -637,7 +663,11 @@ public class GazeMapData : MonoBehaviour
 
 	public void UnloadFile(string filename)
 	{
+		int index = loadedFiles.IndexOf(filename);
 		loadedFiles.Remove(filename);
+		eventOriginColors.RemoveAt(index);
+		eventGazeRayColors.RemoveAt(index);
+		eventHitPointColors.RemoveAt(index);
 		foreach(KeyValuePair<string, GameObject> entry in filepathToGameObject)
 		{
 			entry.Value.SetActive(false);
@@ -647,6 +677,9 @@ public class GazeMapData : MonoBehaviour
 	public void LoadFile(string filename)
 	{
 		loadedFiles.Add(filename);
+		eventOriginColors.Add(Color.blue);
+		eventGazeRayColors.Add(Color.cyan);
+		eventHitPointColors.Add(Color.yellow);
 	}
 
 #if UNITY_EDITOR
@@ -719,7 +752,7 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
-	public List<string> Filenames
+	public HashSet<string> Filenames
 	{
 		get
 		{

@@ -9,7 +9,8 @@ using UnityEditor;
 
 public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 {
-	
+	[SerializeField]
+	private bool showEyeData;
 	private TETGazeTrackerDataValidator gazeUtils;
 
 	private bool trackerIsActive;
@@ -59,7 +60,7 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not calibrated!");
 		}
-		else
+		else if(showEyeData)
 		{
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.EyesCloseTime.ToString());

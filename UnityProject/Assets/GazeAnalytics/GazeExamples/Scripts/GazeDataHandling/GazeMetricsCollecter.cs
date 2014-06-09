@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-//using TETCSharpClient;
-//using TETCSharpClient.Data;
 
 public class GazeMetricsCollecter : MonoBehaviour
 {
@@ -12,6 +10,8 @@ public class GazeMetricsCollecter : MonoBehaviour
 	[SerializeField]
 	private ExperimentSpawner
 		experiment;
+	
+	private string eventText = "experiment";
 
 	private GazeCalculator gazeCalculator;
 	private TETGazeTrackerData gazeDataTracker;
@@ -26,37 +26,16 @@ public class GazeMetricsCollecter : MonoBehaviour
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
 		experiment.OnExperimentStarted += OnExperimentStarted;
 		experiment.OnExperimentEnded += OnExperimentEnded;
-//		GazeManager.Instance.AddGazeListener(this);
 		gazeEvent = GazeMetricEvents.Instance;
-
+		StartCoroutine(CollectEyeMetrics());
 	}
-
-//	public void OnGazeUpdate(GazeData gazeData)
-//	{
-//		gazeEvent.NewGazeEvent("DataWithObject", 
-//		                                       gazeCalculator.CurrentTime,
-//		                                       gazeCalculator.GetCurrentHitPosition(),
-//		                                       gazeCalculator.GetCurrentTargetPosition(),
-//		                                       gazeCalculator.GetCurrentTargetScale(),
-//		                                       gazeCalculator.GetCurrentTargetRotation(),
-//		                                       gazeCalculator.GetCurrentTargetColor(),
-//		                                       gazeCalculator.GetCurrentTargetName(), 
-//		                                       gazeCalculator.GetCurrentGazeRay(), 
-//		                                       gazeCalculator.PupilSize, 
-//		                                       0f, 
-//		                                       0f, 
-//		                                       0f, 
-//		                                       gazeCalculator.CurrentFixationLength,
-//		                                       gazeCalculator.FixationIndex,
-//		                                       gazeCalculator.GetCurrentTargetObjectPath());
-//	}
 
 	private IEnumerator CollectEyeMetrics()
 	{
 		while(true)
 		{
-			gazeEvent.NewGazeEvent("DataWithObject", 
-	                               experiment.CurrentTime,
+			gazeEvent.NewGazeEvent(eventText, 
+			                       Time.time,
 	                               gazeCalculator.GetCurrentHitPosition(),
 	                               gazeCalculator.GetCurrentTargetPosition(),
 	                               gazeCalculator.GetCurrentTargetScale(),
@@ -65,10 +44,11 @@ public class GazeMetricsCollecter : MonoBehaviour
 	                               gazeCalculator.GetCurrentTargetName(), 
 	                               gazeCalculator.GetCurrentGazeRay(), 
 	                               gazeCalculator.PupilSize,
-	                               gazeCalculator.BlinkCount, 
+			                       0,
 	                               gazeCalculator.CurrentEyesClosedTime, 
-	                               0, 
-	                               gazeCalculator.CurrentFixationLength,
+			                       0,
+			                       0f,
+			                       gazeCalculator.CurrentFixationLength,
 	                               gazeCalculator.FixationIndex,
 	                               gazeCalculator.GetCurrentTargetObjectPath());
 			yield return new WaitForSeconds(timeBetweenDataCollects);
@@ -77,13 +57,45 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private void OnExperimentStarted()
 	{
-		StartCoroutine(CollectEyeMetrics());
+		gazeEvent.NewGazeEvent(eventText, 
+		                       Time.time,
+		                       gazeCalculator.GetCurrentHitPosition(),
+		                       gazeCalculator.GetCurrentTargetPosition(),
+		                       gazeCalculator.GetCurrentTargetScale(),
+		                       gazeCalculator.GetCurrentTargetRotation(),
+		                       gazeCalculator.GetCurrentTargetColor(),
+		                       gazeCalculator.GetCurrentTargetName(), 
+		                       gazeCalculator.GetCurrentGazeRay(), 
+		                       gazeCalculator.PupilSize,
+		                       0,
+		                       gazeCalculator.CurrentEyesClosedTime, 
+		                       0,
+		                       0f,
+		                       gazeCalculator.CurrentFixationLength,
+		                       gazeCalculator.FixationIndex,
+		                       gazeCalculator.GetCurrentTargetObjectPath());
 		hits.Clear();
 	}
 
 	private void OnExperimentEnded()
 	{
-		StopCoroutine("CollectEyeMetrics");
+		gazeEvent.NewGazeEvent(eventText, 
+		                       Time.time,
+		                       gazeCalculator.GetCurrentHitPosition(),
+		                       gazeCalculator.GetCurrentTargetPosition(),
+		                       gazeCalculator.GetCurrentTargetScale(),
+		                       gazeCalculator.GetCurrentTargetRotation(),
+		                       gazeCalculator.GetCurrentTargetColor(),
+		                       gazeCalculator.GetCurrentTargetName(), 
+		                       gazeCalculator.GetCurrentGazeRay(), 
+		                       gazeCalculator.PupilSize,
+		                       0,
+		                       gazeCalculator.CurrentEyesClosedTime, 
+		                       0,
+		                       0f,
+		                       gazeCalculator.CurrentFixationLength,
+		                       gazeCalculator.FixationIndex,
+		                       gazeCalculator.GetCurrentTargetObjectPath());
 	}
 
 	private void OnGazeObjectHit(Transform hit)
@@ -97,22 +109,23 @@ public class GazeMetricsCollecter : MonoBehaviour
 		}
 		if(hit.GetComponent<GazePrefabTracker>())
 		{
-			gazeEvent.NewGazeEvent("DataWithObject", 
-			                       experiment.CurrentTime,
-	                               gazeCalculator.GetCurrentHitPosition(),
-	                               gazeCalculator.GetCurrentTargetPosition(),
-	                               gazeCalculator.GetCurrentTargetScale(),
-	                               gazeCalculator.GetCurrentTargetRotation(),
-	                               gazeCalculator.GetCurrentTargetColor(),
-	                               gazeCalculator.GetCurrentTargetName(), 
-	                               gazeCalculator.GetCurrentGazeRay(), 
-	                               gazeCalculator.PupilSize, 
-			                       gazeCalculator.BlinkCount, 
+			gazeEvent.NewGazeEvent(eventText, 
+			                       Time.time,
+			                       gazeCalculator.GetCurrentHitPosition(),
+			                       gazeCalculator.GetCurrentTargetPosition(),
+			                       gazeCalculator.GetCurrentTargetScale(),
+			                       gazeCalculator.GetCurrentTargetRotation(),
+			                       gazeCalculator.GetCurrentTargetColor(),
+			                       gazeCalculator.GetCurrentTargetName(), 
+			                       gazeCalculator.GetCurrentGazeRay(), 
+			                       gazeCalculator.PupilSize,
+			                       0,
 			                       gazeCalculator.CurrentEyesClosedTime, 
-	                               0, 
-	                               gazeCalculator.CurrentFixationLength,
-	                               gazeCalculator.FixationIndex,
-	                               gazeCalculator.GetCurrentTargetObjectPath());
+			                       0,
+			                       0f,
+			                       gazeCalculator.CurrentFixationLength,
+			                       gazeCalculator.FixationIndex,
+			                       gazeCalculator.GetCurrentTargetObjectPath());
 		}
 	}
 }
