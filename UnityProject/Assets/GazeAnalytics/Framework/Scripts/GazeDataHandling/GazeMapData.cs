@@ -111,7 +111,7 @@ public class GazeMapData : MonoBehaviour
 	void OnDrawGizmos()
 	{
 
-		if((isShowingGazeEvents || isShowingPupilEvents || isShowingBlinkMap) && Selection.activeGameObject == this.gameObject)
+		if((isShowingGazeEvents || isShowingPupilEvents || isShowingBlinkMap || isShowingTargetPrefab) && Selection.activeGameObject == this.gameObject)
 		{
 			for(int fileindex = 0; fileindex < loadedFiles.Count; fileindex++)
 			{
@@ -128,7 +128,7 @@ public class GazeMapData : MonoBehaviour
 						for(i = startIndex; i < endIndex; i++)
 						{
 							GazeEvent e = gazeArray[i];
-							if(isShowingGazeEvents)
+							if(isShowingGazeEvents || isShowingTargetPrefab)
 							{
 								Vector3 nextSaccadePoint = i < endIndex - 1 ? gazeArray[i + 1].eventHitPoint : e.eventHitPoint;
 //								Vector3 nextSaccadePoint = gazeArray[i + 1].eventHitPoint;
@@ -178,8 +178,8 @@ public class GazeMapData : MonoBehaviour
 				}
 			}
 		}
-		//We need to hide the instantiated prefabs when not showing gaze events
-		if(!isShowingGazeEvents || Selection.activeGameObject != this.gameObject)
+		//We need to hide the instantiated prefabs when current selection is not the gazemapmanager
+		if(Selection.activeGameObject != this.gameObject)
 		{
 			foreach(KeyValuePair<string, GameObject> entry in filepathToGameObject)
 			{
@@ -198,28 +198,31 @@ public class GazeMapData : MonoBehaviour
 			Gizmos.DrawLine(e.eventGazeRay.origin, e.eventHitPoint);
 		}
 		//Saccade Ray
-		if(nextSaccadePoint != e.eventHitPoint)
+		if(isShowingGazeEvents)
 		{
-			Gizmos.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-			Gizmos.DrawLine(e.eventHitPoint, nextSaccadePoint);
+			if(nextSaccadePoint != e.eventHitPoint)
+			{
+				Gizmos.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+				Gizmos.DrawLine(e.eventHitPoint, nextSaccadePoint);
+			}
+			//HitPoint
+			Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+			float fixSize = Mathf.Clamp(e.fixationLength, 0.1f, 0.5f);
+			Handles.DrawSolidDisc(e.eventHitPoint, camDir, /*gazeRayHitSphereRadius*/fixSize);
+			//index of event
+			style.alignment = TextAnchor.MiddleCenter;
+			style.fontStyle = FontStyle.Bold;
+			style.fontSize = 10;
+			string eventIndexString = (eventindex + 1).ToString();
+			Handles.color = Color.black;
+			Handles.Label(e.eventHitPoint, eventIndexString, style);
 		}
-		//HitPoint
-		Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-		float fixSize = Mathf.Clamp(e.fixationLength, 0.1f, 0.5f);
-		Handles.DrawSolidDisc(e.eventHitPoint, camDir, /*gazeRayHitSphereRadius*/fixSize);
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
 			Gizmos.color = eventOriginColors.Count > fileindex ? eventOriginColors.ToArray()[fileindex] : Color.blue;
 			Gizmos.DrawCube(e.eventGazeRay.origin, Vector3.one * characterCubeSize);
 		}
-		//index of event
-		style.alignment = TextAnchor.MiddleCenter;
-		style.fontStyle = FontStyle.Bold;
-		style.fontSize = 10;
-		string eventIndexString = (eventindex + 1).ToString();
-		Handles.color = Color.black;
-		Handles.Label(e.eventHitPoint, eventIndexString, style);
 		//Name of object that was hit
 		if(isShowingObjectName)
 		{

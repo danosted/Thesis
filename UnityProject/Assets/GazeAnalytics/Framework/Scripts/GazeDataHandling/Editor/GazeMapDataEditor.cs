@@ -270,16 +270,24 @@ public class GazeMapDataEditor : Editor
 			gazeMapData.maxGazeDataIndex = 0f;
 			playAnimation = true;
 		}
-		if(playAnimation && gazeMapData.maxGazeDataIndex + realSpeed <= 1f)
+		if(playAnimation)
 		{
-			if(gazeMapData.maxGazeDataIndex - gazeMapData.minGazeDataIndex < scale)
+			if(gazeMapData.maxGazeDataIndex + realSpeed <= 1f)
 			{
-				gazeMapData.maxGazeDataIndex += realSpeed;
+				if(gazeMapData.maxGazeDataIndex - gazeMapData.minGazeDataIndex < scale)
+				{
+					gazeMapData.maxGazeDataIndex += realSpeed;
+				}
+				else
+				{
+					gazeMapData.minGazeDataIndex += realSpeed;
+					gazeMapData.maxGazeDataIndex += realSpeed;
+				}
+
 			}
 			else
 			{
-				gazeMapData.minGazeDataIndex += realSpeed;
-				gazeMapData.maxGazeDataIndex += realSpeed;
+				playAnimation = false;
 			}
 			SceneView.RepaintAll();
 		}

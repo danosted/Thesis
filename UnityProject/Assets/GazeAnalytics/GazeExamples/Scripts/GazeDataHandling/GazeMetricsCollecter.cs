@@ -105,7 +105,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			int index = experiment.Targets.IndexOf(hit);
 			string material = experiment.TargetMaterials[index].name;
 			hits.Add(hit);
-			GA.API.Design.NewEvent("Hit: " + hit.name + ", material: " + material, experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
+//			GA.API.Design.NewEvent("Hit: " + hit.name + ", material: " + material, experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 		}
 		if(hit.GetComponent<GazePrefabTracker>())
 		{
