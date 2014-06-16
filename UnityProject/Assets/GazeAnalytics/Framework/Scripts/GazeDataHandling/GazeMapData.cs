@@ -613,8 +613,14 @@ public class GazeMapData : MonoBehaviour
 			eventGazeRayColors.Clear();
 			eventHitPointColors.Clear();
 			loadedFiles.Clear();
-			savedFilenames = Serializer.Instance.DeserializeFilenames();
-			int i = 0;
+			try
+			{
+				savedFilenames = Serializer.Instance.DeserializeFilenames();
+			}
+			catch(System.Exception e)
+			{
+				Debug.Log("filename logfile not found, creating new." + e);
+			}
 			foreach(string filename in savedFilenames.ToArray())
 			{
 				List<GazeEvent> eventToAdd = new List<GazeEvent>();
