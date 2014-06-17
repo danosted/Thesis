@@ -1,0 +1,1090 @@
+fileFormatVersion: 2
+guid: 3f60872d4679f0d4d8985a528613127a
+TextureImporter:
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: Standalone
+    maxTextureSize: 1024
+    textureFormat: -1
+    compressionQuality: 50
+  spriteSheet:
+    sprites:
+    - name: Mobile Phone - Candy Crush Saga - Candies_0
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 881
+        width: 314
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_1
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 960
+        width: 121
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_2
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 931
+        width: 112
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_3
+      rect:
+        serializedVersion: 2
+        x: 628
+        y: 931
+        width: 112
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_4
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 931
+        width: 106
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_5
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 932
+        width: 103
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_6
+      rect:
+        serializedVersion: 2
+        x: 956
+        y: 960
+        width: 64
+        height: 62
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_7
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 887
+        width: 80
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_8
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 837
+        width: 110
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_9
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 837
+        width: 106
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_10
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 839
+        width: 103
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_11
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 832
+        width: 79
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_12
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 836
+        width: 95
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_13
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 738
+        width: 155
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_14
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 739
+        width: 155
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_15
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 772
+        width: 119
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_16
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 810
+        width: 70
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_17
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 798
+        width: 67
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_18
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 807
+        width: 49
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_19
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 808
+        width: 47
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_20
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 762
+        width: 74
+        height: 75
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_21
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 788
+        width: 51
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_22
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 704
+        width: 112
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_23
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 715
+        width: 106
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 596
+        width: 155
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_25
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 597
+        width: 155
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_26
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 665
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_27
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 679
+        width: 113
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_28
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 610
+        width: 105
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_29
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 623
+        width: 103
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_30
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 624
+        width: 104
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_31
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 652
+        width: 102
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_32
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 490
+        width: 96
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_33
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 490
+        width: 82
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_34
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 491
+        width: 109
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_35
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 571
+        width: 112
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_36
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 572
+        width: 108
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_37
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 535
+        width: 104
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_38
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 488
+        width: 79
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_39
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 543
+        width: 12
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_40
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 478
+        width: 106
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_41
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 472
+        width: 102
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_42
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 515
+        width: 9
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_43
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 446
+        width: 104
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_44
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 468
+        width: 76
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_45
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 382
+        width: 88
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_46
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 387
+        width: 101
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_47
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 388
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_48
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 391
+        width: 104
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_49
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 379
+        width: 101
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_50
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 379
+        width: 106
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_51
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 373
+        width: 101
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_52
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 376
+        width: 74
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_53
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 351
+        width: 87
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_54
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 372
+        width: 87
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_55
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 283
+        width: 88
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_56
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 288
+        width: 101
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_57
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 290
+        width: 101
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_58
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 293
+        width: 101
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_59
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 280
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_60
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 279
+        width: 80
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_61
+      rect:
+        serializedVersion: 2
+        x: 587
+        y: 284
+        width: 105
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_62
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 275
+        width: 79
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_63
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 283
+        width: 151
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_64
+      rect:
+        serializedVersion: 2
+        x: 925
+        y: 304
+        width: 75
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_65
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 184
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_66
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 188
+        width: 89
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_67
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 191
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_68
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 190
+        width: 89
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_69
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 181
+        width: 74
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_70
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 181
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_71
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 186
+        width: 74
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_72
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 185
+        width: 103
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_73
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 176
+        width: 95
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_74
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 236
+        width: 73
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_75
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 86
+        width: 95
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_76
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 89
+        width: 75
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_77
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 92
+        width: 95
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_78
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 92
+        width: 95
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_79
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 112
+        width: 75
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_80
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 16
+        width: 91
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_81
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 94
+        width: 95
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_82
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 88
+        width: 88
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_83
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 82
+        width: 86
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_84
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 82
+        width: 86
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_85
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 148
+        width: 73
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_86
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 16
+        width: 76
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_87
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 20
+        width: 74
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_88
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 8
+        width: 81
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_89
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 24
+        width: 74
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_90
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 40
+        width: 49
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_91
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 44
+        width: 75
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_92
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 4
+        width: 90
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_93
+      rect:
+        serializedVersion: 2
+        x: 651
+        y: 22
+        width: 74
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_94
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 80
+        width: 73
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_95
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 17
+        width: 71
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_96
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 16
+        width: 70
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_97
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 888
+        width: 78
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_98
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 926
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_99
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 958
+        width: 71
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_100
+      rect:
+        serializedVersion: 2
+        x: 765
+        y: 716
+        width: 47
+        height: 45
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_101
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 768
+        width: 76
+        height: 66
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_102
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 741
+        width: 102
+        height: 88
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mobile Phone - Candy Crush Saga - Candies_103
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 534
+        width: 104
+        height: 88
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

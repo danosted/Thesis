@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TETCSharpClient;
+using System.Security.Cryptography;
 
 [ExecuteInEditMode]
 public class ExperimentSpawner : MonoBehaviour
@@ -23,16 +24,15 @@ public class ExperimentSpawner : MonoBehaviour
 		experimentSteps = 3;
 	[SerializeField]
 	private float
-		experimentSpeed = 1f;
+		endAlpha = 0.2f;
+    [SerializeField]
+    private float distanceBetweenTargets = 1f;
 	[SerializeField]
 	private List<float> 
 		targetStartSizes = new List<float>();
 	[SerializeField]
 	private List<float>
 		targetEndSizes = new List<float>();
-	[SerializeField]
-	private List<Material>
-		targetMaterials = new List<Material>();
 	[SerializeField]
 	private Color
 		backgroundColor = Color.grey;
@@ -147,12 +147,29 @@ public class ExperimentSpawner : MonoBehaviour
 		currentTime = Time.time - startTime;
 	}
 
+    //Source: http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+    private List<Transform> Shuffle(List<Transform> list)
+    {
+        System.Random rng = new System.Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            Transform value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+        return list;
+    }
+
 	private IEnumerator RunExperiementFor(float length)
 	{
 		targetHitNum = 0;
 		finishingTime = 0f;
 		startTime = Time.time;
 		currentExperimentStep = 0;
+        targets = Shuffle(targets);
 		if(experimentType == ExperimentType.ContrastExperiment)
 		{
 			for(int i = 0; i < experimentSteps; i++)
@@ -162,7 +179,7 @@ public class ExperimentSpawner : MonoBehaviour
 				{
 					OnExperimentStarted();
 				}
-				yield return StartCoroutine(RunContrastExperimentFor(length / experimentSteps, 1));
+				yield return StartCoroutine(RunContrastExperimentFor(experimentStepDuration));
 				ResetTargets();
 				if(OnExperimentEnded != null)
 				{	
@@ -180,7 +197,7 @@ public class ExperimentSpawner : MonoBehaviour
 				{
 					OnExperimentStarted();
 				}
-				yield return StartCoroutine(RunSizeExperimentFor(length, 1));
+                yield return StartCoroutine(RunSizeExperimentFor(experimentStepDuration, 1));
 				ResetTargets();
 				if(OnExperimentEnded != null)
 				{	
@@ -194,7 +211,7 @@ public class ExperimentSpawner : MonoBehaviour
 			for(int i = 0; i < experimentSteps; i++)
 			{
 				currentExperimentStep = i;
-				yield return StartCoroutine(RunSpeedExperimentFor(length / experimentSteps, 0, i + 1));
+                yield return StartCoroutine(RunSpeedExperimentFor(experimentStepDuration, 0, i + 1));
 			}
 		}
 		ResetTargets();
@@ -203,37 +220,88 @@ public class ExperimentSpawner : MonoBehaviour
 		StartCoroutine(ShowEndResults(targetHitNum, finishingTime));
 	}
 
-	private IEnumerator RunContrastExperimentFor(float runtime, int difficulty)
+	private IEnumerator RunContrastExperimentFor(float runtime)
 	{
 		elapsedTime = 0f;
-		bool isDone = false;
+        int randCorner = Random.Range(0, 4);
 		for(int i = 0; i < targets.Count; i++)
 		{
-			targets[i].renderer.material.color = backgroundColor;
-			float scale = targetStartSizes[i];
-			targets[i].position = new Vector3((upperBounds.x - scale) * Random.Range(-1f, 1f), (upperBounds.y - scale) * Random.Range(-1f, 1f), -upperBounds.z);
+            float scale = targetStartSizes[i];
+            if (i == 0)
+            {
+                Debug.Log("corner: " + randCorner);
+                if(randCorner == 0)
+                {
+                    targets[i].position = new Vector3(lowerBounds.x + scale, lowerBounds.y + scale, background.position.z - 0.1f);
+                }
+                else if (randCorner == 1)
+                {
+                    targets[i].position = new Vector3(lowerBounds.x + scale, upperBounds.y - scale, background.position.z - 0.1f);
+                }
+                else if (randCorner == 2)
+                {
+                    targets[i].position = new Vector3(upperBounds.x - scale, upperBounds.y - scale, background.position.z - 0.1f);
+                }
+                else if (randCorner == 3)
+                {
+                    targets[i].position = new Vector3(upperBounds.x - scale, lowerBounds.y + scale, background.position.z - 0.1f);
+                }
+                
+            }
+            else
+            {
+                Vector3 prevPos = targets[i - 1].position;
+                //lower left corner
+                if (randCorner == 0)
+                {
+                    float randDirAngle = Random.Range(0f, Mathf.PI * 0.5f);
+                    float x = Mathf.Cos(randDirAngle);
+                    float y = Mathf.Sin(randDirAngle);
+                    Debug.Log("x,y: " + x + "," + y);
+                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
+                }
+                //upper left corner
+                else if (randCorner == 1)
+                {
+                    float randDirAngle = Random.Range(Mathf.PI * 1.5f, Mathf.PI * 2f);
+                    float x = Mathf.Cos(randDirAngle);
+                    float y = Mathf.Sin(randDirAngle);
+                    Debug.Log("x,y: " + x + "," + y);
+                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
+                }
+                //upper right corner
+                else if (randCorner == 2)
+                {
+                    float randDirAngle = Random.Range(Mathf.PI, Mathf.PI * 1.5f);
+                    float x = Mathf.Cos(randDirAngle);
+                    float y = Mathf.Sin(randDirAngle);
+                    Debug.Log("x,y: " + x + "," + y);
+                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
+                }
+                //lower right corner
+                else if (randCorner == 3)
+                {
+                    float randDirAngle = Random.Range(Mathf.PI * 0.5f, Mathf.PI);
+                    float x = Mathf.Cos(randDirAngle);
+                    float y = Mathf.Sin(randDirAngle);
+                    Debug.Log("x,y: " + x + "," + y);
+                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
+                }
+            }
+            Color c = targets[i].renderer.material.color;
+            targets[i].renderer.material.color = new Color(c.r, c.g, c.b, 0f);
 			targets[i].localScale = Vector3.one * targetStartSizes[i];
 			targets[i].gameObject.SetActive(true);
 		}
-		while(elapsedTime < runtime && !isDone)
+		while(elapsedTime < runtime)
 		{
+            float step = endAlpha / (runtime / Time.deltaTime);
 			for(int i = 0; i < targets.Count; i++)
 			{
-				Color c = targets[i].renderer.material.color;
-				Vector3 col = new Vector3(c.r, c.g, c.b);
-				Vector3 endCol = new Vector3(targetMaterials[i].color.r, targetMaterials[i].color.g, targetMaterials[i].color.b);
-//				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
-				col = Vector3.MoveTowards(col, endCol, Time.deltaTime * experimentSpeed / Mathf.Pow(2f, difficulty));
-				targets[i].renderer.material.color = new Color(col.x, col.y, col.z);
-				if(Vector3.Distance(endCol, col) < 0.1f)
-				{
-					yield return new WaitForSeconds(3f);
-					for(int j = 0; j < targets.Count; j++)
-					{
-						targets[j].gameObject.SetActive(false);
-					}
-					isDone = true;
-				}
+                Color c = targets[i].renderer.material.color;
+                float curAlpha = c.a;
+                float nextAlpha = curAlpha + step;
+                targets[i].renderer.material.color = new Color(c.r, c.g, c.b, nextAlpha);
 			}
 			elapsedTime += Time.deltaTime;
 			yield return null;
@@ -246,7 +314,6 @@ public class ExperimentSpawner : MonoBehaviour
 		bool isDone = false;
 		for(int i = 0; i < targets.Count; i++)
 		{
-			targets[i].renderer.material.color = targetMaterials[i].color;
 			targets[i].position = new Vector3(upperBounds.x * Random.Range(-1f, 1f), upperBounds.y * Random.Range(-1f, 1f), upperBounds.z);
 			targets[i].localScale = Vector3.one * targetStartSizes[i];
 			targets[i].gameObject.SetActive(true);
@@ -258,7 +325,7 @@ public class ExperimentSpawner : MonoBehaviour
 				Vector3 scale = targets[i].localScale;
 				Vector3 endScale = Vector3.one * targetEndSizes[i];
 				//				Vector3 endCol = targetColors.Count < targets.Length ? targetColors.ToArray()[0] : targetColors.ToArray()[i];
-				scale = Vector3.MoveTowards(scale, endScale, Time.deltaTime * experimentSpeed / Mathf.Pow(2f, difficulty));
+				scale = Vector3.MoveTowards(scale, endScale, Time.deltaTime * endAlpha / Mathf.Pow(2f, difficulty));
 				targets[i].localScale = scale;
 				if(Vector3.Distance(endScale, scale) < 0.1f)
 				{
@@ -303,7 +370,7 @@ public class ExperimentSpawner : MonoBehaviour
 //				Debug.Log("next step");
 //				Debug.Log("elapsed: " + elapsedTime + " thresh: " + thresh);
 			}
-			target.position = Vector3.MoveTowards(target.position, targetPoint, experimentSpeed * difficulty * Time.deltaTime);
+			target.position = Vector3.MoveTowards(target.position, targetPoint, endAlpha * difficulty * Time.deltaTime);
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
@@ -340,6 +407,33 @@ public class ExperimentSpawner : MonoBehaviour
 		endText.gameObject.SetActive(false);
 		canRun = true;
 	}
+
+    private Vector3 GetConstantDistancePositionFromIndex(int i)
+    {
+        Vector3 endPosition = Vector3.zero;
+        float scale = targetStartSizes[i];
+        if(i == 0)
+        {
+            Vector3 initPos = new Vector3((upperBounds.x - scale) * Random.Range(-1f, 1f), (upperBounds.y - scale) * Random.Range(-1f, 1f), -upperBounds.z);
+            endPosition = initPos;
+        }
+        else if(i == 1)
+        {
+            Vector3 prevPos = targets[i - 1].position;
+            Vector3 randomOnSphere = Random.onUnitSphere * distanceBetweenTargets;
+            endPosition = prevPos + randomOnSphere;
+        }
+        else
+        {
+            Vector3 prevPos = targets[i - 1].position;
+            Vector3 prevPrevPos = targets[i - 2].position;
+            Vector3 dir = prevPos - prevPrevPos;
+            float x = ((dir.x) * Mathf.Cos(90f)) - ((dir.y * Mathf.Sin(90f)));
+            float y = ((dir.y) * Mathf.Cos(90f)) + ((dir.x * Mathf.Sin(90f)));
+            endPosition = new Vector3(x, y, -upperBounds.z);
+        }
+        return endPosition;
+    }
 
 	private void ResetTargets()
 	{
@@ -401,14 +495,6 @@ public class ExperimentSpawner : MonoBehaviour
 		get
 		{
 			return targets;
-		}
-	}
-
-	public List<Material> TargetMaterials
-	{
-		get
-		{
-			return targetMaterials;
 		}
 	}
 

@@ -245,7 +245,7 @@ public class GazeMapData : MonoBehaviour
 					{
 						GameObject go = Instantiate(prefab, e.eventHitObjectPosition, e.eventHitRotation) as GameObject;
 						go.transform.localScale = e.eventHitScale;
-						go.transform.renderer.material.color = e.eventHitColor;
+						go.transform.renderer.sharedMaterial.color = e.eventHitColor;
 						go.transform.parent = transform.GetChild(0);
 						filepathToGameObject.Add(filepath2Color2position, go);	
 					}
@@ -273,6 +273,8 @@ public class GazeMapData : MonoBehaviour
 
 	public void CreateProcessedGazeDataFile(string filename)
 	{
+        LoadFile(filename);
+        UnloadFile(filename);
 		string newProcFilename = "processed_" + filename;
 		if(!filenameToGazeEvent.ContainsKey(newProcFilename))
 		{
@@ -614,24 +616,6 @@ public class GazeMapData : MonoBehaviour
 			eventHitPointColors.Clear();
 			loadedFiles.Clear();
 			savedFilenames = Serializer.Instance.DeserializeFilenames();
-			int i = 0;
-			foreach(string filename in savedFilenames.ToArray())
-			{
-				List<GazeEvent> eventToAdd = new List<GazeEvent>();
-				try
-				{
-					eventToAdd = Serializer.Instance.DeserializeHitmap(filename);
-				}
-				catch(System.IO.FileNotFoundException e)
-				{
-					Debug.Log("!GazeDebug! Filename: " + filename + " not found on disk. Removing from filelog.");
-					savedFilenames.Remove(filename);
-				}
-				if(savedFilenames.Contains(filename))
-				{
-					filenameToGazeEvent.Add(filename, eventToAdd);
-				}
-			}
 			Serializer.Instance.SerializeFilenames(savedFilenames);
 		}
 	}
@@ -679,10 +663,27 @@ public class GazeMapData : MonoBehaviour
 
 	public void LoadFile(string filename)
 	{
-		loadedFiles.Add(filename);
-		eventOriginColors.Add(Color.blue);
-		eventGazeRayColors.Add(Color.cyan);
-		eventHitPointColors.Add(Color.yellow);
+        if (!filenameToGazeEvent.ContainsKey(filename))
+        {
+            List<GazeEvent> eventToAdd = new List<GazeEvent>();
+            try
+            {
+                eventToAdd = Serializer.Instance.DeserializeHitmap(filename);
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                Debug.Log("!GazeDebug! Filename: " + filename + " not found on disk. Removing from filelog.");
+                savedFilenames.Remove(filename);
+            }
+            if (savedFilenames.Contains(filename))
+            {
+                filenameToGazeEvent.Add(filename, eventToAdd);
+            }
+        }
+        loadedFiles.Add(filename);
+        eventOriginColors.Add(Color.blue);
+        eventGazeRayColors.Add(Color.cyan);
+        eventHitPointColors.Add(Color.yellow);
 	}
 
 #if UNITY_EDITOR

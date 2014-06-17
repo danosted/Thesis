@@ -64,7 +64,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 		                       gazeCalculator.GetCurrentTargetScale(),
 		                       gazeCalculator.GetCurrentTargetRotation(),
 		                       gazeCalculator.GetCurrentTargetColor(),
-		                       gazeCalculator.GetCurrentTargetName(), 
+		                       "ExperimentStarted", 
 		                       gazeCalculator.GetCurrentGazeRay(), 
 		                       gazeCalculator.PupilSize,
 		                       0,
@@ -86,7 +86,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 		                       gazeCalculator.GetCurrentTargetScale(),
 		                       gazeCalculator.GetCurrentTargetRotation(),
 		                       gazeCalculator.GetCurrentTargetColor(),
-		                       gazeCalculator.GetCurrentTargetName(), 
+                               "ExperimentEnded", 
 		                       gazeCalculator.GetCurrentGazeRay(), 
 		                       gazeCalculator.PupilSize,
 		                       0,
@@ -102,8 +102,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 	{
 		if(hit.tag == "ExperimentTarget" && !hits.Contains(hit))
 		{
-			int index = experiment.Targets.IndexOf(hit);
-			string material = experiment.TargetMaterials[index].name;
+            string material = hit.renderer.material.ToString();
 			hits.Add(hit);
 //			GA.API.Design.NewEvent("Hit: " + hit.name + ", material: " + material, experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
 		}
@@ -116,7 +115,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                       gazeCalculator.GetCurrentTargetScale(),
 			                       gazeCalculator.GetCurrentTargetRotation(),
 			                       gazeCalculator.GetCurrentTargetColor(),
-			                       gazeCalculator.GetCurrentTargetName(), 
+			                       "hit: " + gazeCalculator.GetCurrentTargetName(), 
 			                       gazeCalculator.GetCurrentGazeRay(), 
 			                       gazeCalculator.PupilSize,
 			                       0,
