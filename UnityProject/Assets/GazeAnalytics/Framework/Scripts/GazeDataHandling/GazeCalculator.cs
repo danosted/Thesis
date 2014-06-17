@@ -163,7 +163,7 @@ public class GazeCalculator : MonoBehaviour
 			if(showLiveGazeDebug)
 			{
 				target.position = gazeHitPoint;
-				target.localScale = new Vector3(hitRaySearchRadius * 2f, hitRaySearchRadius * 2f, hitRaySearchRadius * 2f);
+				target.localScale = new Vector3(2f, 2f, 2f);
 				target.gameObject.SetActive(true);
 			}
 			else
