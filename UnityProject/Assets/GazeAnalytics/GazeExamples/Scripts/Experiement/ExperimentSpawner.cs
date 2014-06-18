@@ -7,11 +7,20 @@ using System.Security.Cryptography;
 [ExecuteInEditMode]
 public class ExperimentSpawner : MonoBehaviour
 {
-	public delegate void OnExperimentStartedDelegate();
-	public event OnExperimentStartedDelegate OnExperimentStarted;
+	public delegate void OnExperimentStepStartedDelegate();
+    public event OnExperimentStepStartedDelegate OnExperimentStepStarted;
 
-	public delegate void OnExperimentEndedDelegate();
-	public event OnExperimentEndedDelegate OnExperimentEnded;
+	public delegate void OnExperimentStepEndedDelegate();
+    public event OnExperimentStepEndedDelegate OnExperimentStepEnded;
+
+    public delegate void OnExperimentStartedDelegate();
+    public event OnExperimentStartedDelegate OnExperimentStarted;
+
+    public delegate void OnExperimentEndedDelegate();
+    public event OnExperimentEndedDelegate OnExperimentEnded;
+
+    public delegate void OnExperimentTargethitDelegate();
+    public event OnExperimentTargethitDelegate OnExperimentTargethit;
 	
 	[SerializeField]
 	private ExperimentType
@@ -26,7 +35,9 @@ public class ExperimentSpawner : MonoBehaviour
 	private float
 		endAlpha = 0.2f;
     [SerializeField]
-    private float distanceBetweenTargets = 1f;
+    private float verticalClamp = 1f;
+    [SerializeField]
+    private float horizontalClamp = 1f;
 	[SerializeField]
 	private List<float> 
 		targetStartSizes = new List<float>();
@@ -56,7 +67,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private Vector3 lowerBounds;
 	private float elapsedTime;
 	private float currentTime;
-	private float finishingTime;
+	private List<float> finishingTimes = new List<float>();
 	private float startTime;
 	private int targetHitNum;
 	private int currentExperimentStep;
@@ -166,128 +177,86 @@ public class ExperimentSpawner : MonoBehaviour
 	private IEnumerator RunExperiementFor(float length)
 	{
 		targetHitNum = 0;
-		finishingTime = 0f;
 		startTime = Time.time;
 		currentExperimentStep = 0;
-        targets = Shuffle(targets);
+        if(OnExperimentStarted != null)
+        {
+            OnExperimentStarted();
+        }
 		if(experimentType == ExperimentType.ContrastExperiment)
 		{
 			for(int i = 0; i < experimentSteps; i++)
 			{
+                targets = Shuffle(targets);
 				currentExperimentStep = i;
-				if(OnExperimentStarted != null)
+				if(OnExperimentStepStarted != null)
 				{
-					OnExperimentStarted();
+					OnExperimentStepStarted();
 				}
 				yield return StartCoroutine(RunContrastExperimentFor(experimentStepDuration));
 				ResetTargets();
-				if(OnExperimentEnded != null)
+				if(OnExperimentStepEnded != null)
 				{	
-					OnExperimentEnded();
+					OnExperimentStepEnded();
 				}
 				yield return new WaitForSeconds(Random.Range(2f, 5f));
 			}
 		}
-		else if(experimentType == ExperimentType.SizeExperiment)
-		{
-			for(int i = 0; i < experimentSteps; i++)
-			{
-				currentExperimentStep = i;
-				if(OnExperimentStarted != null)
-				{
-					OnExperimentStarted();
-				}
-                yield return StartCoroutine(RunSizeExperimentFor(experimentStepDuration, 1));
-				ResetTargets();
-				if(OnExperimentEnded != null)
-				{	
-					OnExperimentEnded();
-				}
-				yield return new WaitForSeconds(Random.Range(2f, 5f));
-			}
-		}
-		else if(experimentType == ExperimentType.SpeedExperiment)
-		{
-			for(int i = 0; i < experimentSteps; i++)
-			{
-				currentExperimentStep = i;
-                yield return StartCoroutine(RunSpeedExperimentFor(experimentStepDuration, 0, i + 1));
-			}
-		}
+        //else if(experimentType == ExperimentType.SizeExperiment)
+        //{
+        //    for(int i = 0; i < experimentSteps; i++)
+        //    {
+        //        currentExperimentStep = i;
+        //        if(OnExperimentStarted != null)
+        //        {
+        //            OnExperimentStarted();
+        //        }
+        //        yield return StartCoroutine(RunSizeExperimentFor(experimentStepDuration, 1));
+        //        ResetTargets();
+        //        if(OnExperimentEnded != null)
+        //        {	
+        //            OnExperimentEnded();
+        //        }
+        //        yield return new WaitForSeconds(Random.Range(2f, 5f));
+        //    }
+        //}
+        //else if(experimentType == ExperimentType.SpeedExperiment)
+        //{
+        //    for(int i = 0; i < experimentSteps; i++)
+        //    {
+        //        currentExperimentStep = i;
+        //        yield return StartCoroutine(RunSpeedExperimentFor(experimentStepDuration, 0, i + 1));
+        //    }
+        //}
 		ResetTargets();
 		StopAllCoroutines();
-		finishingTime = Time.time - startTime;
-		StartCoroutine(ShowEndResults(targetHitNum, finishingTime));
+        if (OnExperimentEnded != null)
+        {
+            OnExperimentEnded();
+        }
+		StartCoroutine(ShowEndResults(targetHitNum));
 	}
 
 	private IEnumerator RunContrastExperimentFor(float runtime)
 	{
 		elapsedTime = 0f;
         int randCorner = Random.Range(0, 4);
+        float width = Mathf.Abs(upperBounds.x - lowerBounds.x);
+        float height = Mathf.Abs(upperBounds.y - lowerBounds.y);
+        float widthStep = width / targets.Count;
+        //Debug.Log("widthStep: " + widthStep);
 		for(int i = 0; i < targets.Count; i++)
 		{
             float scale = targetStartSizes[i];
-            if (i == 0)
-            {
-                Debug.Log("corner: " + randCorner);
-                if(randCorner == 0)
-                {
-                    targets[i].position = new Vector3(lowerBounds.x + scale, lowerBounds.y + scale, background.position.z - 0.1f);
-                }
-                else if (randCorner == 1)
-                {
-                    targets[i].position = new Vector3(lowerBounds.x + scale, upperBounds.y - scale, background.position.z - 0.1f);
-                }
-                else if (randCorner == 2)
-                {
-                    targets[i].position = new Vector3(upperBounds.x - scale, upperBounds.y - scale, background.position.z - 0.1f);
-                }
-                else if (randCorner == 3)
-                {
-                    targets[i].position = new Vector3(upperBounds.x - scale, lowerBounds.y + scale, background.position.z - 0.1f);
-                }
-                
-            }
-            else
-            {
-                Vector3 prevPos = targets[i - 1].position;
-                //lower left corner
-                if (randCorner == 0)
-                {
-                    float randDirAngle = Random.Range(0f, Mathf.PI * 0.5f);
-                    float x = Mathf.Cos(randDirAngle);
-                    float y = Mathf.Sin(randDirAngle);
-                    Debug.Log("x,y: " + x + "," + y);
-                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
-                }
-                //upper left corner
-                else if (randCorner == 1)
-                {
-                    float randDirAngle = Random.Range(Mathf.PI * 1.5f, Mathf.PI * 2f);
-                    float x = Mathf.Cos(randDirAngle);
-                    float y = Mathf.Sin(randDirAngle);
-                    Debug.Log("x,y: " + x + "," + y);
-                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
-                }
-                //upper right corner
-                else if (randCorner == 2)
-                {
-                    float randDirAngle = Random.Range(Mathf.PI, Mathf.PI * 1.5f);
-                    float x = Mathf.Cos(randDirAngle);
-                    float y = Mathf.Sin(randDirAngle);
-                    Debug.Log("x,y: " + x + "," + y);
-                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
-                }
-                //lower right corner
-                else if (randCorner == 3)
-                {
-                    float randDirAngle = Random.Range(Mathf.PI * 0.5f, Mathf.PI);
-                    float x = Mathf.Cos(randDirAngle);
-                    float y = Mathf.Sin(randDirAngle);
-                    Debug.Log("x,y: " + x + "," + y);
-                    targets[i].position = prevPos + new Vector3(x * distanceBetweenTargets, y * distanceBetweenTargets, 0f);
-                }
-            }
+            float horizontalClampClamped = Mathf.Clamp(horizontalClamp, 0f, (widthStep - scale) * 0.5f);
+            float randOffsetX = Random.Range(-(widthStep - scale) * 0.5f + horizontalClampClamped, (widthStep - scale) * 0.5f - horizontalClampClamped);
+            float vertClampClamped = Mathf.Clamp(verticalClamp, 0f, (height - scale) * 0.5f);
+            float randOffsetY = Random.Range(-(height - scale) * 0.5f + vertClampClamped, (height - scale) * 0.5f - vertClampClamped);
+            //Debug.Log("width/i: " + width / (i + 1));
+            float mappedWidth = widthStep * (i + 1) - (width * 0.5f) - widthStep * 0.5f;
+            //Debug.Log("mappedwidth: " + mappedWidth);
+            targets[i].position = new Vector3(mappedWidth + randOffsetX, randOffsetY, background.position.z - 0.1f);
+            //Debug.Log("t " + i + ": " + targets[i].position);
             Color c = targets[i].renderer.material.color;
             targets[i].renderer.material.color = new Color(c.r, c.g, c.b, 0f);
 			targets[i].localScale = Vector3.one * targetStartSizes[i];
@@ -377,9 +346,22 @@ public class ExperimentSpawner : MonoBehaviour
 		target.gameObject.SetActive(false);
 	}
 
-	private IEnumerator ShowEndResults(int targetsHit, float endTime)
+	private IEnumerator ShowEndResults(int targetsHit)
 	{
 		float timeToShow = 8f;
+        float endTime = 0f;
+        if (finishingTimes.Count > 0)
+        {
+            foreach (float t in finishingTimes)
+            {
+                endTime += t;
+            }
+            endTime /= finishingTimes.Count;
+        }
+        else
+        {
+            endTime = Time.time - startTime;
+        }
 		string endTimeText = endTime.ToString();
 		string shortText = "";
 		if(endTime < 10f)
@@ -401,7 +383,7 @@ public class ExperimentSpawner : MonoBehaviour
 			shortText = endTimeText;
 		}
 
-		endText.text = "Experiment Over!\nYou finished in time: " + shortText + " seconds.\nTarget Hits: " + targetsHit.ToString() + "\nWell Done!";
+		endText.text = "Experiment Over!\nFinishing time average: " + shortText + " seconds.\nTarget Hits: " + targetsHit.ToString() + "/" + (targets.Count * experimentSteps) + "\nWell Done!";
 		endText.gameObject.SetActive(true);
 		yield return new WaitForSeconds(timeToShow);
 		endText.gameObject.SetActive(false);
@@ -420,7 +402,7 @@ public class ExperimentSpawner : MonoBehaviour
         else if(i == 1)
         {
             Vector3 prevPos = targets[i - 1].position;
-            Vector3 randomOnSphere = Random.onUnitSphere * distanceBetweenTargets;
+            Vector3 randomOnSphere = Random.onUnitSphere * verticalClamp;
             endPosition = prevPos + randomOnSphere;
         }
         else
@@ -450,6 +432,7 @@ public class ExperimentSpawner : MonoBehaviour
 
 	private void OnTargetHit(Transform hit)
 	{
+        OnExperimentTargethit();
 		targetHitNum++;
 		ResetTarget(hit);
 		int hits = 0;
@@ -464,11 +447,10 @@ public class ExperimentSpawner : MonoBehaviour
 				hits++;
 			}
 		}
-		if(hits == targets.Count && currentExperimentStep == experimentSteps - 1)
+		if(hits == targets.Count)
 		{
-			StopAllCoroutines();
-			finishingTime = Time.time - startTime;
-			StartCoroutine(ShowEndResults(targetHitNum, finishingTime));
+            finishingTimes.Add(elapsedTime);
+            Debug.Log("added finishtime");
 		}
 	}
 
@@ -503,5 +485,4 @@ public class ExperimentSpawner : MonoBehaviour
 			return currentTime;
 		}
 	}
-
 }
