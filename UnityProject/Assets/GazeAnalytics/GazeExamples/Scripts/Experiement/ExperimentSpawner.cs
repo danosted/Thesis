@@ -194,6 +194,11 @@ public class ExperimentSpawner : MonoBehaviour
 					OnExperimentStepStarted();
 				}
 				yield return StartCoroutine(RunContrastExperimentFor(experimentStepDuration));
+				if(finishingTimes.Count <= i)
+				{
+					finishingTimes.Add(elapsedTime);
+					Debug.Log("added finishtime");
+				}
 				ResetTargets();
 				if(OnExperimentStepEnded != null)
 				{	
