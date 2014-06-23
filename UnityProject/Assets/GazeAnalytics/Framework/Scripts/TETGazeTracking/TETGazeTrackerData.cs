@@ -28,7 +28,7 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 
 		//register for gaze updates
 		GazeManager.Instance.AddGazeListener(this);
-		trackerIsActive = GazeManager.Instance.IsConnected;
+		trackerIsActive = GazeManager.Instance.IsActivated;
 	}
 
 	public void OnGazeUpdate(GazeData gazeData)
@@ -49,7 +49,7 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 			Application.Quit();
 		}
 
-		if(!GazeManager.Instance.IsConnected)
+		if(!GazeManager.Instance.IsActivated)
 		{
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not running!");

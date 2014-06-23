@@ -19,9 +19,6 @@ public class GazeCalculator : MonoBehaviour
 	private float
 		hitRaySearchRadius = 1f;
 	[SerializeField]
-	private Color
-		rayColor = Color.cyan;
-	[SerializeField]
 	private Transform
 		target;
 	[SerializeField]
@@ -36,11 +33,7 @@ public class GazeCalculator : MonoBehaviour
 
 	private TETGazeTrackerData gazeData;
 
-	private Vector3 gazePosWorld = Vector3.zero;
-	private Vector3 gazePosScreen = Vector3.zero;
 	private Vector3 gazeHitPoint;
-	private Vector3 upperBounds;
-	private Vector3 lowerBounds;
 
 	private Transform currentTarget;
 
@@ -82,8 +75,6 @@ public class GazeCalculator : MonoBehaviour
 			}
 			StartCoroutine(CalculateGazeRay());
 		}
-		upperBounds = gazeCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, gazeCamera.farClipPlane));
-		lowerBounds = gazeCamera.ScreenToWorldPoint(new Vector3(0, 0, gazeCamera.farClipPlane));
 	}
 
 	/*

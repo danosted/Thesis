@@ -10,11 +10,10 @@ public class GazeMetricsCollecter : MonoBehaviour
 	[SerializeField]
 	private ExperimentSpawner
 		experiment;
-	
-	private string eventText = "experiment";
+	[SerializeField]
+	private string eventName = "experiment";
 
 	private GazeCalculator gazeCalculator;
-	private TETGazeTrackerData gazeDataTracker;
 	private GazeMetricEvents gazeEvent;
 
 	private HashSet<Transform> hits = new HashSet<Transform>();
@@ -22,10 +21,10 @@ public class GazeMetricsCollecter : MonoBehaviour
 	void Start()
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
-		gazeDataTracker = GetComponent<TETGazeTrackerData>();
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
 		experiment.OnExperimentStepStarted += OnExperimentStarted;
 		experiment.OnExperimentStepEnded += OnExperimentEnded;
+        experiment.OnExperimentGoodTargetDisappear += OnGazeObjectHit;
 		gazeEvent = GazeMetricEvents.Instance;
 		StartCoroutine(CollectEyeMetrics());
 	}
@@ -34,7 +33,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 	{
 		while(true)
 		{
-			gazeEvent.NewGazeEvent(eventText, 
+			gazeEvent.NewGazeEvent(eventName, 
 			                       Time.time,
 	                               gazeCalculator.GetCurrentHitPosition(),
 	                               gazeCalculator.GetCurrentTargetPosition(),
@@ -57,7 +56,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private void OnExperimentStarted()
 	{
-		gazeEvent.NewGazeEvent(eventText, 
+		gazeEvent.NewGazeEvent(eventName, 
 		                       Time.time,
 		                       gazeCalculator.GetCurrentHitPosition(),
 		                       gazeCalculator.GetCurrentTargetPosition(),
@@ -79,7 +78,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private void OnExperimentEnded()
 	{
-		gazeEvent.NewGazeEvent(eventText, 
+		gazeEvent.NewGazeEvent(eventName, 
 		                       Time.time,
 		                       gazeCalculator.GetCurrentHitPosition(),
 		                       gazeCalculator.GetCurrentTargetPosition(),
@@ -100,22 +99,20 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private void OnGazeObjectHit(Transform hit)
 	{
-		if(hit.tag == "ExperimentTarget" && !hits.Contains(hit))
-		{
-            string material = hit.renderer.material.ToString();
-			hits.Add(hit);
-//			GA.API.Design.NewEvent("Hit: " + hit.name + ", material: " + material, experiment.ElapsedTime, gazeCalculator.GetCurrentTargetPosition());
-		}
+        if(hit == null)
+        {
+            return;
+        }
 		if(hit.GetComponent<GazePrefabTracker>())
 		{
-			gazeEvent.NewGazeEvent(eventText, 
+			gazeEvent.NewGazeEvent(eventName, 
 			                       Time.time,
 			                       gazeCalculator.GetCurrentHitPosition(),
 			                       gazeCalculator.GetCurrentTargetPosition(),
 			                       gazeCalculator.GetCurrentTargetScale(),
 			                       gazeCalculator.GetCurrentTargetRotation(),
 			                       gazeCalculator.GetCurrentTargetColor(),
-			                       "hit: " + gazeCalculator.GetCurrentTargetName(), 
+			                       "hit: " + hit.name, 
 			                       gazeCalculator.GetCurrentGazeRay(), 
 			                       gazeCalculator.PupilSize,
 			                       0,

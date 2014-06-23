@@ -14,7 +14,6 @@ public class GazeMapDataEditor : Editor
 
 	private float scale;
 	private float speed;
-	private int index = 0;
 	private bool deleteAllFiles;
 	private bool showWarningWindow;
 	private bool playAnimation;
