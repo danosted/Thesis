@@ -21,6 +21,11 @@ public class GazeMetricEvents
 		}
 	}
 
+    public void ResetData()
+    {
+        gazeDataList.Clear();
+    }
+
 	public void NewGazeEvent(string eventName, float eventTime)
 	{
 		eventNames.Add(eventName);

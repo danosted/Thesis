@@ -19,6 +19,12 @@ public class ExperimentSpawner : MonoBehaviour
     public delegate void OnExperimentEndedDelegate();
     public event OnExperimentEndedDelegate OnExperimentEnded;
 
+    public delegate void OnExperimentSucceededDelegate();
+    public event OnExperimentSucceededDelegate OnExperimentSucceeded;
+
+    public delegate void OnExperimentFailedDelegate();
+    public event OnExperimentFailedDelegate OnExperimentFailed;
+
     public delegate void OnExperimentGoodTargetDisappearDelegate(Transform target);
     public event OnExperimentGoodTargetDisappearDelegate OnExperimentGoodTargetDisappear;
 
@@ -73,6 +79,7 @@ public class ExperimentSpawner : MonoBehaviour
     private float currentTime;
     private float startTime;
     private float currTargetLife;
+    private float lastHitTime = 0f;
     private int goodTargetNum;
     private int goodTargetHitNum;
     private int badTargetNum;
@@ -80,7 +87,7 @@ public class ExperimentSpawner : MonoBehaviour
     private int currentExperimentStep;
     private Vector3 upperBounds;
 	private Vector3 lowerBounds;	
-	private TextMesh endText;
+	private TextMesh text;
     private Transform currTarget;
 
 	public enum ExperimentType
@@ -126,17 +133,21 @@ public class ExperimentSpawner : MonoBehaviour
 //			Debug.Log("Lower: " + lowerBounds.x + "," + lowerBounds.y);
 			gazeCalculator.OnGazeObjectHit += OnTargetHit;
 
-			GameObject textGo = new GameObject();
-			textGo.AddComponent(typeof(TextMesh));
-			textGo.renderer.material = textFont.material;
-			endText = textGo.GetComponent<TextMesh>();
-			endText.font = textFont;
-			endText.characterSize = Camera.main.isOrthoGraphic ? 0.2f : 0.05f;
-			endText.alignment = TextAlignment.Center;
-			endText.anchor = TextAnchor.MiddleCenter;
-			endText.fontSize = 50;
-			endText.transform.position = Camera.main.transform.position + Vector3.forward * 2f;
-			endText.gameObject.SetActive(false);
+            //Create endtext gameobject
+			GameObject textGO = new GameObject("Text");
+            textGO.transform.parent = transform;
+            textGO.AddComponent(typeof(TextMesh));
+            textGO.renderer.material = textFont.material;
+            text = textGO.GetComponent<TextMesh>();
+            text.color = new Color(100f/255f, 0f, 75f/255f);
+			text.font = textFont;
+			text.characterSize = Camera.main.isOrthoGraphic ? 0.2f : 0.05f;
+			text.alignment = TextAlignment.Center;
+			text.anchor = TextAnchor.MiddleCenter;
+			text.fontSize = 50;
+			text.transform.position = Camera.main.transform.position + Vector3.forward * 2f;
+            text.gameObject.SetActive(false);
+            StartCoroutine(ShowStartText());
 		}
 	}
 	
@@ -146,36 +157,33 @@ public class ExperimentSpawner : MonoBehaviour
 		{
 			background.renderer.sharedMaterial.color = backgroundColor;
 		}
-		else
-		{
-			float width = 120f;
-			float height = 20f;
-			if(canRun)
-			{
-				if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Start Experiment"))
-				{
-					canRun = false;
-					StartCoroutine(RunExperiementFor(experimentStepDuration));
-				}
-
-			}
-			else
-			{
-				if(GUI.Button(new Rect((Screen.width - width) * 0.5f, (Screen.height - height), width, height), "Stop Experiment"))
-				{
-					StopAllCoroutines();
-					ResetTargets();
-					endText.gameObject.SetActive(false);
-					canRun = true;
-				}
-//				GUI.TextArea(new Rect((Screen.width - width) * 0.5f, height, width, height), elapsedTime.ToString());
-			}
-		}
 	}
 
 	void Update()
 	{
 		currentTime = Time.time - startTime;
+        if (canRun)
+        {
+            if (Input.GetMouseButtonUp(0) || Input.anyKeyDown)
+            {
+                canRun = false;
+                StartCoroutine(RunExperiementFor(experimentStepDuration));
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                StopAllCoroutines();
+                ResetTargets();
+                canRun = true;
+                if (OnExperimentFailed != null)
+                {
+                    OnExperimentFailed();
+                }
+                StartCoroutine(ShowStartText());
+            }
+        }
 	}
 
     //Source: http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
@@ -197,6 +205,7 @@ public class ExperimentSpawner : MonoBehaviour
 	private IEnumerator RunExperiementFor(float length)
 	{
 		goodTargetHitNum = 0;
+        badTargetHitNum = 0;
 		startTime = Time.time;
 		currentExperimentStep = 0;
         bool first = true;
@@ -235,39 +244,20 @@ public class ExperimentSpawner : MonoBehaviour
 				}
 			}
 		}
-        //else if(experimentType == ExperimentType.SizeExperiment)
-        //{
-        //    for(int i = 0; i < experimentSteps; i++)
-        //    {
-        //        currentExperimentStep = i;
-        //        if(OnExperimentStarted != null)
-        //        {
-        //            OnExperimentStarted();
-        //        }
-        //        yield return StartCoroutine(RunSizeExperimentFor(experimentStepDuration, 1));
-        //        ResetTargets();
-        //        if(OnExperimentEnded != null)
-        //        {	
-        //            OnExperimentEnded();
-        //        }
-        //        yield return new WaitForSeconds(Random.Range(2f, 5f));
-        //    }
-        //}
-        //else if(experimentType == ExperimentType.SpeedExperiment)
-        //{
-        //    for(int i = 0; i < experimentSteps; i++)
-        //    {
-        //        currentExperimentStep = i;
-        //        yield return StartCoroutine(RunSpeedExperimentFor(experimentStepDuration, 0, i + 1));
-        //    }
-        //}
 		ResetTargets();
 		StopAllCoroutines();
         if (OnExperimentEnded != null)
         {
             OnExperimentEnded();
         }
-		StartCoroutine(ShowEndResults());
+		StartCoroutine(ShowEndText());
+        if (OnExperimentSucceeded != null)
+        {
+            //#if !UNITY_EDITOR
+            GameObject.FindGameObjectWithTag("GazeData").GetComponent<GazeMapData>().SaveCurrentSession();
+            //#endif
+            OnExperimentSucceeded();
+        }
 	}
 
 	private IEnumerator RunContrastExperimentFor(float runtime)
@@ -309,7 +299,39 @@ public class ExperimentSpawner : MonoBehaviour
 		}
 	}
 
-	private IEnumerator ShowEndResults()
+    private IEnumerator ShowStartText()
+    {
+        text.text = "Press any key to start";
+        text.gameObject.SetActive(true);
+        float minScale = 0.7f;
+        float maxScale = 1.2f;
+        float scale = 1f;
+        float strength = 0.8f;
+        bool goingUp = true;
+        while(canRun)
+        {
+            if(goingUp)
+            {
+                if (scale >= maxScale)
+                {
+                    goingUp = false;
+                }
+            }
+            else
+            {
+                if(scale <= minScale)
+                {
+                    goingUp = true;
+                }
+            }
+            scale = goingUp ? scale + Time.deltaTime * strength : scale - Time.deltaTime * strength;
+            text.transform.localScale = Vector3.one * scale;
+            yield return null;
+        }
+        text.gameObject.SetActive(false);
+    }
+
+	private IEnumerator ShowEndText()
 	{
 		float timeToShow = 8f;
         float endTime = 0f;
@@ -345,12 +367,14 @@ public class ExperimentSpawner : MonoBehaviour
 		{
 			shortText = endTimeText;
 		}
-
-		endText.text = "Experiment over!\nAverage experiment duration: " + shortText + " seconds.\nGood target hits: " + goodTargetHitNum.ToString() + "/" + (goodTargetNum * experimentSteps) + "\nBad target hits: " + badTargetHitNum.ToString() + "/" + (badTargetNum * experimentSteps) + "\nWell done!";
-		endText.gameObject.SetActive(true);
+        float s = (float)(goodTargetHitNum - badTargetHitNum) / endTime * 1000f;
+        int score = s > 0 ? (int)s : 0;
+		text.text = "Experiment over!\nAverage completion time: " + shortText + " seconds.\nCandy hits: " + goodTargetHitNum.ToString() + "/" + (goodTargetNum * experimentSteps) + "\nBomb hits: " + badTargetHitNum.ToString() + "/" + (badTargetNum * experimentSteps) + "\nScore: " + score.ToString();
+		text.gameObject.SetActive(true);
 		yield return new WaitForSeconds(timeToShow);
-		endText.gameObject.SetActive(false);
+		text.gameObject.SetActive(false);
 		canRun = true;
+        StartCoroutine(ShowStartText());
 	}
 
     private Vector3 GetConstantDistancePositionFromIndex(int i)
@@ -395,6 +419,19 @@ public class ExperimentSpawner : MonoBehaviour
 
 	private void OnTargetHit(Transform hit)
 	{
+        if(lastHitTime > 0f)
+        {
+            float dif = Time.time - lastHitTime;
+            if (dif > 0.1f)
+            {
+                currTargetLife = targetPickDuration;
+            }
+            lastHitTime = Time.time;
+        }
+        else
+        {
+            lastHitTime = Time.time;
+        }
         if (currTarget == null)
         {
             currTargetLife = targetPickDuration;
@@ -429,7 +466,6 @@ public class ExperimentSpawner : MonoBehaviour
                     int hits = 0;
                     for (int i = 0; i < targets.Count; i++)
                     {
-                        Debug.Log(targets[i].tag);
                         if (!targets[i].gameObject.activeSelf || targets[i].tag == "Bomb")
                         {
                             hits++;

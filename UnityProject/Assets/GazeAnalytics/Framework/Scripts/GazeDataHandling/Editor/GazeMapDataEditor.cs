@@ -191,7 +191,7 @@ public class GazeMapDataEditor : Editor
 		#region animation
 		EditorGUILayout.LabelField("Animate", largeHeaderStyle);
 		float tempSpeed = speed;
-		speed = EditorGUILayout.Slider("Animation speed", tempSpeed, 0f, 1f); 
+		speed = EditorGUILayout.Slider("Animation speed", tempSpeed, 0f, 5f); 
 		if(GUILayout.Button("Play", GUILayout.MaxWidth(100f)))
 		{
 			PlayAnimation();

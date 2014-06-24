@@ -122,11 +122,11 @@ namespace Assets.Scripts
 					{
 						lastFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;
 						fixationTimer.Reset();
-						fixationIndex++;
 					}
 					if(!fixationTimer.IsRunning && gd.IsFixated)
 					{
 						fixationTimer.Start();
+                        fixationIndex++;
 					}
 
 					currentFixationTime = (float)fixationTimer.ElapsedMilliseconds * 0.001f;

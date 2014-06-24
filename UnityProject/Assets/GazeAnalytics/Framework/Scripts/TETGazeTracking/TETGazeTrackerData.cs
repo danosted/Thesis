@@ -39,29 +39,30 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 
 	void OnGUI()
 	{
-		int padding = 10;
-		int btnWidth = 180;
-		int btnHeight = 20;
-		int y = padding;
+        if(showEyeData)
+        {
+		    int padding = 10;
+		    int btnWidth = 180;
+		    int btnHeight = 20;
+		    int y = padding;
 
-		if(GUI.Button(new Rect(padding, y, btnWidth, btnHeight), "Press to Exit"))
-		{
-			Application.Quit();
-		}
+		    if(GUI.Button(new Rect(padding, y, btnWidth, btnHeight), "Press to Exit"))
+		    {
+			    Application.Quit();
+		    }
 
-		if(!GazeManager.Instance.IsActivated)
-		{
-			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not running!");
+		    if(!GazeManager.Instance.IsActivated)
+		    {
+			    y += btnHeight + padding;
+			    GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not running!");
 
-		}
-		else if(!GazeManager.Instance.IsCalibrated)
-		{
-			y += btnHeight + padding;
-			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not calibrated!");
-		}
-		else if(showEyeData)
-		{
+		    }
+		    else if(!GazeManager.Instance.IsCalibrated)
+		    {
+			    y += btnHeight + padding;
+			    GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "EyeTribe Server not calibrated!");
+		    }
+
 			y += btnHeight + padding;
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), gazeUtils.EyesCloseTime.ToString());
 			y += btnHeight + padding;
@@ -74,22 +75,22 @@ public class TETGazeTrackerData : MonoBehaviour, IGazeListener
 			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "blinks: " + gazeUtils.BlinkCount.ToString());
 //			y += btnHeight + padding;
 //			GUI.TextArea(new Rect(padding, y, btnWidth, btnHeight), "blinks: " + gazeUtils.Dist.ToString());
-		}
-//		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
-//		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
-//		Debug.Log ("left eye pupil: " + pupil_left);
-//		Debug.Log ("right eye pupil: " + pupil_right);
-//		float pupil = (pupil_left + pupil_right) * 0.5f;
-//		Debug.Log("mean pupil: " + pupil);
+    //		float pupil_left = (float)gazeUtils.GetLastValidLeftEye ().PupilSize;
+    //		float pupil_right = (float)gazeUtils.GetLastValidRightEye ().PupilSize;
+    //		Debug.Log ("left eye pupil: " + pupil_left);
+    //		Debug.Log ("right eye pupil: " + pupil_right);
+    //		float pupil = (pupil_left + pupil_right) * 0.5f;
+    //		Debug.Log("mean pupil: " + pupil);
 
-//		if(gazeUtils.GetLeftEye() == null)
-//		{
-//			Debug.Log("left eye closed");
-//		}
-//		if(gazeUtils.GetRightEye() == null)
-//		{
-//			Debug.Log("right eye closed");
-//		}
+    //		if(gazeUtils.GetLeftEye() == null)
+    //		{
+    //			Debug.Log("left eye closed");
+    //		}
+    //		if(gazeUtils.GetRightEye() == null)
+    //		{
+    //			Debug.Log("right eye closed");
+    //		}
+        }
 	}
 
 	void OnApplicationQuit()

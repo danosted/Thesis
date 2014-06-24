@@ -18,15 +18,20 @@ public class GazeMetricsCollecter : MonoBehaviour
 
 	private HashSet<Transform> hits = new HashSet<Transform>();
 
+    private bool first = true;
+
 	void Start()
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
 		experiment.OnExperimentStepStarted += OnExperimentStarted;
 		experiment.OnExperimentStepEnded += OnExperimentEnded;
+        experiment.OnExperimentSucceeded += OnExperimentSucceeded;
+        experiment.OnExperimentFailed += OnExperimentFailed;
         experiment.OnExperimentGoodTargetDisappear += OnGazeObjectHit;
+        experiment.OnExperimentBadTargetDisappear += OnGazeObjectHit;
 		gazeEvent = GazeMetricEvents.Instance;
-		StartCoroutine(CollectEyeMetrics());
+        //StartCoroutine(CollectEyeMetrics());
 	}
 
 	private IEnumerator CollectEyeMetrics()
@@ -74,6 +79,12 @@ public class GazeMetricsCollecter : MonoBehaviour
 		                       gazeCalculator.FixationIndex,
                                "ExperimentStarted");
 		hits.Clear();
+        if(first)
+        {
+            first = false;
+            StartCoroutine(CollectEyeMetrics());
+            Debug.Log("Going");
+        }
 	}
 
 	private void OnExperimentEnded()
@@ -124,4 +135,20 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                       gazeCalculator.GetCurrentTargetObjectPath());
 		}
 	}
+
+    private void OnExperimentFailed()
+    {
+        first = true;
+        StopCoroutine("CollectEyeMetrics");
+        gazeEvent.ResetData();
+        Debug.Log("Ending");
+    }
+
+    private void OnExperimentSucceeded()
+    {
+        first = true;
+        StopCoroutine("CollectEyeMetrics");
+        gazeEvent.ResetData();
+        Debug.Log("Ending");
+    }
 }
