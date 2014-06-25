@@ -717,6 +717,7 @@ public class GazeMapData : MonoBehaviour
             {
                 Debug.Log("!GazeDebug! Filename: " + filename + " not found on disk. Removing from filelog." + "\n" + e);
                 savedFilenames.Remove(filename);
+                Serializer.Instance.SerializeFilenames(savedFilenames);
             }
             if (savedFilenames.Contains(filename))
             {

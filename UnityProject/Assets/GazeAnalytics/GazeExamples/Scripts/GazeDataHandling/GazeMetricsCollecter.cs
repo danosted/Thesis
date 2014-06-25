@@ -28,7 +28,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 		experiment.OnExperimentStepEnded += OnExperimentEnded;
         experiment.OnExperimentSucceeded += OnExperimentSucceeded;
         experiment.OnExperimentFailed += OnExperimentFailed;
-        experiment.OnExperimentGoodTargetDisappear += OnGazeObjectHit;
+        experiment.OnExperimentGoodTargetDisappear += OnExperimentTargetDisappear;
         experiment.OnExperimentBadTargetDisappear += OnGazeObjectHit;
 		gazeEvent = GazeMetricEvents.Instance;
         //StartCoroutine(CollectEyeMetrics());
@@ -83,7 +83,7 @@ public class GazeMetricsCollecter : MonoBehaviour
         {
             first = false;
             StartCoroutine(CollectEyeMetrics());
-            Debug.Log("Going");
+            //Debug.Log("Going");
         }
 	}
 
@@ -123,7 +123,7 @@ public class GazeMetricsCollecter : MonoBehaviour
 			                       gazeCalculator.GetCurrentTargetScale(),
 			                       gazeCalculator.GetCurrentTargetRotation(),
 			                       gazeCalculator.GetCurrentTargetColor(),
-			                       "hit: " + hit.name, 
+			                       "Hit: " + hit.name, 
 			                       gazeCalculator.GetCurrentGazeRay(), 
 			                       gazeCalculator.PupilSize,
 			                       0,
@@ -136,12 +136,40 @@ public class GazeMetricsCollecter : MonoBehaviour
 		}
 	}
 
+    private void OnExperimentTargetDisappear(Transform hit)
+    {
+        if (hit == null)
+        {
+            return;
+        }
+        if (hit.GetComponent<GazePrefabTracker>())
+        {
+            gazeEvent.NewGazeEvent(eventName,
+                                   Time.time,
+                                   gazeCalculator.GetCurrentHitPosition(),
+                                   gazeCalculator.GetCurrentTargetPosition(),
+                                   gazeCalculator.GetCurrentTargetScale(),
+                                   gazeCalculator.GetCurrentTargetRotation(),
+                                   gazeCalculator.GetCurrentTargetColor(),
+                                   "Picked: " + hit.name,
+                                   gazeCalculator.GetCurrentGazeRay(),
+                                   gazeCalculator.PupilSize,
+                                   0,
+                                   gazeCalculator.CurrentEyesClosedTime,
+                                   0,
+                                   0f,
+                                   gazeCalculator.CurrentFixationLength,
+                                   gazeCalculator.FixationIndex,
+                                   gazeCalculator.GetCurrentTargetObjectPath());
+        }
+    }
+
     private void OnExperimentFailed()
     {
         first = true;
         StopCoroutine("CollectEyeMetrics");
         gazeEvent.ResetData();
-        Debug.Log("Ending");
+        //Debug.Log("Ending");
     }
 
     private void OnExperimentSucceeded()
@@ -149,6 +177,6 @@ public class GazeMetricsCollecter : MonoBehaviour
         first = true;
         StopCoroutine("CollectEyeMetrics");
         gazeEvent.ResetData();
-        Debug.Log("Ending");
+        //Debug.Log("Ending");
     }
 }
