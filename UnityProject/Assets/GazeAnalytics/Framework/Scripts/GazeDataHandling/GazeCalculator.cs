@@ -119,7 +119,7 @@ public class GazeCalculator : MonoBehaviour
 			{
 				foreach(RaycastHit hit in hits)
 				{
-					if(hit.transform.GetComponent<GazePrefabTracker>())
+					if(hit.transform.GetComponent<GazePrefabTracker>() && (gazeData.isFixating() || mouseAsGaze))
 					{
 //						Debug.Log("hit: " + hit.transform.name);
 						currentTarget = hit.transform;

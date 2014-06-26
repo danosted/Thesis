@@ -371,10 +371,20 @@ public class ExperimentSpawner : MonoBehaviour
         int score = s > 0 ? (int)s : 0;
 		text.text = "Experiment over!\nAverage completion time: " + shortText + " seconds.\nCandy hits: " + goodTargetHitNum.ToString() + "/" + (goodTargetNum * experimentSteps) + "\nBomb hits: " + badTargetHitNum.ToString() + "/" + (badTargetNum * experimentSteps) + "\nScore: " + score.ToString();
 		text.gameObject.SetActive(true);
-		yield return new WaitForSeconds(timeToShow);
-		text.gameObject.SetActive(false);
-		canRun = true;
-        StartCoroutine(ShowStartText());
+        while(timeToShow > 0f)
+        {
+            timeToShow -= Time.deltaTime;
+            if(Input.anyKeyDown)
+            {
+                break;
+            }
+            yield return null;
+        }
+        //yield return new WaitForSeconds(timeToShow);
+        MenuGUI.Instance.PlayNextRandomScene();
+        //text.gameObject.SetActive(false);
+        //canRun = true;
+        //StartCoroutine(ShowStartText());
 	}
 
     private Vector3 GetConstantDistancePositionFromIndex(int i)
