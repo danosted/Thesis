@@ -164,7 +164,11 @@ public class ExperimentSpawner : MonoBehaviour
 		currentTime = Time.time - startTime;
         if (canRun)
         {
-            if (Input.GetMouseButtonUp(0) || Input.anyKeyDown)
+			if(Input.GetKeyDown(KeyCode.Escape))
+			{
+				Application.Quit();
+			}
+			else if (Input.GetMouseButtonUp(0) || Input.anyKeyDown)
             {
                 canRun = false;
                 StartCoroutine(RunExperiementFor(experimentStepDuration));

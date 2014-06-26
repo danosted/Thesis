@@ -15,7 +15,7 @@ Platform assembly: C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProj
 Loading C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_02_music\contrast_easy_pos_Data\Managed\Newtonsoft.Json.dll into Unity Child Domain
 Platform assembly: C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_02_music\contrast_easy_pos_Data\Managed\TETCSharpClient.dll (this message is harmless)
 Loading C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_02_music\contrast_easy_pos_Data\Managed\TETCSharpClient.dll into Unity Child Domain
-- Completed reload, in  0.069 seconds
+- Completed reload, in  0.057 seconds
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
@@ -27,6 +27,13 @@ Tracker not connected, switching to mouse
 UnityEngine.Debug:Internal_Log(Int32, String, Object)
 UnityEngine.Debug:Log(Object)
 GazeCalculator:Start() (at C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProject\Assets\GazeAnalytics\Framework\Scripts\GazeDataHandling\GazeCalculator.cs:80)
+ 
+(Filename: C Line: 0)
+
+added finishtime
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+<RunExperiementFor>c__Iterator11:MoveNext() (at C:\Users\Dan\Documents\Unity Projects\Github\Thesis\UnityProject\Assets\GazeAnalytics\GazeExamples\Scripts\Experiement\ExperimentSpawner.cs:200)
  
 (Filename: C Line: 0)
 
