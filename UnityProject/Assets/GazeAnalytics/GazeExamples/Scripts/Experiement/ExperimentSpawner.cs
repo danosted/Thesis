@@ -166,7 +166,7 @@ public class ExperimentSpawner : MonoBehaviour
         {
 			if(Input.GetKeyDown(KeyCode.Escape))
 			{
-				Application.Quit();
+                Application.LoadLevel(0);
 			}
 			else if (Input.GetMouseButtonUp(0) || Input.anyKeyDown)
             {

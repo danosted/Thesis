@@ -31,6 +31,11 @@ public class GazeMetricsCollecter : MonoBehaviour
         experiment.OnExperimentGoodTargetDisappear += OnExperimentTargetDisappear;
         experiment.OnExperimentBadTargetDisappear += OnGazeObjectHit;
 		gazeEvent = GazeMetricEvents.Instance;
+        string participantName = MenuGUI.Instance.ParticipantName;
+        if(participantName != "Enter Name")
+        {
+            eventName = participantName;
+        }
         //StartCoroutine(CollectEyeMetrics());
 	}
 

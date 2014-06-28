@@ -775,8 +775,9 @@ public class GazeMapData : MonoBehaviour
 	private string CreateFilename(string eventName)
 	{
 		System.DateTime date = System.DateTime.Now;
-		string filename = Application.loadedLevelName + "_" + 
-			eventName + "_" + 
+		string filename =  
+			eventName + "_" +
+            Application.loadedLevelName + "_" +
 			date.Day.ToString() + "_" + 
 			date.Month.ToString() + "_" +
 			date.Year.ToString() + "_" + 

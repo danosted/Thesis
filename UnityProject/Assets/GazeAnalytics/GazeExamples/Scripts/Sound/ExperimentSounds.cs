@@ -45,7 +45,14 @@ public class ExperimentSounds : MonoBehaviour
         soundtrackSourceActive.clip = activeSoundTrack;
         soundtrackSourcePassive.clip = passiveSoundTrack;
         soundtrackSourcePassive.loop = true;
-        soundtrackSourcePassive.Play();
+    }
+
+    void OnLevelWasLoaded(int level)
+    {
+        if(level == Application.loadedLevel)
+        {
+            soundtrackSourcePassive.Play();
+        }
     }
 
     private void OnGoodTargetHit(Transform target)
