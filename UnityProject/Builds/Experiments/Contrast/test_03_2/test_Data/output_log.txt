@@ -15,108 +15,27 @@ Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProje
 Loading C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\Newtonsoft.Json.dll into Unity Child Domain
 Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\TETCSharpClient.dll (this message is harmless)
 Loading C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\TETCSharpClient.dll into Unity Child Domain
-- Completed reload, in  0.074 seconds
+- Completed reload, in  0.093 seconds
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\System.dll (this message is harmless)
 Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\System.Core.dll (this message is harmless)
-UnloadTime: 0.057468 ms
+UnloadTime: 0.064364 ms
 Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\System.Configuration.dll (this message is harmless)
 Platform assembly: C:\Users\DAN\Documents\UnityProjects\Github\Thesis\UnityProject\Builds\Experiments\Contrast\test_03_2\test_Data\Managed\System.Xml.dll (this message is harmless)
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 35 unused Assets to reduce memory usage. Loaded Objects now: 271.
-Total: 1.329432 ms (FindLiveObjects: 0.031032 ms CreateObjectMapping: 0.012259 ms MarkObjects: 0.294620 ms  DeleteObjects: 0.502655 ms)
-
-Tracker not connected, switching to mouse
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-UnloadTime: 0.359751 ms
-Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 235.
-Total: 3.686781 ms (FindLiveObjects: 0.012643 ms CreateObjectMapping: 0.011876 ms MarkObjects: 0.315309 ms  DeleteObjects: 2.939310 ms)
-
-UnloadTime: 0.061682 ms
-Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 298.
-Total: 1.328666 ms (FindLiveObjects: 0.020688 ms CreateObjectMapping: 0.013026 ms MarkObjects: 0.355153 ms  DeleteObjects: 0.504188 ms)
-
-Tracker not connected, switching to mouse
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-added finishtime
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-added finishtime
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-added finishtime
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-added finishtime
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-!GazeDebug!: filename logfile not found, creating new.System.ArgumentException: Encoding name 'Windows-1252' not supported
-Parameter name: name
-  at System.Text.Encoding.GetEncoding (System.String name) [0x00000] in <filename unknown>:0 
-  at System.Xml.XmlInputStream.Initialize (System.IO.Stream stream) [0x00000] in <filename unknown>:0 
-  at System.Xml.XmlInputStream..ctor (System.IO.Stream stream) [0x00000] in <filename unknown>:0 
-  at (wrapper remoting-invoke-with-check) System.Xml.XmlInputStream:.ctor (System.IO.Stream)
-  at System.Xml.XmlStreamReader..ctor (System.IO.Stream input) [0x00000] in <filename unknown>:0 
-  at (wrapper remoting-invoke-with-check) System.Xml.XmlStreamReader:.ctor (System.IO.Stream)
-  at System.Xml.XmlTextReader..ctor (System.IO.Stream input) [0x00000] in <filename unknown>:0 
-  at System.Xml.Serialization.XmlSerializer.Deserialize (System.IO.Stream stream) [0x00000] in <filename unknown>:0 
-  at Serializer.DeserializeFilenames () [0x00000] in <filename unknown>:0 
-  at GazeMapData.SaveCurrentSession () [0x00000] in <filename unknown>:0 
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-!GazeDebug!: Data has been saved to file: Lol_contrast_easy_eerie_26_6_2014_17_18_19.xml
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-!GazeDebug!: saved 1 filenames.
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-UnloadTime: 0.344809 ms
-Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 302.
-Total: 1.079254 ms (FindLiveObjects: 0.021071 ms CreateObjectMapping: 0.014941 ms MarkObjects: 0.572383 ms  DeleteObjects: 0.058234 ms)
-
-Tracker not connected, switching to mouse
- 
-(Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
-
-UnloadTime: 0.337913 ms
-Unloading 1 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 39 unused Assets to reduce memory usage. Loaded Objects now: 236.
-Total: 7.785034 ms (FindLiveObjects: 0.012643 ms CreateObjectMapping: 0.012643 ms MarkObjects: 0.553994 ms  DeleteObjects: 6.806158 ms)
-
-UnloadTime: 0.066280 ms
 Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
-Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 298.
-Total: 1.562753 ms (FindLiveObjects: 0.022987 ms CreateObjectMapping: 0.012643 ms MarkObjects: 0.584260 ms  DeleteObjects: 0.514532 ms)
+Unloading 35 unused Assets to reduce memory usage. Loaded Objects now: 396.
+Total: 1.275407 ms (FindLiveObjects: 0.024136 ms CreateObjectMapping: 0.013409 ms MarkObjects: 0.300749 ms  DeleteObjects: 0.496140 ms)
 
 Tracker not connected, switching to mouse
  
 (Filename: C:/BuildAgent/work/aeedb04a1292f85a/artifacts/StandalonePlayerGenerated/UnityEngineDebug.cpp Line: 49)
 
-UnloadTime: 0.343277 ms
-Unloading 1 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+UnloadTime: 0.348639 ms
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
-Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 233.
-Total: 2.019818 ms (FindLiveObjects: 0.013792 ms CreateObjectMapping: 0.011876 ms MarkObjects: 0.545565 ms  DeleteObjects: 1.052052 ms)
+Unloading 39 unused Assets to reduce memory usage. Loaded Objects now: 233.
+Total: 1.977667 ms (FindLiveObjects: 0.014558 ms CreateObjectMapping: 0.012642 ms MarkObjects: 0.424880 ms  DeleteObjects: 1.133653 ms)
 
