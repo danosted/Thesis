@@ -165,6 +165,14 @@ public class GazeMapDataEditor : Editor
 		#region gazemaprender
 		EditorGUILayout.LabelField("Gaze Visualization", largeHeaderStyle);
 		//Prevent out of bounds exception due to slider inaccuracy:
+		if(gazeMapData.minGazeDataIndex == float.NaN)
+		{
+			gazeMapData.minGazeDataIndex = 0f;
+		}
+		if(gazeMapData.maxGazeDataIndex == float.NaN)
+		{
+			gazeMapData.minGazeDataIndex = 1f;
+		}
 		gazeMapData.minGazeDataIndex = (gazeMapData.minGazeDataIndex < 0f || gazeMapData.minGazeDataIndex > 1f) ? 0f : gazeMapData.minGazeDataIndex;
 		gazeMapData.maxGazeDataIndex = (gazeMapData.maxGazeDataIndex < 0f || gazeMapData.maxGazeDataIndex > 1f) ? 1f : gazeMapData.maxGazeDataIndex;
 		EditorGUILayout.BeginHorizontal();

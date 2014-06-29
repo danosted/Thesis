@@ -329,8 +329,9 @@ public class GazeMapData : MonoBehaviour
 		{
             if ((i + 1) == (rawGazeEvents.Count - 1))
             {
-                clusterSteps.Add(i + 1);
+                clusterSteps.Add(i + 2);
 //				Debug.Log("clusterstep: " + (i + 1));
+//				Debug.Log("added eventHitname: " + rawGazeEvents[i+1].eventHitName + " at: " + i);
             }
             else
             {
@@ -344,7 +345,7 @@ public class GazeMapData : MonoBehaviour
                         {
                             clusterSteps.Add(i);
                             foundHit = false;
-                            //Debug.Log("added fp: " + rawGazeEvents[i].filePath + " at: " + i);
+//                            Debug.Log("added fp: " + rawGazeEvents[i].filePath + " at: " + i);
                             //Debug.Log("clusterstep: " + i);
                         }
                         else
@@ -355,6 +356,7 @@ public class GazeMapData : MonoBehaviour
                             {
                                 clusterSteps.Add(i);
                                 lastFP = thisFP;
+//								Debug.Log("added fp: " + thisFP + " at: " + i);
                                 //Debug.Log("clusterstep: " + i);
                             }
                         }
@@ -376,11 +378,11 @@ public class GazeMapData : MonoBehaviour
         #endregion
         #region k-medoid
         List<ClusterPoint> medoids = new List<ClusterPoint>();
-        Dictionary<ClusterPoint, HashSet<ClusterPoint>> medoid2cluster = new Dictionary<ClusterPoint, HashSet<ClusterPoint>>();
+		Dictionary<ClusterPoint, List<ClusterPoint>> medoid2cluster = new Dictionary<ClusterPoint, List<ClusterPoint>>();
 		int medoidIndex = 0;
 		for(int j = 0; j < clusterSteps.Count; j++)
 		{
-            HashSet<ClusterPoint> processedClusterPoints = new HashSet<ClusterPoint>();
+//            HashSet<ClusterPoint> processedClusterPoints = new HashSet<ClusterPoint>();
 			List<ClusterPoint> nonMedoidPoints = new List<ClusterPoint>();
 			ClusterPoint medoid;
 			startIndex = j > 0 ? clusterSteps[j - 1] : 0;
@@ -400,7 +402,7 @@ public class GazeMapData : MonoBehaviour
 						medoids.Add(nonMedoidPoints[0]);
 
                         //testing
-                        medoid2cluster.Add(medoids[medoidIndex], new HashSet<ClusterPoint>());
+                        medoid2cluster.Add(medoids[medoidIndex], new List<ClusterPoint>());
 					}
 					else
 					{
@@ -414,10 +416,10 @@ public class GazeMapData : MonoBehaviour
 					nonMedoidPoints.RemoveAt(rindex);
 					ClusterPoint cp = allClusterPoints.Find(ge => ge.gazeIndex.Equals(nonMedoidPoints[0].gazeIndex));
 					cp.medoidGazeIndex = medoids[medoidIndex].gazeIndex;
-                    processedClusterPoints.Add(cp);
+//                    processedClusterPoints.Add(cp);
                     
                     //testing
-                    medoid2cluster.Add(medoids[medoidIndex], processedClusterPoints);
+					medoid2cluster.Add(medoids[medoidIndex], nonMedoidPoints);
 				}
 				else
 				{
@@ -446,7 +448,7 @@ public class GazeMapData : MonoBehaviour
 							totalCost += Vector3.Distance(rawGazeEvents[medoid.gazeIndex].eventHitPoint, rawGazeEvents[nonMedoidPoints[c].gazeIndex].eventHitPoint);
                             ClusterPoint cp = allClusterPoints.Find(ge => ge.gazeIndex.Equals(nonMedoidPoints[c].gazeIndex));
                             cp.medoidGazeIndex = medoid.gazeIndex;
-                            processedClusterPoints.Add(cp);
+//                            processedClusterPoints.Add(cp);
 						}
 //						Debug.Log("medoid " + medoid.gazeIndex + " , totalCost: " + totalCost + ", pos: " + rawGazeEvents[medoid.gazeIndex].eventHitPoint);
 						if(totalCost < lastCost)
@@ -454,13 +456,14 @@ public class GazeMapData : MonoBehaviour
 							lastCost = totalCost;
 //							Debug.Log("medoidIndex " + medoidIndex + ", medoidsSize: " + medoids.Count);
 							medoids[medoidIndex] = medoid;
-                            if(processedClusterPoints.Contains(medoid))
-                            {
-                                processedClusterPoints.Remove(medoid);
-                            }
+//                            if(processedClusterPoints.Contains(medoid))
+//                            {
+//                                processedClusterPoints.Remove(medoid);
+//                            }
 						}
 						else
 						{
+//							processedClusterPoints.Clear();
 							ClusterPoint previousMedoid = nonMedoidPoints[x];
 							nonMedoidPoints[x] = medoid;
 							medoid = previousMedoid;
@@ -468,7 +471,8 @@ public class GazeMapData : MonoBehaviour
 					}
 
                     //testing
-                    medoid2cluster.Add(medoids[medoidIndex], processedClusterPoints);
+//					Debug.Log("procpoints: " + nonMedoidPoints.Count);
+					medoid2cluster.Add(medoids[medoidIndex], nonMedoidPoints);
 				}
 			}
 			else
@@ -478,23 +482,40 @@ public class GazeMapData : MonoBehaviour
 			medoidIndex++;
         }
         #endregion
+//		Debug.Log("allpoints " + allClusterPoints.Count);
         #region post-processing
 		List<ClusterPoint> sortedMedoids = medoids.OrderBy(o => o.gazeIndex).ToList();
         List<GazeEvent> processedEvents = new List<GazeEvent>();
-        for (int i = 0; i < sortedMedoids.Count; i++)
+		for (int i = 0; i < sortedMedoids.Count; i++)
         {
 //			Debug.Log("sortedmedoid: " + sortedMedoids[i].gazeIndex);
-            HashSet<ClusterPoint> values = medoid2cluster[sortedMedoids[i]];
+            List<ClusterPoint> values = medoid2cluster[sortedMedoids[i]];
+			HashSet<string> eventNames = new HashSet<string>();
+			Dictionary<int, float> fixIndex2duration = new Dictionary<int, float>();
             GazeEvent cluster2single = rawGazeEvents[sortedMedoids[i].gazeIndex];
 			int curFixIndex = cluster2single.fixationIndex;
-			Dictionary<int, float> fixIndex2duration = new Dictionary<int, float>();
+			int max_fixindex = 0;
+			float max_timestep = 0f;
 			bool hasFilepath = cluster2single.filePath != "" ? true : false;
-            bool haseventHitName = cluster2single.eventHitName != "" ? true : false;
+			bool haseventHitName = true;
+			if(cluster2single.eventHitName != "")
+			{
+				if((cluster2single.eventHitName.Contains(":") || cluster2single.eventHitName.Contains("Experiment")))
+			   	{
+					eventNames.Add(cluster2single.eventHitName);
+					haseventHitName = true;
+				}
+				else
+				{
+					haseventHitName = false;
+				}
+			}
 //			Debug.Log(hasFilepath);
 //			Debug.Log(allClusterPoints.Count);
+//			Debug.Log("procpoints " + values.Count);
             foreach (ClusterPoint cp in values)
             {
-                    //Debug.Log("geindex: " + allClusterPoints[j].gazeIndex);
+//				Debug.Log("geindex: " + cp.gazeIndex);
                 GazeEvent ge = rawGazeEvents[cp.gazeIndex];
                 string filepath = ge.filePath;
                 #region set_filepath
@@ -502,7 +523,6 @@ public class GazeMapData : MonoBehaviour
                 {
                     if (!hasFilepath)
                     {
-                        //Debug.Log("double filepath: " + allClusterPoints[j].gazeIndex);
                         cluster2single.filePath = filepath;
                         cluster2single.eventHitObjectPosition = ge.eventHitObjectPosition;
                         cluster2single.eventHitScale = ge.eventHitScale;
@@ -511,32 +531,35 @@ public class GazeMapData : MonoBehaviour
                         cluster2single.filePath = filepath;
                         hasFilepath = true;
                     }
-                    else
-                    {
-                        //Debug.Log("double filepath: " + cp.gazeIndex);
-                    }
                 }
                 #endregion
                 #region set_eventhitname
                 string eventHitName = ge.eventHitName;
-                //Debug.Log("event: " + eventHitName); 
-                if (eventHitName != "")
+				if (eventHitName != "" && (eventHitName.Contains(":") || eventHitName.Contains("Experiment")))
                 {
+//					Debug.Log("event: " + eventHitName + ", i: " + cp.gazeIndex); 
                     //Debug.Log("eventHitName: " + eventHitName);
                     if (!haseventHitName)
                     {
+						eventNames.Add(eventHitName);
                         //Debug.Log("double eventname: " + allClusterPoints[j].gazeIndex);
                         cluster2single.eventHitName = eventHitName;
                         haseventHitName = true;
                     }
                     else
                     {
+						if(!eventNames.Contains(eventHitName) || eventHitName.Contains("Experiment"))
+						{
+							eventNames.Add(eventHitName);
+							cluster2single.eventHitName += "\n" + eventHitName;
+//							Debug.Log("double eventHitName: " + eventHitName + " at " + cp.gazeIndex);
+						}
                         //Debug.Log("double eventName: " + allClusterPoints[j].gazeIndex);
                     }
                 }
                 #endregion
                 #region set_fixationindex
-                int max_fixindex = curFixIndex > ge.fixationIndex ? curFixIndex : ge.fixationIndex;
+				max_fixindex = max_fixindex > ge.fixationIndex ? max_fixindex : ge.fixationIndex;
                 if (curFixIndex == ge.fixationIndex)
                 {
                     if (cluster2single.fixationLength < ge.fixationLength)
@@ -559,11 +582,15 @@ public class GazeMapData : MonoBehaviour
                     }
                 }
                 #endregion
+				#region set_timestep
+				max_timestep = max_timestep > ge.eventTime ? max_timestep : ge.eventTime;
+				#endregion
             }
             foreach (float duration in fixIndex2duration.Values)
             {
                 cluster2single.fixationLength += duration;
             }
+			cluster2single.fixationIndex = max_fixindex;
 //			Debug.Log("medoid " + sortedMedoids[i].gazeIndex + " , newIndex: " + (i + 1) + ", pos: " + rawGazeEvents[medoids[i].gazeIndex].eventHitPoint);
             if(cluster2single.fixationLength > 0f || hasFilepath)
             {
@@ -626,6 +653,8 @@ public class GazeMapData : MonoBehaviour
 		{
 			List<GazeEvent> gazeData = filenameToGazeEvent[filename];
 			Serializer.Instance.SerializeHitmap(gazeData, filename);
+			savedFilenames
+				= Serializer.Instance.DeserializeFilenames();
 			if(!savedFilenames.Contains(filename))
 			{
 				savedFilenames.Add(filename);
