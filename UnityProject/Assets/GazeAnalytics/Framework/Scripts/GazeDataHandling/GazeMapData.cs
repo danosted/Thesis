@@ -24,6 +24,8 @@ public class GazeMapData : MonoBehaviour
 	[SerializeField]
 	private Color
 		pupilColor = Color.yellow;
+    [SerializeField]
+    private List<Color> borderColors = new List<Color>();
 
 	[SerializeField]
 	private bool
@@ -62,8 +64,8 @@ public class GazeMapData : MonoBehaviour
 
 	private bool isSaving;
 
-	private int startIndex = 0;
-	private int endIndex = 0;
+	public int startIndex = 0;
+	public int endIndex = 0;
 	
 	private GUIStyle style = new GUIStyle();
 
@@ -139,8 +141,8 @@ public class GazeMapData : MonoBehaviour
                                 {
                                     percentage = end - (float)(i);
                                 }
-								Vector3 nextSaccadePoint = i < endIndex - 1 ? gazeArray[i + 1].eventHitPoint : e.eventHitPoint;
-								DrawGazeEvent(e, nextSaccadePoint, fileindex, i, percentage);
+								GazeEvent next = i < endIndex - 1 ? gazeArray[i + 1] : e;
+                                DrawGazeEvent(e, next, fileindex, i, percentage);
 							}
 							else
 							{
@@ -196,65 +198,79 @@ public class GazeMapData : MonoBehaviour
 		}
 	}
 
-	private void DrawGazeEvent(GazeEvent e, Vector3 nextSaccadePoint, int fileindex, int eventindex, float percentage)
+	private void DrawGazeEvent(GazeEvent thisEvent, GazeEvent nextEvent, int fileindex, int eventindex, float percentage)
 	{
-		Vector3 camDir = (Camera.current.transform.position - e.eventHitPoint).normalized;
+        GUI.skin = null;
+		Vector3 camDir = (Camera.current.transform.position - thisEvent.eventHitPoint).normalized;
 		//Gaze Ray
 		if(isShowingGazeRay)
 		{
 			Gizmos.color = eventGazeRayColors.Count > fileindex ? eventGazeRayColors.ToArray()[fileindex] : Color.cyan;
-			Gizmos.DrawLine(e.eventGazeRay.origin, e.eventHitPoint);
+			Gizmos.DrawLine(thisEvent.eventGazeRay.origin, thisEvent.eventHitPoint);
 		}
-		//Saccade Ray
+		//Fixations & saccades
 		if(isShowingGazeEvents)
 		{
-			if(nextSaccadePoint != e.eventHitPoint)
+            float thisFixationSize = Mathf.Clamp(thisEvent.fixationLength, 0.1f, 0.5f) * percentage;
+            float nextFixationSize = Mathf.Clamp(nextEvent.fixationLength, 0.1f, 0.5f) * percentage;
+            float borderPadding = 0.04f;
+            //Saccade Ray
+			if(nextEvent != thisEvent)
 			{
-				Gizmos.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-				Gizmos.DrawLine(e.eventHitPoint, nextSaccadePoint);
+                //Gizmos.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+                Gizmos.color = borderColors.Count > fileindex ? borderColors.ToArray()[fileindex] : Color.black; ;
+                Vector3 dir = (nextEvent.eventHitPoint - thisEvent.eventHitPoint).normalized;
+                if ((thisFixationSize + nextFixationSize) * 0.5f < Vector3.Distance(thisEvent.eventHitPoint, nextEvent.eventHitPoint) - 2f * borderPadding)
+                {
+                    Gizmos.DrawLine(thisEvent.eventHitPoint + Mathf.Clamp(thisEvent.fixationLength, 0.1f, 0.5f) * dir, nextEvent.eventHitPoint - nextFixationSize * dir);
+                }
 			}
-			//HitPoint
-			Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
-			float fixSize = Mathf.Clamp(e.fixationLength, 0.1f, 0.5f) * percentage;
-			Handles.DrawSolidDisc(e.eventHitPoint, camDir, /*gazeRayHitSphereRadius*/fixSize);
+			//HitPoint border
+            Handles.color = borderColors.Count > fileindex ? borderColors.ToArray()[fileindex] : Color.black; ;
+            Handles.DrawSolidDisc(thisEvent.eventHitPoint, camDir, /*gazeRayHitSphereRadius*/thisFixationSize + borderPadding);
+            //HitPoint center
+            Handles.color = eventHitPointColors.Count > fileindex ? eventHitPointColors.ToArray()[fileindex] : Color.yellow;
+			Handles.DrawSolidDisc(thisEvent.eventHitPoint, camDir, /*gazeRayHitSphereRadius*/thisFixationSize);
 			//index of event
 			style.alignment = TextAnchor.MiddleCenter;
 			style.fontStyle = FontStyle.Bold;
 			style.fontSize = 10;
 			string eventIndexString = (eventindex + 1).ToString();
+            float padLeft = -0.025f;
+            float padUp = 0.025f;
 			Handles.color = Color.black;
-			Handles.Label(e.eventHitPoint, eventIndexString, style);
+            Handles.Label(thisEvent.eventHitPoint + new Vector3(padLeft, padUp, 0f), eventIndexString, style);
 		}
 		//Event origin color
 		if(!isShowingPupilEvents && isShowingRayOrigin)
 		{
 			Gizmos.color = eventOriginColors.Count > fileindex ? eventOriginColors.ToArray()[fileindex] : Color.blue;
-			Gizmos.DrawCube(e.eventGazeRay.origin, Vector3.one * characterCubeSize);
+			Gizmos.DrawCube(thisEvent.eventGazeRay.origin, Vector3.one * characterCubeSize);
 		}
 		//Name of object that was hit
 		if(isShowingObjectName)
 		{
-			Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.eventHitName, style);
+            Handles.Label(thisEvent.eventHitPoint + Vector3.up * Mathf.Clamp(thisEvent.fixationLength, 0.3f, 0.8f) + Vector3.left * 0.4f, thisEvent.eventHitName, style);
 		}
         //Target prefab
 		if(isShowingTargetPrefab)
 		{
-			if(e.filePath != "")
+			if(thisEvent.filePath != "")
 			{
 //				Handles.Label(e.eventHitPoint + Vector3.up * 2f * gazeRayHitSphereRadius, e.filePath, style);
-				string filepath2Color2position = CreateUniqueHiteventFilepath(e);
+				string filepath2Color2position = CreateUniqueHiteventFilepath(thisEvent);
 				if(filepathToGameObject.ContainsKey(filepath2Color2position))
 				{
 					filepathToGameObject[filepath2Color2position].SetActive(true);
 				}
 				else
 				{
-					Object prefab = AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
+					Object prefab = AssetDatabase.LoadAssetAtPath(thisEvent.filePath, typeof(GameObject));
 					if(prefab != null)
 					{
-						GameObject go = Instantiate(prefab, e.eventHitObjectPosition, e.eventHitRotation) as GameObject;
-						go.transform.localScale = e.eventHitScale;
-						go.transform.renderer.sharedMaterial.color = e.eventHitColor;
+						GameObject go = Instantiate(prefab, thisEvent.eventHitObjectPosition, thisEvent.eventHitRotation) as GameObject;
+						go.transform.localScale = thisEvent.eventHitScale;
+						go.transform.renderer.sharedMaterial.color = thisEvent.eventHitColor;
 						go.transform.parent = transform.GetChild(0);
 						filepathToGameObject.Add(filepath2Color2position, go);	
 					}
@@ -263,7 +279,7 @@ public class GazeMapData : MonoBehaviour
 		}
 		else
 		{
-			string filepath2Color2position = CreateUniqueHiteventFilepath(e);
+			string filepath2Color2position = CreateUniqueHiteventFilepath(thisEvent);
 			if(filepathToGameObject.ContainsKey(filepath2Color2position))
 			{
 				filepathToGameObject[filepath2Color2position].SetActive(false);
@@ -691,6 +707,7 @@ public class GazeMapData : MonoBehaviour
 			eventOriginColors.Clear();
 			eventGazeRayColors.Clear();
 			eventHitPointColors.Clear();
+            borderColors.Clear();
 			loadedFiles.Clear();
             savedFilenames = Serializer.Instance.DeserializeFilenames();
 		}
@@ -718,6 +735,7 @@ public class GazeMapData : MonoBehaviour
 		eventOriginColors.Clear();
 		eventGazeRayColors.Clear();
 		eventHitPointColors.Clear();
+        borderColors.Clear();
 	}
 
 	public void UnloadFile(string filename)
@@ -727,6 +745,7 @@ public class GazeMapData : MonoBehaviour
 		eventOriginColors.RemoveAt(index);
 		eventGazeRayColors.RemoveAt(index);
 		eventHitPointColors.RemoveAt(index);
+        borderColors.RemoveAt(index);
 		foreach(KeyValuePair<string, GameObject> entry in filepathToGameObject)
 		{
 			entry.Value.SetActive(false);
@@ -757,6 +776,7 @@ public class GazeMapData : MonoBehaviour
         eventOriginColors.Add(Color.blue);
         eventGazeRayColors.Add(Color.cyan);
         eventHitPointColors.Add(Color.yellow);
+        borderColors.Add(Color.black);
 	}
 
 #if UNITY_EDITOR

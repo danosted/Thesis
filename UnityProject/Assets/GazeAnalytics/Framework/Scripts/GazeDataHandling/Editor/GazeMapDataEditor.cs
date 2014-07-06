@@ -212,19 +212,19 @@ public class GazeMapDataEditor : Editor
 		#endregion
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
-		#region pupilmaprender
+		#region colorCoding
 		EditorGUILayout.LabelField("Color Coding", largeHeaderStyle);
 		serializedObject.ApplyModifiedProperties();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("pupilColor"), true);
-		serializedObject.ApplyModifiedProperties();
-		#endregion
-
+        serializedObject.ApplyModifiedProperties();
 		serializedObject.Update();
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("borderColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventOriginColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventGazeRayColors"), true);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("eventHitPointColors"), true);
 		serializedObject.ApplyModifiedProperties();
-	}
+        #endregion
+    }
 
 	void OnSceneGUI()
 	{
@@ -244,22 +244,24 @@ public class GazeMapDataEditor : Editor
 						{
 							GazeEvent[] gazeArray = entry.Value.ToArray();
 							int i = 0;
-							for(i = (int)(gazeMapData.minGazeDataIndex*(gazeArray.Length-1)); i < (int)(gazeMapData.maxGazeDataIndex*(gazeArray.Length)); i++)
+                            for (i = gazeMapData.startIndex; i < gazeMapData.endIndex; i++)
 							{
 								GazeEvent e = gazeArray[i];
 								if(e.filePath != "")
 								{
+                                    GameObject go = (GameObject)AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
 									Camera cam = Camera.current;
-									//			Quaternion.LookRotation(cam.transform.position - e.eventHitPoint)
+                                    if (go == null)
+                                    {
+                                        return;
+                                    }
 									if(Handles.Button(e.eventHitPoint, Quaternion.LookRotation(cam.transform.position - e.eventHitPoint), 0.5f, 0.5f, Handles.RectangleCap))
-									{
-										GameObject go = (GameObject)AssetDatabase.LoadAssetAtPath(e.filePath, typeof(GameObject));
+									{	
 										if(go != null)
 										{
 											Selection.activeGameObject = go;
 										}
 									}
-									
 								}
 							}
 						}
