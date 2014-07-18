@@ -147,9 +147,19 @@ public class GazeCalculator : MonoBehaviour
 				isHit = false;
 			}
 			//Fixation
-			currentFixationLength = gazeData.GetCurrentFixationLength();
-			fixationIndex = gazeData.GetFixationIndex();
-			lastFixationLength = gazeData.GetLastFixationLength();
+            if(mouseAsGaze)
+            {
+                currentFixationLength = Random.RandomRange(0f, 4f);
+                fixationIndex = fixationIndex + Random.Range(0, 1);
+                lastFixationLength = Random.RandomRange(0f, 5f);
+            }
+            else
+            {
+                currentFixationLength = gazeData.GetCurrentFixationLength();
+                fixationIndex = gazeData.GetFixationIndex();
+                lastFixationLength = gazeData.GetLastFixationLength();
+            }
+			
 			//Live Gaze Target
 			if(showLiveGazeDebug)
 			{

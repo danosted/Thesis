@@ -24,19 +24,26 @@ public class GazeMetricsCollecter : MonoBehaviour
 	{
 		gazeCalculator = GetComponent<GazeCalculator>();
 		gazeCalculator.OnGazeObjectHit += OnGazeObjectHit;
-		experiment.OnExperimentStepStarted += OnExperimentStarted;
-		experiment.OnExperimentStepEnded += OnExperimentEnded;
-        experiment.OnExperimentSucceeded += OnExperimentSucceeded;
-        experiment.OnExperimentFailed += OnExperimentFailed;
-        experiment.OnExperimentGoodTargetDisappear += OnExperimentTargetDisappear;
-        experiment.OnExperimentBadTargetDisappear += OnGazeObjectHit;
-		gazeEvent = GazeMetricEvents.Instance;
-        string participantName = MenuGUI.Instance.ParticipantName;
-        if(participantName != "Enter Name")
+        gazeEvent = GazeMetricEvents.Instance;
+        if(experiment != null)
         {
-            eventName = participantName;
+            Debug.Log("Hello");
+            experiment.OnExperimentStepStarted += OnExperimentStarted;
+            experiment.OnExperimentStepEnded += OnExperimentEnded;
+            experiment.OnExperimentSucceeded += OnExperimentSucceeded;
+            experiment.OnExperimentFailed += OnExperimentFailed;
+            experiment.OnExperimentGoodTargetDisappear += OnExperimentTargetDisappear;
+            experiment.OnExperimentBadTargetDisappear += OnGazeObjectHit;
+            string participantName = MenuGUI.Instance.ParticipantName;
+            if (participantName != "Enter Name")
+            {
+                eventName = participantName;
+            }
         }
-        //StartCoroutine(CollectEyeMetrics());
+        else
+        {
+            StartCoroutine(CollectEyeMetrics());
+        }
 	}
 
 	private IEnumerator CollectEyeMetrics()

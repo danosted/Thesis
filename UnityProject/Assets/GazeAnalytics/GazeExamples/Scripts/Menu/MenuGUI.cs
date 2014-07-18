@@ -15,6 +15,8 @@ public class MenuGUI : MonoBehaviour
 
     private static object _lock = new object();
 
+    private bool isUsed = true;
+
     public static MenuGUI Instance
     {
         get
@@ -47,7 +49,6 @@ public class MenuGUI : MonoBehaviour
 						singleton.name = "(singleton) "+ typeof(MenuGUI).ToString();
  
 						DontDestroyOnLoad(singleton);
- 
 						Debug.Log("[Singleton] An instance of " + typeof(MenuGUI) + 
 							" is needed in the scene, so '" + singleton +
 							"' was created with DontDestroyOnLoad.");
@@ -81,6 +82,10 @@ public class MenuGUI : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        if (buttonText == null)
+        {
+            return;
+        }
         if (FindObjectsOfType(typeof(MenuGUI)).Length > 1)
         {
             Destroy(gameObject);
@@ -100,6 +105,7 @@ public class MenuGUI : MonoBehaviour
         {
             scenesToPlay.Add(i);
         }
+
 
         buttonText.text = "Start";
         textToEdit = genericName;
