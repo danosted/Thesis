@@ -211,7 +211,7 @@ public class GazeMapData : MonoBehaviour
 		//Fixations & saccades
 		if(isShowingGazeEvents)
 		{
-            float thisFixationSize = Mathf.Clamp(thisEvent.fixationLength, 0.1f, 0.5f) * percentage;
+            float thisFixationSize = Mathf.Clamp(thisEvent.fixationLength, 0.1f, 0.5f);// *percentage;
             float nextFixationSize = Mathf.Clamp(nextEvent.fixationLength, 0.1f, 0.5f) * percentage;
             float borderPadding = 0.04f;
             //Saccade Ray
@@ -601,6 +601,9 @@ public class GazeMapData : MonoBehaviour
 				#region set_timestep
 				max_timestep = max_timestep > ge.eventTime ? max_timestep : ge.eventTime;
 				#endregion
+                #region set_pupildilation
+                cluster2single.pupilMeanSize += ge.pupilMeanSize;
+                #endregion
             }
             foreach (float duration in fixIndex2duration.Values)
             {
@@ -617,6 +620,7 @@ public class GazeMapData : MonoBehaviour
                     float saccadeJumpLength = Vector3.Distance(cluster2single.eventHitPoint, rawGazeEvents[sortedMedoids[i - 1].gazeIndex].eventHitPoint);
                     cluster2single.saccadeJumpLength = saccadeJumpLength;
                 }
+                cluster2single.pupilMeanSize /= values.Count + 1;
                 processedEvents.Add(cluster2single);
             }
         }
